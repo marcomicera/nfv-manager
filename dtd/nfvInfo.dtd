@@ -1,0 +1,44 @@
+<!ELEMENT nfvInfo (catalog,network,nffgs?)>
+
+<!ELEMENT catalog (VNF+)>
+<!ELEMENT VNF EMPTY>
+<!ATTLIST VNF
+	functionalType		NMTOKEN	#REQUIRED
+	requiredMemory		NMTOKEN	#REQUIRED
+	requiredStorage		NMTOKEN	#REQUIRED>
+
+<!ELEMENT network (hosts,channels?)>
+<!ELEMENT hosts (host+)>
+<!ELEMENT host EMPTY>
+<!ATTLIST host
+	id						ID		#REQUIRED
+	availableMemory			NMTOKEN	"0"
+	availableStorage		NMTOKEN	"0"
+	maxVNFs					NMTOKEN	#REQUIRED
+	nodes					IDREFS	#IMPLIED>
+<!ELEMENT channels (channel+)>
+<!ELEMENT channel EMPTY>
+<!ATTLIST channel
+	host1				IDREF	#REQUIRED
+	host2				IDREF	#REQUIRED
+	averageThroughput	NMTOKEN	#IMPLIED
+	averageLatency		NMTOKEN	#IMPLIED>
+
+<!ELEMENT nffgs (nffg*)>
+<!ELEMENT nffg (deployTime,nodes)>
+<!ATTLIST nffg
+	id	ID	#REQUIRED>
+<!ELEMENT deployTime (#PCDATA)>
+<!ELEMENT nodes (node+)>
+<!ELEMENT node (link*)>
+<!ATTLIST node
+	id					ID		#REQUIRED
+	functionalType		NMTOKEN	#REQUIRED
+	host				IDREF	#IMPLIED>
+<!ELEMENT link EMPTY>
+<!ATTLIST link
+	id					CDATA	#REQUIRED
+	sourceNode			IDREF	#REQUIRED
+	destinationNode		IDREF	#REQUIRED
+	minimumThroughput	NMTOKEN	#IMPLIED
+	maximumLatency		NMTOKEN	#IMPLIED>
