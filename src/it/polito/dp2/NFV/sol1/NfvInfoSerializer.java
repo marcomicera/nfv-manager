@@ -84,7 +84,7 @@ public class NfvInfoSerializer {
                                 ValidationEventLocator vel = ve.getLocator();
                                 System.out.println("Line:Col[" + vel.getLineNumber() +
                                     ":" + vel.getColumnNumber() +
-                                    "]:" + ve.getMessage() + "\n\n"
+                                    "]:" + ve.getMessage()
                                 );
                             }
                             return true;
