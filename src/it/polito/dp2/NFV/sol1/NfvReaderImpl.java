@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.Calendar;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.xml.XMLConstants;
@@ -22,14 +23,18 @@ import it.polito.dp2.NFV.NffgReader;
 import it.polito.dp2.NFV.NfvReaderException;
 import it.polito.dp2.NFV.VNFTypeReader;
 import it.polito.dp2.NFV.sol1.jaxb.NFVType;
+import it.polito.dp2.NFV.sol1.jaxb.NffgsType;
 
 class NfvReaderImpl implements it.polito.dp2.NFV.NfvReader {
 	private String inputFile;
-	private JAXBElement<NFVType> nfvElement;
+	private NFVType nfvInfo;
 	
 	public NfvReaderImpl() throws NfvReaderException {
 		inputFile = System.getProperty("it.polito.dp2.NFV.sol1.NfvInfo.file");
-		
+		this.readFile();
+	}
+	
+	private void readFile() {
 		// Reading the input file
 		FileInputStream fis = null;
 		try {
@@ -61,9 +66,13 @@ class NfvReaderImpl implements it.polito.dp2.NFV.NfvReader {
 			u.setSchema(schema);
 			
 			// Unmarshalling input file
-			nfvElement = u.unmarshal(fis, NFVType.class);
+			Object unmarshalledInput = u.unmarshal(fis);
+			if(unmarshalledInput instanceof JAXBElement<?>)
+				nfvInfo = ((JAXBElement<NFVType>)unmarshalledInput).getValue();
+			else
+				throw new JAXBException("Could not unmarshal input file");
 		} catch (JAXBException e) {
-			System.err.println("Cannot parse input file");
+			System.err.println("JAXB exception: " + e.getMessage());
 			e.printStackTrace();
 			System.exit(1);
 		} catch (ClassCastException cce) {
@@ -74,8 +83,13 @@ class NfvReaderImpl implements it.polito.dp2.NFV.NfvReader {
 	}
 
 	@Override
-	public Set<NffgReader> getNffgs(Calendar var1) {
-		// TODO Auto-generated method stub
+	public Set<NffgReader> getNffgs(Calendar since) {
+		NffgsType nffgs = nfvInfo.getNffgs();
+		
+		if(nffgs == null) {
+			return new LinkedHashSet<NffgReader>();
+		}
+		
 		return null;
 	}
 
