@@ -18,7 +18,9 @@ import javax.xml.validation.SchemaFactory;
 
 import org.xml.sax.SAXException;
 
-import it.polito.dp2.NFV.*;
+import it.polito.dp2.NFV.NfvReader;
+import it.polito.dp2.NFV.NfvReaderException;
+import it.polito.dp2.NFV.NfvReaderFactory;
 import it.polito.dp2.NFV.sol1.jaxb.NFVType;
 
 
@@ -53,69 +55,74 @@ public class NfvInfoSerializer {
 		
 		String filename = args[0];
 		
+		// Creating the output file
+		FileOutputStream fos = null;
 		try {
-			// Creating the output file
-			File file = new File(filename);
-	        FileOutputStream fos = new FileOutputStream(file, false);
-			
-	        // Retrieving data
-			NfvInfoSerializer data = new NfvInfoSerializer();
-			
-			/*	Creating a JAXBContext capable of handling classes generated into
-            	the it.polito.dp2.NFV.sol1.jaxb package */
-			JAXBContext jc = JAXBContext.newInstance("it.polito.dp2.NFV.sol1.jaxb");
-			
-			// Creating a Marshaler
-			Marshaller m = jc.createMarshaller();
-			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-			
-			// Validation
-			SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-			try {
-				Schema schema = sf.newSchema(new File("xsd/nfvInfo.xsd"));
-				m.setSchema(schema);
-				m.setEventHandler(
-					new ValidationEventHandler() {
-                        // allows unmarshalling to continue even if there are errors
-						@Override
-                        public boolean handleEvent(ValidationEvent ve) {
-                            // ignore warnings
-                            if (ve.getSeverity() != ValidationEvent.WARNING) {
-                                ValidationEventLocator vel = ve.getLocator();
-                                System.out.println("Line:Col[" + vel.getLineNumber() +
-                                    ":" + vel.getColumnNumber() +
-                                    "]:" + ve.getMessage()
-                                );
-                            }
-                            return true;
-                        }
-                    }
-				);
-			} catch(SAXException se) {
-                System.out.println("Unable to validate due to following error.");
-                se.printStackTrace();
-            }
-	        
-			// Creating the JAXBElement object
-	        JAXBElement<NFVType> nfvElement = data.toJAXB();
-			
-        	// Marshaling to the specified file
-			m.marshal(nfvElement, fos);
-			fos.close();
-		} catch(JAXBException je) {
-			je.printStackTrace();
+			fos = new FileOutputStream(new File(filename), false);
+		} catch(FileNotFoundException e) {
+			System.err.println("Could not create output file");
+			e.printStackTrace();
 			System.exit(1);
+		}
+		
+		// Retrieving data
+		JAXBElement<NFVType> nfvElement = null;
+		try {
+			NfvInfoSerializer data = new NfvInfoSerializer();
+	        nfvElement = data.toJAXB(); // Conversion
 		} catch (NfvReaderException e) {
 			System.err.println("Could not instantiate data generator");
 			e.printStackTrace();
 			System.exit(1);
-		} catch (FileNotFoundException e) {
-			System.err.println("Invalid file name");
-			e.printStackTrace();
-			System.exit(1);
+		}
+		
+		// Validation
+		SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+		Schema schema = null;
+		try {
+			schema = sf.newSchema(new File("xsd/nfvInfo.xsd"));
+		} catch (SAXException e) {
+            System.err.println("Could not read the schema file");
+            e.printStackTrace();            
+        }
+		
+		try {
+			/*	Creating a JAXBContext capable of handling classes generated into
+	    	the it.polito.dp2.NFV.sol1.jaxb package */
+			JAXBContext jc = JAXBContext.newInstance("it.polito.dp2.NFV.sol1.jaxb");
+			
+			// Creating a Marshaller
+			Marshaller m = jc.createMarshaller();
+			m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+			
+			m.setSchema(schema);
+			m.setEventHandler(
+				new ValidationEventHandler() {
+	                // allows unmarshalling to continue even if there are errors
+					@Override
+	                public boolean handleEvent(ValidationEvent ve) {
+	                    // ignore warnings
+	                    if (ve.getSeverity() != ValidationEvent.WARNING) {
+	                        ValidationEventLocator vel = ve.getLocator();
+	                        System.out.println("Line:Col[" + vel.getLineNumber() +
+	                            ":" + vel.getColumnNumber() +
+	                            "]:" + ve.getMessage()
+	                        );
+	                    }
+	                    return true;
+	                }
+	            }
+			);
+			
+			// Marshalling to the specified file
+			m.marshal(nfvElement, /*fos*/ System.out);
+			fos.close();
+		} catch (JAXBException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		} catch (IOException e) {
+			System.err.println("An I/O occurred");
 			e.printStackTrace();
-			System.exit(1);
 		}
 	}
 	
