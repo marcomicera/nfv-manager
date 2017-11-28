@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
@@ -26,6 +27,7 @@ import it.polito.dp2.NFV.sol1.jaxb.NFVType;
 
 public class NfvInfoSerializer {
 	private NfvJAXBConverter converter;
+	
 
 	/**
 	 * Creates a NfvInfoSerializer with a given monitor
@@ -65,31 +67,47 @@ public class NfvInfoSerializer {
 			System.exit(1);
 		}
 		
-		// Retrieving data
+		// Retrieving data and serializing
 		JAXBElement<NFVType> nfvElement = null;
 		try {
-			NfvInfoSerializer data = new NfvInfoSerializer();
-	        nfvElement = data.toJAXB(); // Conversion
+			NfvInfoSerializer serializer = new NfvInfoSerializer();
+	        nfvElement = serializer.toJAXB(); // Conversion
+	        serializer.marshal(nfvElement, fos); // Marshalling
 		} catch (NfvReaderException e) {
 			System.err.println("Could not instantiate data generator");
 			e.printStackTrace();
 			System.exit(1);
 		}
-		
+	}
+	
+	/**
+	 * Converts the NFV object obtainable by NfvReader
+	 * into a JAXB equivalent class
+	 * @return the NFV JAXB-compatible object
+	 */
+	private JAXBElement<NFVType> toJAXB() {
+		return converter.getNfvInfo();
+	}
+	
+	/**
+	 * Marshals object obj to the OutputStream os using a schema
+	 * @param obj object to be marshalled
+	 * @param os OutputStream used during marshalling
+	 */
+	private void marshal(Object obj, OutputStream os) {
 		// Validation
 		SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		Schema schema = null;
 		try {
-			schema = sf.newSchema(new File("xsd/nfvInfo.xsd"));
+			schema = sf.newSchema(new File(NfvConfig.schemaFile));
 		} catch (SAXException e) {
             System.err.println("Could not read the schema file");
             e.printStackTrace();            
         }
 		
 		try {
-			/*	Creating a JAXBContext capable of handling classes generated into
-	    	the it.polito.dp2.NFV.sol1.jaxb package */
-			JAXBContext jc = JAXBContext.newInstance("it.polito.dp2.NFV.sol1.jaxb");
+			// JAXBContext capable of handling JAXB-compatible generated classes 
+			JAXBContext jc = JAXBContext.newInstance(NfvConfig.jaxbClassesPackage);
 			
 			// Creating a Marshaller
 			Marshaller m = jc.createMarshaller();
@@ -115,8 +133,9 @@ public class NfvInfoSerializer {
 			);
 			
 			// Marshalling to the specified file
-			m.marshal(nfvElement, /*fos*/ System.out);
-			fos.close();
+			m.marshal(obj, os == null ? System.out : os);
+			if(os != null)
+				os.close();
 		} catch (JAXBException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -124,14 +143,5 @@ public class NfvInfoSerializer {
 			System.err.println("An I/O occurred");
 			e.printStackTrace();
 		}
-	}
-	
-	/**
-	 * Converts the NFV object obtainable by NfvReader
-	 * into a JAXB equivalent class
-	 * @return the NFV JAXB-compatible object
-	 */
-	private JAXBElement<NFVType> toJAXB() {
-		return converter.getNfvInfo();
 	}
 }

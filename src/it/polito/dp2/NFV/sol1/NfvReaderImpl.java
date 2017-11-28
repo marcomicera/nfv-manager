@@ -30,7 +30,7 @@ class NfvReaderImpl implements it.polito.dp2.NFV.NfvReader {
 	private NFVType nfvInfo;
 	
 	public NfvReaderImpl() throws NfvReaderException {
-		inputFile = System.getProperty("it.polito.dp2.NFV.sol1.NfvInfo.file");
+		inputFile = System.getProperty(NfvConfig.inputFile);
 		this.readFile();
 	}
 	
@@ -49,17 +49,16 @@ class NfvReaderImpl implements it.polito.dp2.NFV.NfvReader {
 		SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 		Schema schema = null;
 		try {
-			schema = sf.newSchema(new File("xsd/nfvInfo.xsd"));
+			schema = sf.newSchema(new File(NfvConfig.schemaFile));
 		} catch (SAXException e) {
 			System.err.println("Could not read the schema file");
 			e.printStackTrace();
 		}
 		
-		
 		try {
 			/*	Creating a JAXBContext capable of handling classes generated into
 	    	the it.polito.dp2.NFV.sol1.jaxb package */
-			JAXBContext jc = JAXBContext.newInstance("it.polito.dp2.NFV.sol1.jaxb");
+			JAXBContext jc = JAXBContext.newInstance(NfvConfig.jaxbClassesPackage);
 			
 			// Creating an Unmarshaller
 			Unmarshaller u = jc.createUnmarshaller();
