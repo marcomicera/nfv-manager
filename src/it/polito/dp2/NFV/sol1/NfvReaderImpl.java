@@ -27,11 +27,27 @@ import it.polito.dp2.NFV.sol1.jaxb.NffgsType;
 
 class NfvReaderImpl implements it.polito.dp2.NFV.NfvReader {
 	private String inputFile;
-	private NFVType nfvInfo;
+	public NFVType nfvInfo;
 	
 	public NfvReaderImpl() throws NfvReaderException {
-		inputFile = System.getProperty(NfvConfig.inputFile);
-		this.readFile();
+		inputFile = System.getProperty(NfvConfig.inputFileProperty);
+		/**/System.out.println("************************************************* Input file is: " + inputFile);
+		if(inputFile != null)
+			this.readFile();
+		else
+			throw new NfvReaderException("Could not find input file");
+	}
+	
+	public static void main(String[] args) {
+		NfvReaderImpl r;
+		try {
+			r = new NfvReaderImpl();
+			System.out.print(r.nfvInfo);
+		} catch (NfvReaderException e) {
+			System.err.print(e.getMessage());
+			e.printStackTrace();
+		}  
+		
 	}
 	
 	private void readFile() {
