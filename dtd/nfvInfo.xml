@@ -4,16 +4,16 @@
 <nfvInfo>
 
 	<catalog>
-  		<VNF functionalType="CACHE" requiredMemory="512" requiredStorage="2048"/>
-    	<VNF functionalType="DPI" requiredMemory="256" requiredStorage="1024"/>
-    	<VNF functionalType="FW" requiredMemory="128" requiredStorage="1024"/>
-    	<VNF functionalType="MAIL_CLIENT" requiredMemory="128" requiredStorage="1024"/>
-    	<VNF functionalType="MAIL_SERVER" requiredMemory="1024" requiredStorage="4096"/>
-    	<VNF functionalType="NAT" requiredMemory="512" requiredStorage="512"/>
-    	<VNF functionalType="SPAM" requiredMemory="128" requiredStorage="512"/>
-    	<VNF functionalType="VPN" requiredMemory="128" requiredStorage="512"/>
-    	<VNF functionalType="WEB_CLIENT" requiredMemory="2048" requiredStorage="4096"/>
-    	<VNF functionalType="WEB_SERVER" requiredMemory="8192" requiredStorage="8192"/>
+  		<VNF id="CACHEt" functionalType="CACHE" requiredMemory="512" requiredStorage="2048"/>
+    	<VNF id="DPIt" functionalType="DPI" requiredMemory="256" requiredStorage="1024"/>
+    	<VNF id="FWt" functionalType="FW" requiredMemory="128" requiredStorage="1024"/>
+    	<VNF id="MAIL_CLIENTt" functionalType="MAIL_CLIENT" requiredMemory="128" requiredStorage="1024"/>
+   		<VNF id="MAIL_SERVERt" functionalType="MAIL_SERVER" requiredMemory="1024" requiredStorage="4096"/>
+    	<VNF id="NATt" functionalType="NAT" requiredMemory="512" requiredStorage="512"/>
+    	<VNF id="SPAMt" functionalType="SPAM" requiredMemory="128" requiredStorage="512"/>
+    	<VNF id="VPNt" functionalType="VPN" requiredMemory="128" requiredStorage="512"/>
+    	<VNF id="WEB_CLIENTt" functionalType="WEB_CLIENT" requiredMemory="2048" requiredStorage="4096"/>
+    	<VNF id="WEB_SERVERt" functionalType="WEB_SERVER" requiredMemory="8192" requiredStorage="8192"/>
   	</catalog>
   	
   	<network>

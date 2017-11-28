@@ -48,6 +48,7 @@ public class NfvJAXBConverter {
 		List<VNFType> catalogList = catalog.getVNF();
 		for(VNFTypeReader vnf: monitor.getVNFCatalog()) {
 			VNFType tempVnf = new VNFType();
+			tempVnf.setId(vnf.getName());
 			tempVnf.setFunctionalType(
 				FunctionalTypeType.fromValue(
 						vnf.getFunctionalType().value()

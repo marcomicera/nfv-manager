@@ -2,11 +2,6 @@
 
 	<!-- Global element declaration -->
 	<xsd:element name="nfvInfo" type="NFVType">
-		<!-- Node's functionalType reference -->
-		<!-- <xsd:keyref name="nodeFunctionalTypeRef" refer="functionalTypeKey">
-			<xsd:selector xpath="nffgs/nffg/nodes/node"/>
-			<xsd:field xpath="@functionalType"/>
-		</xsd:keyref> -->
 		
 		<!-- Node's host reference -->
 		<xsd:keyref name="nodeHostRef" refer="hostKey">
@@ -51,11 +46,11 @@
 	<xsd:complexType name="NFVType">
 		<xsd:all>
 			<xsd:element name="catalog" type="CatalogType">
-				<!-- VNF's functionalType key -->
-				<!-- <xsd:key name="functionalTypeKey">
+				<!-- VNF's id key -->
+				<xsd:key name="functionalTypeKey">
 					<xsd:selector xpath="VNF"/>
-					<xsd:field xpath="@functionalType"/>
-				</xsd:key> -->
+					<xsd:field xpath="@id"/>
+				</xsd:key>
 			</xsd:element>
 			<xsd:element name="network" type="NetworkType"/>
 			<xsd:element name="nffgs" minOccurs="0" maxOccurs="1" type="NffgsType">
@@ -75,6 +70,7 @@
 	</xsd:complexType>
 	
 	<xsd:complexType name="VNFType">
+		<xsd:attribute name="id" type="xsd:token" use="required"/>
 		<xsd:attribute name="functionalType" type="functionalTypeType" use="required"/>
 		<xsd:attribute name="requiredMemory" type="xsd:int" use="required"/>
 		<xsd:attribute name="requiredStorage" type="xsd:int" use="required"/>

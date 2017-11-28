@@ -27,7 +27,9 @@ import it.polito.dp2.NFV.sol1.jaxb.NffgsType;
 
 class NfvReaderImpl implements it.polito.dp2.NFV.NfvReader {
 	private String inputFile;
-	public NFVType nfvInfo;
+	private NFVType nfvInfo;
+	private Set<NfvVNF> catalog;
+	
 	
 	public NfvReaderImpl() throws NfvReaderException {
 		inputFile = System.getProperty(NfvConfig.inputFileProperty);
@@ -38,7 +40,7 @@ class NfvReaderImpl implements it.polito.dp2.NFV.NfvReader {
 			throw new NfvReaderException("Could not find input file");
 	}
 	
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		NfvReaderImpl r;
 		try {
 			r = new NfvReaderImpl();
@@ -48,7 +50,7 @@ class NfvReaderImpl implements it.polito.dp2.NFV.NfvReader {
 			e.printStackTrace();
 		}  
 		
-	}
+	}*/
 	
 	private void readFile() {
 		// Reading the input file
@@ -85,7 +87,7 @@ class NfvReaderImpl implements it.polito.dp2.NFV.NfvReader {
 			if(unmarshalledInput instanceof JAXBElement<?>)
 				nfvInfo = ((JAXBElement<NFVType>)unmarshalledInput).getValue();
 			else
-				throw new JAXBException("Could not unmarshal input file");
+				throw new JAXBException("could not unmarshal input file");
 		} catch (JAXBException e) {
 			System.err.println("JAXB exception: " + e.getMessage());
 			e.printStackTrace();
@@ -95,16 +97,19 @@ class NfvReaderImpl implements it.polito.dp2.NFV.NfvReader {
         	cce.printStackTrace();
         	System.exit(1);
         }
+		
+		catalog = readCatalog();
+	}
+	
+	private Set<NfvVNF> readCatalog() {
+		
+		
+		return null;
 	}
 
 	@Override
 	public Set<NffgReader> getNffgs(Calendar since) {
-		NffgsType nffgs = nfvInfo.getNffgs();
-		
-		if(nffgs == null) {
-			return new LinkedHashSet<NffgReader>();
-		}
-		
+		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -133,7 +138,7 @@ class NfvReaderImpl implements it.polito.dp2.NFV.NfvReader {
 	}
 
 	@Override
-	public ConnectionPerformanceReader getConnectionPerformance(HostReader var1, HostReader var2) {
+	public ConnectionPerformanceReader getConnectionPerformance(HostReader host1, HostReader host2) {
 		// TODO Auto-generated method stub
 		return null;
 	}

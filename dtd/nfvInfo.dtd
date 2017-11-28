@@ -3,6 +3,7 @@
 <!ELEMENT catalog (VNF+)>
 <!ELEMENT VNF EMPTY>
 <!ATTLIST VNF
+	id					ID		#REQUIRED
 	functionalType		NMTOKEN	#REQUIRED
 	requiredMemory		NMTOKEN	#REQUIRED
 	requiredStorage		NMTOKEN	#REQUIRED>
