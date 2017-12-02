@@ -158,9 +158,7 @@ public class NfvJAXBConverter {
 			NodeType tempNode = new NodeType();
 			tempNode.setId(node.getName());
 			tempNode.setFunctionalType(
-				FunctionalTypeType.fromValue(
-					node.getFuncType().getFunctionalType().value()
-				)
+				node.getFuncType().getName()
 			);
 			tempNode.setHost(node.getHost() == null ? null : node.getHost().getName());
 			

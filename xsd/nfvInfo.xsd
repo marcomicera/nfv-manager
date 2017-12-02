@@ -3,12 +3,6 @@
 	<!-- Global element declaration -->
 	<xsd:element name="nfvInfo" type="NFVType">
 		
-		<!-- Node's host reference -->
-		<xsd:keyref name="nodeHostRef" refer="hostKey">
-			<xsd:selector xpath="nffgs/nffg/nodes/node"/>
-			<xsd:field xpath="@host"/>
-		</xsd:keyref>
-		
 		<!-- Channel's host references -->
 		<xsd:keyref name="channelHost1Ref" refer="hostKey">
 			<xsd:selector xpath="network/channels/channel"/>
@@ -40,14 +34,28 @@
 			<xsd:selector xpath="network/hosts/host/node"/>
 			<xsd:field xpath="@id"/>
 		</xsd:keyref>
+		
+		<!-- Node's functionalType references -->
+		<xsd:keyref name="NodeFunctionalTypeRef" refer="VNFKey">
+			<xsd:selector xpath="nffgs/nffg/nodes/node"/>
+			<xsd:field xpath="@functionalType"/>
+		</xsd:keyref>
+		
+		<!-- Node's host reference -->
+		<xsd:keyref name="nodeHostRef" refer="hostKey">
+			<xsd:selector xpath="nffgs/nffg/nodes/node"/>
+			<xsd:field xpath="@host"/>
+		</xsd:keyref>
+		
 	</xsd:element>
+	
 
 	<!-- Type definitions -->
 	<xsd:complexType name="NFVType">
 		<xsd:all>
 			<xsd:element name="catalog" type="CatalogType">
 				<!-- VNF's id key -->
-				<xsd:key name="functionalTypeKey">
+				<xsd:key name="VNFKey">
 					<xsd:selector xpath="VNF"/>
 					<xsd:field xpath="@id"/>
 				</xsd:key>
@@ -161,7 +169,7 @@
 	<xsd:complexType name="NodesType">
 		<xsd:sequence>
 			<xsd:element name="node" minOccurs="1" maxOccurs="unbounded" type="NodeType"/>
-		</xsd:sequence>
+		</xsd:sequence> 
 	</xsd:complexType>
 	
 	<xsd:complexType name="NodeType">
@@ -170,11 +178,9 @@
 		</xsd:sequence>
 	
 		<xsd:attribute name="id" type="xsd:token" use="required"/>
-		<xsd:attribute name="functionalType" type="functionalTypeType" use="required"/>
+		<xsd:attribute name="functionalType" type="xsd:token" use="required"/>
 		<xsd:attribute name="host" type="xsd:token" use="optional"/>
 	</xsd:complexType>
-	
-	
 	
 	<xsd:complexType name="LinkType">
 		<xsd:attribute name="id" type="xsd:token" use="required"/>

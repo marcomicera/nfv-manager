@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.Calendar;
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 import javax.xml.XMLConstants;
@@ -17,41 +16,28 @@ import javax.xml.validation.SchemaFactory;
 
 import org.xml.sax.SAXException;
 
-import it.polito.dp2.NFV.ConnectionPerformanceReader;
-import it.polito.dp2.NFV.HostReader;
-import it.polito.dp2.NFV.NffgReader;
-import it.polito.dp2.NFV.NfvReaderException;
-import it.polito.dp2.NFV.VNFTypeReader;
-import it.polito.dp2.NFV.sol1.jaxb.NFVType;
-import it.polito.dp2.NFV.sol1.jaxb.NffgsType;
+import it.polito.dp2.NFV.*;
+import it.polito.dp2.NFV.sol1.jaxb.*;
 
 class NfvReaderImpl implements it.polito.dp2.NFV.NfvReader {
 	private String inputFile;
 	private NFVType nfvInfo;
-	private Set<NfvVNF> catalog;
-	
+	private Set<VNFTypeReader> catalog;
+	private Set<HostReader> hosts;
 	
 	public NfvReaderImpl() throws NfvReaderException {
 		inputFile = System.getProperty(NfvConfig.inputFileProperty);
 		/**/System.out.println("************************************************* Input file is: " + inputFile);
-		if(inputFile != null)
-			this.readFile();
+		if(inputFile != null) {
+			readFile();
+			readCatalog();
+			readHosts();
+		}
 		else
 			throw new NfvReaderException("Could not find input file");
 	}
 	
-	/*public static void main(String[] args) {
-		NfvReaderImpl r;
-		try {
-			r = new NfvReaderImpl();
-			System.out.print(r.nfvInfo);
-		} catch (NfvReaderException e) {
-			System.err.print(e.getMessage());
-			e.printStackTrace();
-		}  
-		
-	}*/
-	
+	@SuppressWarnings("unchecked") // TODO can this suppressed warning be avoided?
 	private void readFile() {
 		// Reading the input file
 		FileInputStream fis = null;
@@ -87,7 +73,7 @@ class NfvReaderImpl implements it.polito.dp2.NFV.NfvReader {
 			if(unmarshalledInput instanceof JAXBElement<?>)
 				nfvInfo = ((JAXBElement<NFVType>)unmarshalledInput).getValue();
 			else
-				throw new JAXBException("could not unmarshal input file");
+				throw new ClassCastException();
 		} catch (JAXBException e) {
 			System.err.println("JAXB exception: " + e.getMessage());
 			e.printStackTrace();
@@ -97,16 +83,73 @@ class NfvReaderImpl implements it.polito.dp2.NFV.NfvReader {
         	cce.printStackTrace();
         	System.exit(1);
         }
-		
-		catalog = readCatalog();
 	}
 	
-	private Set<NfvVNF> readCatalog() {
-		
-		
-		return null;
+	private void readCatalog() {
+		for(VNFType vnf: nfvInfo.getCatalog().getVNF())
+			catalog.add(
+				new MyVNFReader(
+					vnf.getId(),
+					vnf.getFunctionalType(),
+					vnf.getRequiredMemory(),
+					vnf.getRequiredStorage()
+				)
+			); 
 	}
 
+	private void readHosts() {
+		for(HostType host: nfvInfo.getNetwork().getHosts().getHost())
+			hosts.add(
+				new MyHostReader(
+					host.getId(),
+					host.getAvailableMemory(),
+					host.getAvailableStorage(),
+					host.getMaxVNFs(),
+					readNodes(host)
+				)
+			);
+	}
+
+	/**
+	 * Reads NF-FG nodes allocated on this host
+	 * @param host the host of which nodes have to be read 
+	 * @return set of nodes allocated to the host
+	 */
+	private Set<NodeReader> readNodes(HostType host) {
+		Set<NodeReader> nodes = null;
+		
+		for(NodeRefType nodeRef: host.getNode()) 
+			for(NffgType nffg: nfvInfo.getNffgs().getNffg()) 
+				for(NodeType node: nffg.getNodes().getNode()) 
+					if(nodeRef.getId().compareTo(node.getId()) == 0) {
+						// Searching functional type
+						/*VNFType ft = null;
+						for(VNFType vnf: nfvInfo.getCatalog().getVNF())
+							if(vnf.getFunctionalType() == node.getFunctionalType())
+								ft = vnf;
+						if(ft != null)
+							MyVNFReader 
+						
+						nodes.add(
+							new MyNodeReader(
+								node.getId(),
+								ft,
+								node.getHost(),
+								node.getLink(),
+								new MyNffgReader(
+									nffg.getId(),
+									nffg.getDeployTime().toGregorianCalendar(),
+									nffg.getNodes().getNode()
+								)
+							)
+						);
+						
+						continue;*/
+					}
+		
+		return nodes;
+	}
+	
 	@Override
 	public Set<NffgReader> getNffgs(Calendar since) {
 		// TODO Auto-generated method stub
@@ -121,20 +164,19 @@ class NfvReaderImpl implements it.polito.dp2.NFV.NfvReader {
 
 	@Override
 	public Set<HostReader> getHosts() {
-		// TODO Auto-generated method stub
-		return null;
+		return hosts;
 	}
 
 	@Override
 	public HostReader getHost(String var1) {
 		// TODO Auto-generated method stub
+		// TODO transform hosts from Set<> to Map<> to use the get() function
 		return null;
 	}
 
 	@Override
 	public Set<VNFTypeReader> getVNFCatalog() {
-		// TODO Auto-generated method stub
-		return null;
+		return catalog;
 	}
 
 	@Override

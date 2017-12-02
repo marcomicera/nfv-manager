@@ -9,7 +9,8 @@
     	<VNF id="FWt" functionalType="FW" requiredMemory="128" requiredStorage="1024"/>
     	<VNF id="MAIL_CLIENTt" functionalType="MAIL_CLIENT" requiredMemory="128" requiredStorage="1024"/>
    		<VNF id="MAIL_SERVERt" functionalType="MAIL_SERVER" requiredMemory="1024" requiredStorage="4096"/>
-    	<VNF id="NATt" functionalType="NAT" requiredMemory="512" requiredStorage="512"/>
+    	<VNF id="NATa" functionalType="NAT" requiredMemory="512" requiredStorage="512"/>
+    	<VNF id="NATb" functionalType="NAT" requiredMemory="1024" requiredStorage="128"/>
     	<VNF id="SPAMt" functionalType="SPAM" requiredMemory="128" requiredStorage="512"/>
     	<VNF id="VPNt" functionalType="VPN" requiredMemory="128" requiredStorage="512"/>
     	<VNF id="WEB_CLIENTt" functionalType="WEB_CLIENT" requiredMemory="2048" requiredStorage="4096"/>
@@ -44,7 +45,7 @@
   		<nffg id="nffg7142">
   			<deployTime>2012-11-24T14:25:01+01:00</deployTime>
   			<nodes>
-  				<node id="n5123" functionalType="FW">
+  				<node id="n5123" functionalType="FWt">
   					<link 	id="Link0"
 							sourceNode="n1580"
 							destinationNode="n4318"
@@ -55,27 +56,26 @@
   		<nffg id="nffg2412">
 			<deployTime>2011-05-11T08:38:17-02:00</deployTime>
 			<nodes>
-				<node id="n2818" functionalType="NAT">
+				<node id="n2818" functionalType="NATt">
 					<link 	id="Link0"
 							sourceNode="n1580"
 							destinationNode="n4318"
 							minimumThroughput="5"/>
 				</node>
-				<node id="n4570" functionalType="DPI" host="h6401">
-				</node>
-				<node id="n1580" functionalType="FW">
+				<node id="n4570" functionalType="DPIt" host="h6401"/>
+				<node id="n1580" functionalType="FWtt">
 					<link	id="Link2"
 							sourceNode="n2818"
 							destinationNode="n1703"
 							maximumLatency="55"/>
 				</node>
-				<node id="n4318" functionalType="CACHE" host="h2918">
+				<node id="n4318" functionalType="CACHEt" host="h2918">
 					<link	id="Link1"
 							sourceNode="n4318"
 							destinationNode="n1580"
 							minimumThroughput="5"/>
 				</node>
-				<node id="n1703" functionalType="MAIL_SERVER" host="h8153">
+				<node id="n1703" functionalType="MAIL_SERVERt" host="h8153">
 					<link	id="Link3"
 							sourceNode="n4570"
 							destinationNode="n1580"/>
