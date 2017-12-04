@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<nfvInfo>
+    <catalog>
+        <VNF id="MAILCLIENTt" functionalType="MAIL_CLIENT" requiredMemory="37" requiredStorage="30"/>
+        <VNF id="WEBCLIENTt" functionalType="WEB_CLIENT" requiredMemory="37" requiredStorage="750"/>
+        <VNF id="MAILSERVERt" functionalType="MAIL_SERVER" requiredMemory="580" requiredStorage="2100"/>
+        <VNF id="WEBSERVERt" functionalType="WEB_SERVER" requiredMemory="950" requiredStorage="9900"/>
+        <VNF id="CACHEa" functionalType="CACHE" requiredMemory="77" requiredStorage="80"/>
+        <VNF id="DPIb" functionalType="DPI" requiredMemory="55" requiredStorage="110"/>
+        <VNF id="VPNc" functionalType="VPN" requiredMemory="24" requiredStorage="930"/>
+        <VNF id="FWd" functionalType="FW" requiredMemory="79" requiredStorage="890"/>
+    </catalog>
+    <network>
+        <hosts>
+            <host id="H0" availableMemory="7800" availableStorage="54000" maxVNFs="10">
+                <node id="FWd2Nffg0"/>
+                <node id="WEBSERVERt1Nffg0"/>
+                <node id="WEBSERVERt4Nffg0"/>
+                <node id="MAILCLIENTt0Nffg0"/>
+            </host>
+            <host id="H1" availableMemory="6500" availableStorage="85000" maxVNFs="14">
+                <node id="WEBSERVERt2Nffg0"/>
+                <node id="FWd0Nffg0"/>
+                <node id="WEBCLIENTt1Nffg0"/>
+            </host>
+            <host id="H2" availableMemory="2200" availableStorage="91000" maxVNFs="8">
+                <node id="WEBSERVERt3Nffg0"/>
+                <node id="MAILSERVERt0Nffg0"/>
+                <node id="DPIb1Nffg0"/>
+            </host>
+        </hosts>
+        <channels>
+            <channel host1="H0" host2="H1" averageThroughput="52.38" averageLatency="51"/>
+            <channel host1="H0" host2="H2" averageThroughput="13.2" averageLatency="99"/>
+        </channels>
+    </network>
+    <nffgs>
+        <nffg id="Nffg0">
+            <deployTime>2016-09-24T23:59:20.000+02:00</deployTime>
+            <nodes>
+                <node id="FWd2Nffg0" functionalType="FWd" host="H0">
+                    <link id="Link16" sourceNode="FWd2Nffg0" destinationNode="MAILCLIENTt0Nffg0"/>
+                    <link id="Link7" sourceNode="FWd2Nffg0" destinationNode="WEBSERVERt1Nffg0"/>
+                    <link id="Link9" sourceNode="FWd2Nffg0" destinationNode="WEBSERVERt2Nffg0"/>
+                </node>
+                <node id="WEBSERVERt2Nffg0" functionalType="WEBSERVERt" host="H1">
+                    <link id="Link15" sourceNode="WEBSERVERt2Nffg0" destinationNode="FWd0Nffg0"/>
+                    <link id="Link8" sourceNode="WEBSERVERt2Nffg0" destinationNode="FWd2Nffg0"/>
+                </node>
+                <node id="WEBSERVERt3Nffg0" functionalType="WEBSERVERt" host="H2">
+                    <link id="Link10" sourceNode="WEBSERVERt3Nffg0" destinationNode="DPIb1Nffg0"/>
+                </node>
+                <node id="FWd0Nffg0" functionalType="FWd" host="H1">
+                    <link id="Link1" sourceNode="FWd0Nffg0" destinationNode="MAILCLIENTt0Nffg0"/>
+                    <link id="Link13" sourceNode="FWd0Nffg0" destinationNode="WEBSERVERt4Nffg0"/>
+                    <link id="Link3" sourceNode="FWd0Nffg0" destinationNode="WEBCLIENTt1Nffg0"/>
+                    <link id="Link5" sourceNode="FWd0Nffg0" destinationNode="MAILSERVERt0Nffg0"/>
+                </node>
+                <node id="WEBSERVERt1Nffg0" functionalType="WEBSERVERt" host="H0">
+                    <link id="Link6" sourceNode="WEBSERVERt1Nffg0" destinationNode="FWd2Nffg0"/>
+                </node>
+                <node id="WEBSERVERt4Nffg0" functionalType="WEBSERVERt" host="H0">
+                    <link id="Link12" sourceNode="WEBSERVERt4Nffg0" destinationNode="FWd0Nffg0"/>
+                </node>
+                <node id="MAILSERVERt0Nffg0" functionalType="MAILSERVERt" host="H2">
+                    <link id="Link4" sourceNode="MAILSERVERt0Nffg0" destinationNode="FWd0Nffg0"/>
+                </node>
+                <node id="WEBCLIENTt1Nffg0" functionalType="WEBCLIENTt" host="H1">
+                    <link id="Link2" sourceNode="WEBCLIENTt1Nffg0" destinationNode="FWd0Nffg0"/>
+                </node>
+                <node id="MAILCLIENTt0Nffg0" functionalType="MAILCLIENTt" host="H0">
+                    <link id="Link0" sourceNode="MAILCLIENTt0Nffg0" destinationNode="FWd0Nffg0"/>
+                    <link id="Link14" sourceNode="MAILCLIENTt0Nffg0" destinationNode="DPIb1Nffg0"/>
+                </node>
+                <node id="DPIb1Nffg0" functionalType="DPIb" host="H2">
+                    <link id="Link11" sourceNode="DPIb1Nffg0" destinationNode="WEBSERVERt3Nffg0"/>
+                </node>
+            </nodes>
+        </nffg>
+    </nffgs>
+</nfvInfo>

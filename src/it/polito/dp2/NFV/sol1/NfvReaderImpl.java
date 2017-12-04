@@ -4,6 +4,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 import javax.xml.XMLConstants;
@@ -22,23 +26,30 @@ import it.polito.dp2.NFV.sol1.jaxb.*;
 class NfvReaderImpl implements it.polito.dp2.NFV.NfvReader {
 	private String inputFile;
 	private NFVType nfvInfo;
-	private Set<VNFTypeReader> catalog;
-	private Set<HostReader> hosts;
+	private Map<String, VNFTypeReader> catalog;
+	private Map<String, HostReader> hosts;
+	//private Map<String, ConnectionPerformanceReader> channels;
+	private Map<String, NffgReader> nffgs;
 	
 	public NfvReaderImpl() throws NfvReaderException {
 		inputFile = System.getProperty(NfvConfig.inputFileProperty);
-		/**/System.out.println("************************************************* Input file is: " + inputFile);
 		if(inputFile != null) {
 			readFile();
+			
+			catalog = new HashMap<String, VNFTypeReader>();
 			readCatalog();
+			
+			hosts = new HashMap<String, HostReader>();
 			readHosts();
+			
+			nffgs = new HashMap<String, NffgReader>();
+			readNffgs();
 		}
 		else
 			throw new NfvReaderException("Could not find input file");
 	}
-	
-	@SuppressWarnings("unchecked") // TODO can this suppressed warning be avoided?
-	private void readFile() {
+
+	private void readFile() throws NfvReaderException {
 		// Reading the input file
 		FileInputStream fis = null;
 		try {
@@ -69,11 +80,15 @@ class NfvReaderImpl implements it.polito.dp2.NFV.NfvReader {
 			u.setSchema(schema);
 			
 			// Unmarshalling input file
-			Object unmarshalledInput = u.unmarshal(fis);
-			if(unmarshalledInput instanceof JAXBElement<?>)
-				nfvInfo = ((JAXBElement<NFVType>)unmarshalledInput).getValue();
-			else
-				throw new ClassCastException();
+			Object root = u.unmarshal(fis);
+			if(!(root instanceof JAXBElement<?>))
+				throw new NfvReaderException("/Unexpected root element");
+			Object rootObject = ((JAXBElement<?>)root).getValue();
+			if(rootObject == null)
+				throw new NfvReaderException("No root element found");
+			if(!(rootObject instanceof NFVType))
+				throw new NfvReaderException("/Unexpected root element");
+			nfvInfo = (NFVType)rootObject;
 		} catch (JAXBException e) {
 			System.err.println("JAXB exception: " + e.getMessage());
 			e.printStackTrace();
@@ -87,96 +102,163 @@ class NfvReaderImpl implements it.polito.dp2.NFV.NfvReader {
 	
 	private void readCatalog() {
 		for(VNFType vnf: nfvInfo.getCatalog().getVNF())
-			catalog.add(
-				new MyVNFReader(
-					vnf.getId(),
-					vnf.getFunctionalType(),
-					vnf.getRequiredMemory(),
-					vnf.getRequiredStorage()
-				)
-			); 
+			try {
+				catalog.put(
+					vnf.getId(), 
+					new MyVNFReader(
+						vnf.getId(),
+						vnf.getFunctionalType(),
+						vnf.getRequiredMemory(),
+						vnf.getRequiredStorage()
+					)
+				);
+			} catch(NullPointerException e) {
+				e.printStackTrace();
+			}
 	}
 
-	private void readHosts() {
-		for(HostType host: nfvInfo.getNetwork().getHosts().getHost())
-			hosts.add(
-				new MyHostReader(
-					host.getId(),
-					host.getAvailableMemory(),
-					host.getAvailableStorage(),
-					host.getMaxVNFs(),
-					readNodes(host)
-				)
+	private void readNffgs() {
+		for(NffgType nffg: nfvInfo.getNffgs().getNffg()) {
+			MyNffgReader tempNffgReader = new MyNffgReader(
+				nffg.getId(),
+				nffg.getDeployTime()
 			);
+			
+			Map<String, NodeReader> tempNodeReaders = readNodes(nffg, tempNffgReader); 
+			
+			tempNffgReader.setNodes(tempNodeReaders);
+			
+			if(tempNodeReaders != null) {
+				Iterator<NodeReader> it = tempNodeReaders.values().iterator();
+				
+				while(it.hasNext()) {
+					MyNodeReader tempNodeReader = (MyNodeReader)it.next();
+					tempNodeReader.setLinks(
+						readLinks(
+							getNodeInfo(tempNodeReader),
+							tempNffgReader
+						)
+					);
+				}
+			}
+			
+			nffgs.put(
+				nffg.getId(),
+				tempNffgReader
+			);
+		}
 	}
-
-	/**
-	 * Reads NF-FG nodes allocated on this host
-	 * @param host the host of which nodes have to be read 
-	 * @return set of nodes allocated to the host
-	 */
-	private Set<NodeReader> readNodes(HostType host) {
-		Set<NodeReader> nodes = null;
-		
-		for(NodeRefType nodeRef: host.getNode()) 
-			for(NffgType nffg: nfvInfo.getNffgs().getNffg()) 
-				for(NodeType node: nffg.getNodes().getNode()) 
-					if(nodeRef.getId().compareTo(node.getId()) == 0) {
-						// Searching functional type
-						/*VNFType ft = null;
-						for(VNFType vnf: nfvInfo.getCatalog().getVNF())
-							if(vnf.getFunctionalType() == node.getFunctionalType())
-								ft = vnf;
-						if(ft != null)
-							MyVNFReader 
-						
-						nodes.add(
-							new MyNodeReader(
-								node.getId(),
-								ft,
-								node.getHost(),
-								node.getLink(),
-								new MyNffgReader(
-									nffg.getId(),
-									nffg.getDeployTime().toGregorianCalendar(),
-									nffg.getNodes().getNode()
-								)
-							)
-						);
-						
-						continue;*/
-					}
+	
+	private Map<String, NodeReader> readNodes(NffgType nffg, MyNffgReader nffgReader) {
+		Map<String, NodeReader> nodes = new HashMap<String, NodeReader>();
+		for(NodeType node: nffg.getNodes().getNode()) {
+			MyNodeReader tempNodeReader = new MyNodeReader(
+				node.getId(),
+				catalog.get(node.getFunctionalType()),
+				hosts.get(node.getHost()),
+				nffgReader
+			);
+			
+			nodes.put(
+				node.getId(), 
+				tempNodeReader
+			);
+			
+			if(node.getHost() != null) {
+				MyHostReader host = (MyHostReader)hosts.get(node.getHost());
+				host.addNode(node.getId(), tempNodeReader);
+			}
+		}
 		
 		return nodes;
 	}
 	
+	private Map<String, LinkReader> readLinks(NodeType node, MyNffgReader nffgReader) {
+		Map<String, LinkReader> links = new HashMap<String, LinkReader>();
+		
+		for(LinkType link: node.getLink()) {
+			NodeReader sourceNode = nffgReader.getNode(link.getSourceNode());
+			NodeReader destinationNode = nffgReader.getNode(link.getDestinationNode());
+			
+			links.put(
+				link.getId(),
+				new MyLinkReader(
+					link.getId(),
+					link.getMaximumLatency() == null ? 0 : link.getMaximumLatency(),
+					link.getMinimumThroughput() == null ? 0 : link.getMinimumThroughput(),
+					sourceNode,
+					destinationNode
+				)
+			);
+		}
+		
+		return links;
+	}
+	
+	private void readHosts() {
+		for(HostType host: nfvInfo.getNetwork().getHosts().getHost())
+			hosts.put(
+				host.getId(),
+				new MyHostReader(
+					host.getId(),
+					host.getAvailableMemory(),
+					host.getAvailableStorage(),
+					host.getMaxVNFs()
+				)
+			);
+	}
+
+	private NodeType getNodeInfo(String nodeRef) {
+		for(NffgType nffg: nfvInfo.getNffgs().getNffg()) 
+			for(NodeType node: nffg.getNodes().getNode()) 
+				if(nodeRef.compareTo(node.getId()) == 0)
+					return node;
+		
+		return null;
+	}
+	
+	private NodeType getNodeInfo(NodeReader node) {
+		return getNodeInfo(node.getName());
+	}
+	
 	@Override
 	public Set<NffgReader> getNffgs(Calendar since) {
-		// TODO Auto-generated method stub
-		return null;
+		if(nffgs == null) {
+			return new HashSet<NffgReader>();
+		} else if(since == null) {
+			return new HashSet<NffgReader>(nffgs.values());
+		} else {
+			HashSet<NffgReader> result = new HashSet<NffgReader>();
+			Iterator<NffgReader> it = nffgs.values().iterator();
+
+			while (it.hasNext()) {
+				NffgReader nffg = (NffgReader)it.next();
+				if(nffg.getDeployTime() != null && nffg.getDeployTime().after(since))
+					result.add(nffg);
+			}
+
+			return result;
+		}
 	}
 
 	@Override
-	public NffgReader getNffg(String var1) {
-		// TODO Auto-generated method stub
-		return null;
+	public NffgReader getNffg(String name) {
+		return nffgs.get(name);
 	}
 
 	@Override
 	public Set<HostReader> getHosts() {
-		return hosts;
+		return new HashSet<HostReader>(hosts.values());
 	}
 
 	@Override
-	public HostReader getHost(String var1) {
-		// TODO Auto-generated method stub
-		// TODO transform hosts from Set<> to Map<> to use the get() function
-		return null;
+	public HostReader getHost(String name) {
+		return hosts.get(name);
 	}
 
 	@Override
 	public Set<VNFTypeReader> getVNFCatalog() {
-		return catalog;
+		return new HashSet<VNFTypeReader>(catalog.values());
 	}
 
 	@Override

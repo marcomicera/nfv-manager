@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<nfvInfo>
+    <catalog>
+        <VNF id="MAILCLIENTt" functionalType="MAIL_CLIENT" requiredMemory="17" requiredStorage="920"/>
+        <VNF id="WEBCLIENTt" functionalType="WEB_CLIENT" requiredMemory="43" requiredStorage="310"/>
+        <VNF id="MAILSERVERt" functionalType="MAIL_SERVER" requiredMemory="300" requiredStorage="8300"/>
+        <VNF id="WEBSERVERt" functionalType="WEB_SERVER" requiredMemory="220" requiredStorage="500"/>
+        <VNF id="CACHEa" functionalType="CACHE" requiredMemory="67" requiredStorage="860"/>
+        <VNF id="SPAMb" functionalType="SPAM" requiredMemory="56" requiredStorage="380"/>
+        <VNF id="SPAMc" functionalType="SPAM" requiredMemory="82" requiredStorage="540"/>
+        <VNF id="DPId" functionalType="DPI" requiredMemory="72" requiredStorage="760"/>
+        <VNF id="FWe" functionalType="FW" requiredMemory="94" requiredStorage="430"/>
+    </catalog>
+    <network>
+        <hosts>
+            <host id="H0" availableMemory="3900" availableStorage="39000" maxVNFs="7">
+                <node id="WEBCLIENTt3Nffg2"/>
+                <node id="WEBCLIENTt3Nffg1"/>
+                <node id="FWe2Nffg0"/>
+                <node id="DPId3Nffg1"/>
+                <node id="MAILSERVERt3Nffg4"/>
+                <node id="MAILCLIENTt0Nffg3"/>
+                <node id="MAILCLIENTt0Nffg0"/>
+            </host>
+            <host id="H1" availableMemory="1700" availableStorage="92000" maxVNFs="8">
+                <node id="WEBSERVERt0Nffg2"/>
+                <node id="MAILSERVERt4Nffg4"/>
+                <node id="SPAMb3Nffg0"/>
+                <node id="MAILSERVERt0Nffg3"/>
+                <node id="MAILCLIENTt4Nffg1"/>
+                <node id="WEBCLIENTt1Nffg0"/>
+                <node id="CACHEa4Nffg1"/>
+            </host>
+            <host id="H2" availableMemory="7200" availableStorage="91000" maxVNFs="13">
+                <node id="WEBCLIENTt2Nffg0"/>
+                <node id="CACHEa5Nffg1"/>
+                <node id="MAILSERVERt1Nffg3"/>
+                <node id="WEBSERVERt0Nffg1"/>
+                <node id="MAILSERVERt1Nffg2"/>
+                <node id="FWe0Nffg4"/>
+                <node id="CACHEa4Nffg0"/>
+            </host>
+            <host id="H3" availableMemory="3800" availableStorage="61000" maxVNFs="4">
+                <node id="CACHEa5Nffg0"/>
+                <node id="DPId6Nffg1"/>
+                <node id="WEBCLIENTt3Nffg0"/>
+                <node id="WEBSERVERt1Nffg1"/>
+            </host>
+            <host id="H4" availableMemory="7100" availableStorage="84000" maxVNFs="8">
+                <node id="DPId6Nffg0"/>
+                <node id="WEBSERVERt2Nffg1"/>
+                <node id="SPAMc0Nffg3"/>
+                <node id="WEBSERVERt3Nffg2"/>
+                <node id="MAILSERVERt2Nffg2"/>
+                <node id="CACHEa7Nffg1"/>
+                <node id="MAILCLIENTt0Nffg4"/>
+                <node id="MAILSERVERt0Nffg0"/>
+            </host>
+            <host id="H5" availableMemory="5400" availableStorage="51000" maxVNFs="8">
+                <node id="MAILSERVERt1Nffg0"/>
+                <node id="CACHEa1Nffg4"/>
+                <node id="DPId2Nffg4"/>
+                <node id="SPAMb0Nffg1"/>
+                <node id="WEBCLIENTt0Nffg1"/>
+                <node id="DPId0Nffg2"/>
+                <node id="WEBSERVERt0Nffg4"/>
+                <node id="WEBCLIENTt0Nffg2"/>
+            </host>
+            <host id="H6" availableMemory="1400" availableStorage="94000" maxVNFs="13">
+                <node id="SPAMc4Nffg4"/>
+                <node id="SPAMc1Nffg1"/>
+                <node id="MAILCLIENTt1Nffg1"/>
+                <node id="MAILSERVERt1Nffg4"/>
+                <node id="FWe1Nffg2"/>
+                <node id="SPAMb3Nffg4"/>
+                <node id="SPAMb0Nffg0"/>
+                <node id="WEBCLIENTt1Nffg2"/>
+            </host>
+            <host id="H7" availableMemory="5300" availableStorage="58000" maxVNFs="7">
+                <node id="SPAMb1Nffg0"/>
+                <node id="WEBCLIENTt2Nffg1"/>
+                <node id="WEBSERVERt2Nffg4"/>
+                <node id="CACHEa2Nffg1"/>
+                <node id="MAILCLIENTt2Nffg2"/>
+                <node id="SPAMc2Nffg2"/>
+            </host>
+        </hosts>
+        <channels>
+            <channel host1="H0" host2="H1" averageThroughput="83.64" averageLatency="73"/>
+            <channel host1="H0" host2="H2" averageThroughput="81.25" averageLatency="36"/>
+            <channel host1="H0" host2="H3" averageThroughput="47.47" averageLatency="48"/>
+            <channel host1="H0" host2="H4" averageThroughput="52.1" averageLatency="21"/>
+            <channel host1="H0" host2="H5" averageThroughput="59.6" averageLatency="27"/>
+            <channel host1="H0" host2="H6" averageThroughput="85.02" averageLatency="70"/>
+            <channel host1="H0" host2="H7" averageThroughput="20.85" averageLatency="99"/>
+        </channels>
+    </network>
+    <nffgs>
+        <nffg id="Nffg4">
+            <deployTime>2016-09-26T20:49:20.000+02:00</deployTime>
+            <nodes>
+                <node id="MAILSERVERt4Nffg4" functionalType="MAILSERVERt" host="H1">
+                    <link id="Link10" sourceNode="MAILSERVERt4Nffg4" destinationNode="SPAMb3Nffg4"/>
+                </node>
+                <node id="SPAMc4Nffg4" functionalType="SPAMc" host="H6">
+                    <link id="Link13" sourceNode="SPAMc4Nffg4" destinationNode="MAILSERVERt1Nffg4"/>
+                    <link id="Link9" sourceNode="SPAMc4Nffg4" destinationNode="MAILSERVERt3Nffg4"/>
+                </node>
+                <node id="CACHEa1Nffg4" functionalType="CACHEa" host="H5">
+                    <link id="Link7" sourceNode="CACHEa1Nffg4" destinationNode="WEBSERVERt2Nffg4"/>
+                </node>
+                <node id="MAILSERVERt1Nffg4" functionalType="MAILSERVERt" host="H6">
+                    <link id="Link4" sourceNode="MAILSERVERt1Nffg4" destinationNode="DPId2Nffg4"/>
+                </node>
+                <node id="WEBSERVERt2Nffg4" functionalType="WEBSERVERt" host="H7">
+                    <link id="Link6" sourceNode="WEBSERVERt2Nffg4" destinationNode="CACHEa1Nffg4"/>
+                </node>
+                <node id="DPId2Nffg4" functionalType="DPId" host="H5">
+                    <link id="Link5" sourceNode="DPId2Nffg4" destinationNode="MAILSERVERt1Nffg4"/>
+                </node>
+                <node id="MAILSERVERt3Nffg4" functionalType="MAILSERVERt" host="H0">
+                    <link id="Link8" sourceNode="MAILSERVERt3Nffg4" destinationNode="SPAMc4Nffg4"/>
+                </node>
+                <node id="SPAMb3Nffg4" functionalType="SPAMb" host="H6">
+                    <link id="Link11" sourceNode="SPAMb3Nffg4" destinationNode="MAILSERVERt4Nffg4"/>
+                </node>
+                <node id="MAILCLIENTt0Nffg4" functionalType="MAILCLIENTt" host="H4">
+                    <link id="Link0" sourceNode="MAILCLIENTt0Nffg4" destinationNode="FWe0Nffg4"/>
+                </node>
+                <node id="FWe0Nffg4" functionalType="FWe" host="H2">
+                    <link id="Link12" sourceNode="FWe0Nffg4" destinationNode="MAILSERVERt1Nffg4"/>
+                    <link id="Link1" sourceNode="FWe0Nffg4" destinationNode="MAILCLIENTt0Nffg4"/>
+                    <link id="Link3" sourceNode="FWe0Nffg4" destinationNode="WEBSERVERt0Nffg4"/>
+                </node>
+                <node id="WEBSERVERt0Nffg4" functionalType="WEBSERVERt" host="H5">
+                    <link id="Link2" sourceNode="WEBSERVERt0Nffg4" destinationNode="FWe0Nffg4"/>
+                </node>
+            </nodes>
+        </nffg>
+        <nffg id="Nffg3">
+            <deployTime>2016-09-28T20:59:20.000+02:00</deployTime>
+            <nodes>
+                <node id="MAILSERVERt1Nffg3" functionalType="MAILSERVERt" host="H2">
+                    <link id="Link4" sourceNode="MAILSERVERt1Nffg3" destinationNode="SPAMc0Nffg3"/>
+                </node>
+                <node id="SPAMc0Nffg3" functionalType="SPAMc" host="H4">
+                    <link id="Link1" sourceNode="SPAMc0Nffg3" destinationNode="MAILCLIENTt0Nffg3"/>
+                    <link id="Link3" sourceNode="SPAMc0Nffg3" destinationNode="MAILSERVERt0Nffg3"/>
+                    <link id="Link5" sourceNode="SPAMc0Nffg3" destinationNode="MAILSERVERt1Nffg3"/>
+                </node>
+                <node id="MAILSERVERt0Nffg3" functionalType="MAILSERVERt" host="H1">
+                    <link id="Link2" sourceNode="MAILSERVERt0Nffg3" destinationNode="SPAMc0Nffg3"/>
+                </node>
+                <node id="MAILCLIENTt0Nffg3" functionalType="MAILCLIENTt" host="H0">
+                    <link id="Link0" sourceNode="MAILCLIENTt0Nffg3" destinationNode="SPAMc0Nffg3"/>
+                </node>
+            </nodes>
+        </nffg>
+        <nffg id="Nffg2">
+            <deployTime>2016-09-26T23:11:20.000+02:00</deployTime>
+            <nodes>
+                <node id="WEBSERVERt0Nffg2" functionalType="WEBSERVERt" host="H1">
+                    <link id="Link8" sourceNode="WEBSERVERt0Nffg2" destinationNode="FWe1Nffg2"/>
+                </node>
+                <node id="MAILSERVERt1Nffg2" functionalType="MAILSERVERt" host="H2">
+                    <link id="Link10" sourceNode="MAILSERVERt1Nffg2" destinationNode="DPId0Nffg2"/>
+                </node>
+                <node id="WEBCLIENTt3Nffg2" functionalType="WEBCLIENTt" host="H0">
+                    <link id="Link6" sourceNode="WEBCLIENTt3Nffg2" destinationNode="DPId0Nffg2"/>
+                </node>
+                <node id="WEBSERVERt3Nffg2" functionalType="WEBSERVERt" host="H4">
+                    <link id="Link14" sourceNode="WEBSERVERt3Nffg2" destinationNode="SPAMc2Nffg2"/>
+                </node>
+                <node id="FWe1Nffg2" functionalType="FWe" host="H6">
+                    <link id="Link13" sourceNode="FWe1Nffg2" destinationNode="MAILSERVERt2Nffg2"/>
+                    <link id="Link9" sourceNode="FWe1Nffg2" destinationNode="WEBSERVERt0Nffg2"/>
+                </node>
+                <node id="MAILSERVERt2Nffg2" functionalType="MAILSERVERt" host="H4">
+                    <link id="Link12" sourceNode="MAILSERVERt2Nffg2" destinationNode="FWe1Nffg2"/>
+                </node>
+                <node id="MAILCLIENTt2Nffg2" functionalType="MAILCLIENTt" host="H7">
+                    <link id="Link4" sourceNode="MAILCLIENTt2Nffg2" destinationNode="DPId0Nffg2"/>
+                </node>
+                <node id="WEBCLIENTt1Nffg2" functionalType="WEBCLIENTt" host="H6">
+                    <link id="Link2" sourceNode="WEBCLIENTt1Nffg2" destinationNode="DPId0Nffg2"/>
+                </node>
+                <node id="SPAMc2Nffg2" functionalType="SPAMc" host="H7">
+                    <link id="Link15" sourceNode="SPAMc2Nffg2" destinationNode="WEBSERVERt3Nffg2"/>
+                </node>
+                <node id="DPId0Nffg2" functionalType="DPId" host="H5">
+                    <link id="Link11" sourceNode="DPId0Nffg2" destinationNode="MAILSERVERt1Nffg2"/>
+                    <link id="Link1" sourceNode="DPId0Nffg2" destinationNode="WEBCLIENTt0Nffg2"/>
+                    <link id="Link3" sourceNode="DPId0Nffg2" destinationNode="WEBCLIENTt1Nffg2"/>
+                    <link id="Link5" sourceNode="DPId0Nffg2" destinationNode="MAILCLIENTt2Nffg2"/>
+                    <link id="Link7" sourceNode="DPId0Nffg2" destinationNode="WEBCLIENTt3Nffg2"/>
+                </node>
+                <node id="WEBCLIENTt0Nffg2" functionalType="WEBCLIENTt" host="H5">
+                    <link id="Link0" sourceNode="WEBCLIENTt0Nffg2" destinationNode="DPId0Nffg2"/>
+                </node>
+            </nodes>
+        </nffg>
+        <nffg id="Nffg1">
+            <deployTime>2016-09-25T23:56:20.000+02:00</deployTime>
+            <nodes>
+                <node id="CACHEa5Nffg1" functionalType="CACHEa" host="H2">
+                    <link id="Link1" sourceNode="CACHEa5Nffg1" destinationNode="WEBCLIENTt0Nffg1"/>
+                </node>
+                <node id="WEBSERVERt2Nffg1" functionalType="WEBSERVERt" host="H4">
+                    <link id="Link14" sourceNode="WEBSERVERt2Nffg1" destinationNode="CACHEa4Nffg1"/>
+                </node>
+                <node id="DPId6Nffg1" functionalType="DPId" host="H3">
+                    <link id="Link11" sourceNode="DPId6Nffg1" destinationNode="WEBSERVERt0Nffg1"/>
+                </node>
+                <node id="MAILCLIENTt1Nffg1" functionalType="MAILCLIENTt" host="H6">
+                    <link id="Link2" sourceNode="MAILCLIENTt1Nffg1" destinationNode="CACHEa7Nffg1"/>
+                    <link id="Link17" sourceNode="MAILCLIENTt1Nffg1" destinationNode="CACHEa4Nffg1"/>
+                </node>
+                <node id="WEBCLIENTt3Nffg1" functionalType="WEBCLIENTt" host="H0">
+                    <link id="Link6" sourceNode="WEBCLIENTt3Nffg1" destinationNode="CACHEa4Nffg1"/>
+                </node>
+                <node id="CACHEa2Nffg1" functionalType="CACHEa" host="H7">
+                    <link id="Link16" sourceNode="CACHEa2Nffg1" destinationNode="WEBCLIENTt2Nffg1"/>
+                    <link id="Link24" sourceNode="CACHEa2Nffg1" destinationNode="MAILCLIENTt1Nffg1"/>
+                    <link id="Link18" sourceNode="CACHEa2Nffg1" destinationNode="MAILCLIENTt4Nffg1"/>
+                </node>
+                <node id="DPId3Nffg1" functionalType="DPId" host="H0">
+                    <link id="Link26" sourceNode="DPId3Nffg1" destinationNode="WEBSERVERt0Nffg1"/>
+                    <link id="Link13" sourceNode="DPId3Nffg1" destinationNode="WEBSERVERt1Nffg1"/>
+                </node>
+                <node id="CACHEa7Nffg1" functionalType="CACHEa" host="H4">
+                    <link id="Link20" sourceNode="CACHEa7Nffg1" destinationNode="WEBSERVERt2Nffg1"/>
+                    <link id="Link3" sourceNode="CACHEa7Nffg1" destinationNode="MAILCLIENTt1Nffg1"/>
+                    <link id="Link9" sourceNode="CACHEa7Nffg1" destinationNode="MAILCLIENTt4Nffg1"/>
+                </node>
+                <node id="MAILCLIENTt4Nffg1" functionalType="MAILCLIENTt" host="H1">
+                    <link id="Link8" sourceNode="MAILCLIENTt4Nffg1" destinationNode="CACHEa7Nffg1"/>
+                </node>
+                <node id="WEBSERVERt1Nffg1" functionalType="WEBSERVERt" host="H3">
+                    <link id="Link12" sourceNode="WEBSERVERt1Nffg1" destinationNode="DPId3Nffg1"/>
+                </node>
+                <node id="CACHEa4Nffg1" functionalType="CACHEa" host="H1">
+                    <link id="Link21" sourceNode="CACHEa4Nffg1" destinationNode="WEBSERVERt1Nffg1"/>
+                    <link id="Link15" sourceNode="CACHEa4Nffg1" destinationNode="WEBSERVERt2Nffg1"/>
+                    <link id="Link19" sourceNode="CACHEa4Nffg1" destinationNode="DPId6Nffg1"/>
+                    <link id="Link7" sourceNode="CACHEa4Nffg1" destinationNode="WEBCLIENTt3Nffg1"/>
+                </node>
+                <node id="WEBCLIENTt2Nffg1" functionalType="WEBCLIENTt" host="H7">
+                    <link id="Link22" sourceNode="WEBCLIENTt2Nffg1" destinationNode="CACHEa2Nffg1"/>
+                    <link id="Link4" sourceNode="WEBCLIENTt2Nffg1" destinationNode="SPAMc1Nffg1"/>
+                </node>
+                <node id="WEBSERVERt0Nffg1" functionalType="WEBSERVERt" host="H2">
+                    <link id="Link10" sourceNode="WEBSERVERt0Nffg1" destinationNode="DPId6Nffg1"/>
+                </node>
+                <node id="SPAMc1Nffg1" functionalType="SPAMc" host="H6">
+                    <link id="Link23" sourceNode="SPAMc1Nffg1" destinationNode="MAILCLIENTt1Nffg1"/>
+                    <link id="Link25" sourceNode="SPAMc1Nffg1" destinationNode="WEBCLIENTt0Nffg1"/>
+                    <link id="Link5" sourceNode="SPAMc1Nffg1" destinationNode="WEBCLIENTt2Nffg1"/>
+                </node>
+                <node id="SPAMb0Nffg1" functionalType="SPAMb" host="H5"/>
+                <node id="WEBCLIENTt0Nffg1" functionalType="WEBCLIENTt" host="H5">
+                    <link id="Link0" sourceNode="WEBCLIENTt0Nffg1" destinationNode="CACHEa5Nffg1"/>
+                </node>
+            </nodes>
+        </nffg>
+        <nffg id="Nffg0">
+            <deployTime>2016-09-27T07:11:20.000+02:00</deployTime>
+            <nodes>
+                <node id="CACHEa5Nffg0" functionalType="CACHEa" host="H3">
+                    <link id="Link12" sourceNode="CACHEa5Nffg0" destinationNode="DPId6Nffg0"/>
+                    <link id="Link20" sourceNode="CACHEa5Nffg0" destinationNode="WEBCLIENTt3Nffg0"/>
+                    <link id="Link16" sourceNode="CACHEa5Nffg0" destinationNode="FWe2Nffg0"/>
+                    <link id="Link3" sourceNode="CACHEa5Nffg0" destinationNode="WEBCLIENTt1Nffg0"/>
+                    <link id="Link5" sourceNode="CACHEa5Nffg0" destinationNode="WEBCLIENTt2Nffg0"/>
+                </node>
+                <node id="DPId6Nffg0" functionalType="DPId" host="H4">
+                    <link id="Link22" sourceNode="DPId6Nffg0" destinationNode="WEBCLIENTt3Nffg0"/>
+                    <link id="Link21" sourceNode="DPId6Nffg0" destinationNode="MAILCLIENTt0Nffg0"/>
+                </node>
+                <node id="SPAMb3Nffg0" functionalType="SPAMb" host="H1">
+                    <link id="Link9" sourceNode="SPAMb3Nffg0" destinationNode="MAILSERVERt0Nffg0"/>
+                </node>
+                <node id="WEBCLIENTt3Nffg0" functionalType="WEBCLIENTt" host="H3">
+                    <link id="Link15" sourceNode="WEBCLIENTt3Nffg0" destinationNode="FWe2Nffg0"/>
+                    <link id="Link19" sourceNode="WEBCLIENTt3Nffg0" destinationNode="CACHEa4Nffg0"/>
+                    <link id="Link6" sourceNode="WEBCLIENTt3Nffg0" destinationNode="SPAMb0Nffg0"/>
+                </node>
+                <node id="FWe2Nffg0" functionalType="FWe" host="H0"/>
+                <node id="WEBCLIENTt1Nffg0" functionalType="WEBCLIENTt" host="H1">
+                    <link id="Link2" sourceNode="WEBCLIENTt1Nffg0" destinationNode="CACHEa5Nffg0"/>
+                </node>
+                <node id="CACHEa4Nffg0" functionalType="CACHEa" host="H2"/>
+                <node id="SPAMb1Nffg0" functionalType="SPAMb" host="H7">
+                    <link id="Link11" sourceNode="SPAMb1Nffg0" destinationNode="MAILSERVERt1Nffg0"/>
+                </node>
+                <node id="WEBCLIENTt2Nffg0" functionalType="WEBCLIENTt" host="H2">
+                    <link id="Link4" sourceNode="WEBCLIENTt2Nffg0" destinationNode="CACHEa5Nffg0"/>
+                    <link id="Link18" sourceNode="WEBCLIENTt2Nffg0" destinationNode="DPId6Nffg0"/>
+                </node>
+                <node id="MAILSERVERt1Nffg0" functionalType="MAILSERVERt" host="H5">
+                    <link id="Link10" sourceNode="MAILSERVERt1Nffg0" destinationNode="SPAMb1Nffg0"/>
+                    <link id="Link14" sourceNode="MAILSERVERt1Nffg0" destinationNode="SPAMb3Nffg0"/>
+                    <link id="Link17" sourceNode="MAILSERVERt1Nffg0" destinationNode="CACHEa4Nffg0"/>
+                </node>
+                <node id="SPAMb0Nffg0" functionalType="SPAMb" host="H6">
+                    <link id="Link23" sourceNode="SPAMb0Nffg0" destinationNode="MAILSERVERt1Nffg0"/>
+                    <link id="Link1" sourceNode="SPAMb0Nffg0" destinationNode="MAILCLIENTt0Nffg0"/>
+                    <link id="Link13" sourceNode="SPAMb0Nffg0" destinationNode="CACHEa5Nffg0"/>
+                    <link id="Link7" sourceNode="SPAMb0Nffg0" destinationNode="WEBCLIENTt3Nffg0"/>
+                </node>
+                <node id="MAILSERVERt0Nffg0" functionalType="MAILSERVERt" host="H4">
+                    <link id="Link8" sourceNode="MAILSERVERt0Nffg0" destinationNode="SPAMb3Nffg0"/>
+                </node>
+                <node id="MAILCLIENTt0Nffg0" functionalType="MAILCLIENTt" host="H0">
+                    <link id="Link0" sourceNode="MAILCLIENTt0Nffg0" destinationNode="SPAMb0Nffg0"/>
+                </node>
+            </nodes>
+        </nffg>
+    </nffgs>
+</nfvInfo>

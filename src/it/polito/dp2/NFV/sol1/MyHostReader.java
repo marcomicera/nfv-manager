@@ -1,25 +1,28 @@
 package it.polito.dp2.NFV.sol1;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
+import it.polito.dp2.NFV.HostReader;
 import it.polito.dp2.NFV.NodeReader;
 
 public class MyHostReader extends MyNamedEntity implements it.polito.dp2.NFV.HostReader {
 	private int availableMemory;
 	private int availableStorage;
 	private int maxVNFs;
-	private Set<NodeReader> nodes;
+	private Map<String, NodeReader> nodes;
 
 	public MyHostReader(String id, 
 						int availableMemory, 
 						int availableStorage, 
-						int maxVNFs,
-						Set<NodeReader> nodes) {
+						int maxVNFs) {
 		super(id);
 		this.availableMemory = availableMemory;
 		this.availableStorage = availableStorage;
 		this.maxVNFs = maxVNFs;
-		this.nodes = nodes;
+		nodes = new HashMap<String, NodeReader>();
 	}
 
 	@Override
@@ -39,7 +42,11 @@ public class MyHostReader extends MyNamedEntity implements it.polito.dp2.NFV.Hos
 
 	@Override
 	public Set<NodeReader> getNodes() {
-		return nodes;
+		//return (Set<NodeReader>)nodes.values();
+		return new HashSet<NodeReader>(nodes.values());
 	}
 	
+	public void addNode(String nodeName, NodeReader node) {
+		nodes.put(nodeName, node);
+	}
 }

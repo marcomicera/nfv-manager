@@ -1,22 +1,25 @@
 package it.polito.dp2.NFV.sol1;
 
 import java.util.Calendar;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import javax.xml.datatype.XMLGregorianCalendar;
+
 import it.polito.dp2.NFV.NodeReader;
-import it.polito.dp2.NFV.sol1.jaxb.NodeType;
 
 public class MyNffgReader extends MyNamedEntity implements it.polito.dp2.NFV.NffgReader {
 	private Calendar deployTime;
 	private Map<String, NodeReader> nodes;
 	
-	public MyNffgReader(String name, Calendar deployTime, List<NodeType> nodes) {
+	public MyNffgReader(String name, Calendar deployTime) {
 		super(name);
 		this.deployTime = deployTime;
-		/*for(NodeType node: nodes)
-			this.nodes.put(node.getId(), node);*/
+	}
+	
+	public MyNffgReader(String name, XMLGregorianCalendar deployTime) {
+		this(name, deployTime.toGregorianCalendar());
 	}
 
 	@Override
@@ -34,7 +37,11 @@ public class MyNffgReader extends MyNamedEntity implements it.polito.dp2.NFV.Nff
 
 	@Override
 	public Set<NodeReader> getNodes() {
-		return (Set<NodeReader>)nodes.values();
+		//return (Set<NodeReader>)nodes.values();
+		return new HashSet<NodeReader>(nodes.values());
 	}
 	
+	public void setNodes(Map<String, NodeReader> nodes) {
+		this.nodes = nodes;
+	}
 }

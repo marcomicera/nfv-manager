@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<nfvInfo>
+    <catalog>
+        <VNF id="MAILCLIENTt" functionalType="MAIL_CLIENT" requiredMemory="80" requiredStorage="120"/>
+        <VNF id="WEBCLIENTt" functionalType="WEB_CLIENT" requiredMemory="94" requiredStorage="850"/>
+        <VNF id="MAILSERVERt" functionalType="MAIL_SERVER" requiredMemory="380" requiredStorage="800"/>
+        <VNF id="WEBSERVERt" functionalType="WEB_SERVER" requiredMemory="820" requiredStorage="8800"/>
+        <VNF id="VPNa" functionalType="VPN" requiredMemory="97" requiredStorage="500"/>
+        <VNF id="SPAMb" functionalType="SPAM" requiredMemory="95" requiredStorage="240"/>
+    </catalog>
+    <network>
+        <hosts>
+            <host id="H0" availableMemory="9800" availableStorage="56000" maxVNFs="8">
+                <node id="WEBCLIENTt2Nffg0"/>
+                <node id="MAILSERVERt1Nffg0"/>
+                <node id="SPAMb3Nffg0"/>
+                <node id="VPNa1Nffg0"/>
+                <node id="WEBCLIENTt0Nffg0"/>
+                <node id="VPNa5Nffg0"/>
+            </host>
+            <host id="H1" availableMemory="5100" availableStorage="36000" maxVNFs="10">
+                <node id="SPAMb4Nffg0"/>
+                <node id="VPNa2Nffg0"/>
+                <node id="MAILSERVERt0Nffg0"/>
+                <node id="WEBCLIENTt1Nffg0"/>
+                <node id="VPNa0Nffg0"/>
+            </host>
+        </hosts>
+        <channels>
+            <channel host1="H0" host2="H1" averageThroughput="38.97" averageLatency="21"/>
+        </channels>
+    </network>
+    <nffgs>
+        <nffg id="Nffg0">
+            <deployTime>2016-09-29T01:14:20.000+02:00</deployTime>
+            <nodes>
+                <node id="WEBCLIENTt2Nffg0" functionalType="WEBCLIENTt" host="H0">
+                    <link id="Link4" sourceNode="WEBCLIENTt2Nffg0" destinationNode="VPNa5Nffg0"/>
+                </node>
+                <node id="MAILSERVERt1Nffg0" functionalType="MAILSERVERt" host="H0">
+                    <link id="Link8" sourceNode="MAILSERVERt1Nffg0" destinationNode="SPAMb4Nffg0"/>
+                </node>
+                <node id="SPAMb4Nffg0" functionalType="SPAMb" host="H1">
+                    <link id="Link11" sourceNode="SPAMb4Nffg0" destinationNode="WEBCLIENTt2Nffg0"/>
+                    <link id="Link10" sourceNode="SPAMb4Nffg0" destinationNode="VPNa0Nffg0"/>
+                    <link id="Link9" sourceNode="SPAMb4Nffg0" destinationNode="MAILSERVERt1Nffg0"/>
+                </node>
+                <node id="SPAMb3Nffg0" functionalType="SPAMb" host="H0"/>
+                <node id="VPNa2Nffg0" functionalType="VPNa" host="H1">
+                    <link id="Link3" sourceNode="VPNa2Nffg0" destinationNode="WEBCLIENTt1Nffg0"/>
+                </node>
+                <node id="MAILSERVERt0Nffg0" functionalType="MAILSERVERt" host="H1">
+                    <link id="Link6" sourceNode="MAILSERVERt0Nffg0" destinationNode="VPNa0Nffg0"/>
+                </node>
+                <node id="VPNa1Nffg0" functionalType="VPNa" host="H0">
+                    <link id="Link13" sourceNode="VPNa1Nffg0" destinationNode="SPAMb3Nffg0"/>
+                </node>
+                <node id="WEBCLIENTt0Nffg0" functionalType="WEBCLIENTt" host="H0">
+                    <link id="Link12" sourceNode="WEBCLIENTt0Nffg0" destinationNode="VPNa5Nffg0"/>
+                    <link id="Link0" sourceNode="WEBCLIENTt0Nffg0" destinationNode="VPNa0Nffg0"/>
+                </node>
+                <node id="WEBCLIENTt1Nffg0" functionalType="WEBCLIENTt" host="H1">
+                    <link id="Link2" sourceNode="WEBCLIENTt1Nffg0" destinationNode="VPNa2Nffg0"/>
+                </node>
+                <node id="VPNa5Nffg0" functionalType="VPNa" host="H0">
+                    <link id="Link14" sourceNode="VPNa5Nffg0" destinationNode="WEBCLIENTt1Nffg0"/>
+                    <link id="Link5" sourceNode="VPNa5Nffg0" destinationNode="WEBCLIENTt2Nffg0"/>
+                </node>
+                <node id="VPNa0Nffg0" functionalType="VPNa" host="H1">
+                    <link id="Link1" sourceNode="VPNa0Nffg0" destinationNode="WEBCLIENTt0Nffg0"/>
+                    <link id="Link7" sourceNode="VPNa0Nffg0" destinationNode="MAILSERVERt0Nffg0"/>
+                </node>
+            </nodes>
+        </nffg>
+    </nffgs>
+</nfvInfo>
