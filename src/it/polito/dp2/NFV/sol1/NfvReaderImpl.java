@@ -300,7 +300,7 @@ class NfvReaderImpl implements it.polito.dp2.NFV.NfvReader {
 		/*TODO delete*/		Entry<MyHostPair, ConnectionPerformanceReader> entry = it.next();
 		/*TODO delete*/		sb.append(entry.getKey());
 		/*TODO delete*/		sb.append('=').append('"');
-		/*TODO delete*/		sb.append("l=").append(entry.getValue().getLatency()).append("-t").append(entry.getValue().getThroughput());
+		/*TODO delete*/		sb.append("l=").append(entry.getValue().getLatency()).append(", t=").append(entry.getValue().getThroughput());
 		/*TODO delete*/		sb.append('"');
 		/*TODO delete*/		if (it.hasNext()) sb.append(',').append(' ');
 		/*TODO delete*/}	
@@ -308,8 +308,10 @@ class NfvReaderImpl implements it.polito.dp2.NFV.NfvReader {
 		
 		MyHostPair tempHostPair = new MyHostPair(host1, host2);
 		
-		if(!channels.containsKey(tempHostPair))
+		if(!channels.containsKey(tempHostPair)) {
+			/*TODO delete*/System.out.println("**************************** No key found in channels map: returning null **************************** ");
 			return null;
+		}
 		
 		return channels.get(tempHostPair);
 	}

@@ -1,7 +1,6 @@
 package it.polito.dp2.NFV.sol1;
 
 import java.util.GregorianCalendar;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.xml.bind.JAXBElement;
@@ -102,15 +101,10 @@ public class NfvJAXBConverter {
 		ChannelsType channels = new ChannelsType();
 		List<ChannelType> channelsList = channels.getChannel();
 		
-		Iterator<HostReader> iterator1 = monitor.getHosts().iterator();
-		while(iterator1.hasNext()) {
-			HostReader host1 = iterator1.next();
-			Iterator<HostReader> iterator2 = iterator1;
-			while(iterator2.hasNext()) {
-				HostReader host2 = iterator2.next();
-				
+		for(HostReader host1: monitor.getHosts()) {
+			for(HostReader host2: monitor.getHosts()) {
 				ConnectionPerformanceReader connection = 
-					monitor.getConnectionPerformance(host1, host2);
+						monitor.getConnectionPerformance(host1, host2);
 				
 				ChannelType channel = new ChannelType();
 				channel.setHost1(host1.getName());
@@ -121,7 +115,7 @@ public class NfvJAXBConverter {
 				channelsList.add(channel);
 			}
 		}
- 		
+		
 		return channels;
 	}
 	

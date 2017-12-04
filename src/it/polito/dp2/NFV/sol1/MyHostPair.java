@@ -29,13 +29,13 @@ public class MyHostPair {
 		MyHostPair otherPair = (MyHostPair)o;
 		/*TODO delete*/System.out.println("equals() function called b/w " + otherPair + " and " + this);
 		return (
-			(	host1.getName() == otherPair.host1.getName() 
+			(	host1.getName().compareTo(otherPair.host1.getName()) == 0  
 					&& 
-				host2.getName() == otherPair.host2.getName()
+				host2.getName().compareTo(otherPair.host2.getName()) == 0
 			) || (
-				host1.getName() == otherPair.host2.getName() 
+				host1.getName().compareTo(otherPair.host2.getName()) == 0
 					&& 
-				host2.getName() == otherPair.host1.getName()
+				host2.getName().compareTo(otherPair.host1.getName()) == 0 
 			)
 		);
 	}
