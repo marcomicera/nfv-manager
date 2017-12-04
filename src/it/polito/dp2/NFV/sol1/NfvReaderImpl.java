@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.xml.XMLConstants;
@@ -28,7 +29,7 @@ class NfvReaderImpl implements it.polito.dp2.NFV.NfvReader {
 	private NFVType nfvInfo;
 	private Map<String, VNFTypeReader> catalog;
 	private Map<String, HostReader> hosts;
-	//private Map<String, ConnectionPerformanceReader> channels;
+	private Map<MyHostPair, ConnectionPerformanceReader> channels;
 	private Map<String, NffgReader> nffgs;
 	
 	public NfvReaderImpl() throws NfvReaderException {
@@ -44,6 +45,9 @@ class NfvReaderImpl implements it.polito.dp2.NFV.NfvReader {
 			
 			nffgs = new HashMap<String, NffgReader>();
 			readNffgs();
+			
+			channels = new HashMap<MyHostPair, ConnectionPerformanceReader>();
+			readChannels();
 		}
 		else
 			throw new NfvReaderException("Could not find input file");
@@ -135,7 +139,7 @@ class NfvReaderImpl implements it.polito.dp2.NFV.NfvReader {
 					MyNodeReader tempNodeReader = (MyNodeReader)it.next();
 					tempNodeReader.setLinks(
 						readLinks(
-							getNodeInfo(tempNodeReader),
+							readNodeInfo(tempNodeReader),
 							tempNffgReader
 						)
 					);
@@ -208,7 +212,7 @@ class NfvReaderImpl implements it.polito.dp2.NFV.NfvReader {
 			);
 	}
 
-	private NodeType getNodeInfo(String nodeRef) {
+	private NodeType readNodeInfo(String nodeRef) {
 		for(NffgType nffg: nfvInfo.getNffgs().getNffg()) 
 			for(NodeType node: nffg.getNodes().getNode()) 
 				if(nodeRef.compareTo(node.getId()) == 0)
@@ -217,8 +221,29 @@ class NfvReaderImpl implements it.polito.dp2.NFV.NfvReader {
 		return null;
 	}
 	
-	private NodeType getNodeInfo(NodeReader node) {
-		return getNodeInfo(node.getName());
+	private NodeType readNodeInfo(NodeReader node) {
+		return readNodeInfo(node.getName());
+	}
+	
+	private void readChannels() {
+		for(ChannelType channel: nfvInfo.getNetwork().getChannels().getChannel()) {
+			/*TODO delete*/System.out.println(
+				"Inserting channel b/w: " + channel.getHost1() + " and " + channel.getHost2()
+			);
+			MyHostPair tempHostPair = new MyHostPair(
+				hosts.get(channel.getHost1()),
+				hosts.get(channel.getHost2())
+			);
+			
+			channels.put(
+				tempHostPair,
+				new MyConnectionPerformanceReader(
+					//tempHostPair,
+					channel.getAverageLatency(),
+					channel.getAverageThroughput()
+				)
+			);
+		}
 	}
 	
 	@Override
@@ -262,9 +287,31 @@ class NfvReaderImpl implements it.polito.dp2.NFV.NfvReader {
 	}
 
 	@Override
-	public ConnectionPerformanceReader getConnectionPerformance(HostReader host1, HostReader host2) {
-		// TODO Auto-generated method stub
-		return null;
+	public ConnectionPerformanceReader getConnectionPerformance(HostReader host1, 
+																HostReader host2) {
+		if(host1 == null || host2 == null || channels == null || channels.isEmpty())
+			return null;
+		
+		/*TODO delete*/System.out.println("Testing: getConnectionPerformance b/w " + host1.getName() + " and " + host2.getName());
+		/*TODO delete*/System.out.println("Printing channels:"); StringBuilder sb = new StringBuilder();
+		/*TODO delete*/Iterator<Entry<MyHostPair, ConnectionPerformanceReader>> it = channels.entrySet().iterator();
+		/*TODO delete*/System.out.println("channels.isEmpty(): " + channels.isEmpty());
+		/*TODO delete*/while(it.hasNext()) {
+		/*TODO delete*/		Entry<MyHostPair, ConnectionPerformanceReader> entry = it.next();
+		/*TODO delete*/		sb.append(entry.getKey());
+		/*TODO delete*/		sb.append('=').append('"');
+		/*TODO delete*/		sb.append("l=").append(entry.getValue().getLatency()).append("-t").append(entry.getValue().getThroughput());
+		/*TODO delete*/		sb.append('"');
+		/*TODO delete*/		if (it.hasNext()) sb.append(',').append(' ');
+		/*TODO delete*/}	
+		/*TODO delete*/System.out.println(sb.toString());
+		
+		MyHostPair tempHostPair = new MyHostPair(host1, host2);
+		
+		if(!channels.containsKey(tempHostPair))
+			return null;
+		
+		return channels.get(tempHostPair);
 	}
 	
 }

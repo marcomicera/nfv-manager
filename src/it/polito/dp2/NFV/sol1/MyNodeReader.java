@@ -4,11 +4,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import it.polito.dp2.NFV.FunctionalType;
 import it.polito.dp2.NFV.HostReader;
 import it.polito.dp2.NFV.LinkReader;
 import it.polito.dp2.NFV.NffgReader;
-import it.polito.dp2.NFV.NodeReader;
 import it.polito.dp2.NFV.VNFTypeReader;
 
 public class MyNodeReader extends MyNamedEntity implements it.polito.dp2.NFV.NodeReader {

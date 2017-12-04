@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import it.polito.dp2.NFV.HostReader;
 import it.polito.dp2.NFV.NodeReader;
 
 public class MyHostReader extends MyNamedEntity implements it.polito.dp2.NFV.HostReader {
