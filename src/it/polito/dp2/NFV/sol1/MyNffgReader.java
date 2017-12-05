@@ -15,11 +15,20 @@ public class MyNffgReader extends MyNamedEntity implements it.polito.dp2.NFV.Nff
 	
 	public MyNffgReader(String name, Calendar deployTime) {
 		super(name);
+		
+		if(deployTime == null) {
+			System.err.println("Invalid NFFG's deploy time");
+			System.exit(1);
+		}
+		
 		this.deployTime = deployTime;
 	}
 	
 	public MyNffgReader(String name, XMLGregorianCalendar deployTime) {
-		this(name, deployTime.toGregorianCalendar());
+		this(
+			name, 
+			deployTime == null ? null : deployTime.toGregorianCalendar()
+		);
 	}
 
 	@Override
@@ -37,11 +46,13 @@ public class MyNffgReader extends MyNamedEntity implements it.polito.dp2.NFV.Nff
 
 	@Override
 	public Set<NodeReader> getNodes() {
-		//return (Set<NodeReader>)nodes.values();
+		if(nodes == null)
+			return null;
+		
 		return new HashSet<NodeReader>(nodes.values());
 	}
 	
 	public void setNodes(Map<String, NodeReader> nodes) {
-		this.nodes = nodes;
+		if(nodes != null) this.nodes = nodes;
 	}
 }

@@ -137,11 +137,13 @@ public class NfvInfoSerializer {
 			if(os != null)
 				os.close();
 		} catch (JAXBException e1) {
-			// TODO Auto-generated catch block
+			System.err.println("A JAXB exception occurred");
 			e1.printStackTrace();
+			System.exit(1);
 		} catch (IOException e) {
-			System.err.println("An I/O occurred");
+			System.err.println("An I/O exception occurred");
 			e.printStackTrace();
+			System.exit(1);
 		}
 	}
 }

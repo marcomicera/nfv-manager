@@ -6,11 +6,19 @@ import java.util.Map;
 import java.util.Set;
 
 import it.polito.dp2.NFV.NodeReader;
+import it.polito.dp2.NFV.VNFTypeReader;
 
 public class MyHostReader extends MyNamedEntity implements it.polito.dp2.NFV.HostReader {
+	/**
+	 * Capability parameters
+	 */
 	private int availableMemory;
 	private int availableStorage;
 	private int maxVNFs;
+	
+	/**
+	 * Allocated nodes on the host
+	 */
 	private Map<String, NodeReader> nodes;
 
 	public MyHostReader(String id, 
@@ -41,11 +49,15 @@ public class MyHostReader extends MyNamedEntity implements it.polito.dp2.NFV.Hos
 
 	@Override
 	public Set<NodeReader> getNodes() {
-		//return (Set<NodeReader>)nodes.values();
 		return new HashSet<NodeReader>(nodes.values());
 	}
 	
-	public void addNode(String nodeName, NodeReader node) {
+	/**
+	 * Adds a allocated node on this host
+	 * @param nodeName	The new allocated node's ID
+	 * @param node		The new allocated node's reader
+	 */
+	public void addNode(String nodeName, NodeReader node) { 
 		nodes.put(nodeName, node);
 	}
 }

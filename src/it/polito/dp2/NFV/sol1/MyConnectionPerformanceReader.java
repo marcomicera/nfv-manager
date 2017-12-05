@@ -5,6 +5,11 @@ public class MyConnectionPerformanceReader implements it.polito.dp2.NFV.Connecti
 	private float throughput;
 	
 	public MyConnectionPerformanceReader(int latency, float throughput) {
+		if(latency < 0 || throughput < 0) {
+			System.err.println("Invalid connection parameters");
+			System.exit(1);
+		}
+		
 		this.latency = latency;
 		this.throughput = throughput;
 	}
@@ -18,5 +23,4 @@ public class MyConnectionPerformanceReader implements it.polito.dp2.NFV.Connecti
 	public float getThroughput() {
 		return throughput;
 	}
-	
 }

@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.xml.XMLConstants;
@@ -227,9 +226,6 @@ class NfvReaderImpl implements it.polito.dp2.NFV.NfvReader {
 	
 	private void readChannels() {
 		for(ChannelType channel: nfvInfo.getNetwork().getChannels().getChannel()) {
-			/*TODO delete*/System.out.println(
-				"Inserting channel b/w: " + channel.getHost1() + " and " + channel.getHost2()
-			);
 			MyHostPair tempHostPair = new MyHostPair(
 				hosts.get(channel.getHost1()),
 				hosts.get(channel.getHost2())
@@ -238,7 +234,6 @@ class NfvReaderImpl implements it.polito.dp2.NFV.NfvReader {
 			channels.put(
 				tempHostPair,
 				new MyConnectionPerformanceReader(
-					//tempHostPair,
 					channel.getAverageLatency(),
 					channel.getAverageThroughput()
 				)

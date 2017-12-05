@@ -14,6 +14,16 @@ public class MyLinkReader extends MyNamedEntity implements it.polito.dp2.NFV.Lin
 						NodeReader sourceNode,
 						NodeReader destinationNode) {
 		super(id);
+		
+		if(	latency < 0 || 
+			throughput < 0 ||
+			sourceNode == null ||
+			destinationNode == null
+		) {
+			System.err.println("Invalid link parameters");
+			System.exit(1);
+		}
+		
 		this.latency = latency;
 		this.throughput = throughput;
 		this.sourceNode = sourceNode;
@@ -39,12 +49,4 @@ public class MyLinkReader extends MyNamedEntity implements it.polito.dp2.NFV.Lin
 	public NodeReader getDestinationNode() {
 		return destinationNode;
 	}
-	
-//	public void setSourceNode(NodeReader sourceNode) {
-//		this.sourceNode = sourceNode;
-//	}
-//	
-//	public void setDestinationNode(NodeReader destinationNode) {
-//		this.destinationNode = destinationNode;
-//	}
 }
