@@ -38,7 +38,7 @@ public class MyNffgReader extends MyNamedEntity implements it.polito.dp2.NFV.Nff
 
 	@Override
 	public NodeReader getNode(String name) {
-		if(name == null || nodes == null)
+		if(name == null || name.isEmpty() || nodes == null)
 			return null;
 		
 		return nodes.get(name);
@@ -53,6 +53,6 @@ public class MyNffgReader extends MyNamedEntity implements it.polito.dp2.NFV.Nff
 	}
 	
 	public void setNodes(Map<String, NodeReader> nodes) {
-		if(nodes != null) this.nodes = nodes;
+		this.nodes = nodes;
 	}
 }

@@ -13,6 +13,6 @@ public class MyNamedEntity implements it.polito.dp2.NFV.NamedEntityReader {
 	}
 
 	public String getName() {
-		return this.name;
+		return name;
 	}
 }

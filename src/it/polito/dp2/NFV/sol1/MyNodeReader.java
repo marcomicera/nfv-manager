@@ -20,6 +20,12 @@ public class MyNodeReader extends MyNamedEntity implements it.polito.dp2.NFV.Nod
 						HostReader host,
 						NffgReader nffg) {
 		super(id);
+		
+		if(functionalType == null || host == null || nffg == null) {
+			System.err.println("Invalid node's parameters");
+			System.exit(1);
+		}
+		
 		this.functionalType = functionalType;
 		this.host = host;
 		this.nffg = nffg;
@@ -37,7 +43,9 @@ public class MyNodeReader extends MyNamedEntity implements it.polito.dp2.NFV.Nod
 
 	@Override
 	public Set<LinkReader> getLinks() {
-		//return (Set<LinkReader>)links.values();
+		if(links == null)
+			return null;
+		
 		return new HashSet<LinkReader>(links.values());
 	}
 

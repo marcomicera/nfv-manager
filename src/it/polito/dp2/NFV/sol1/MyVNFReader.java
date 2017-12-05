@@ -13,6 +13,15 @@ public class MyVNFReader extends MyNamedEntity implements it.polito.dp2.NFV.VNFT
     			int requiredMemory, 
     			int requiredStorage) {
 		super(id);
+		
+		if(	functionalType == null || 
+			requiredMemory < 0 || 
+			requiredStorage < 0
+		) {
+			System.err.println("Invalid VNF's parameters");
+			System.exit(1);
+		}
+		
 		this.functionalType = functionalType;
 		this.requiredMemory = requiredMemory;
 		this.requiredStorage = requiredStorage;
@@ -24,7 +33,7 @@ public class MyVNFReader extends MyNamedEntity implements it.polito.dp2.NFV.VNFT
 				int requiredStorage) {
 		this(
 			id,
-			FunctionalType.fromValue(functionalType),
+			functionalType == null ? null : FunctionalType.fromValue(functionalType),
 			requiredMemory,
 			requiredStorage
 		);
@@ -36,7 +45,7 @@ public class MyVNFReader extends MyNamedEntity implements it.polito.dp2.NFV.VNFT
     			int requiredStorage) {
     	this(
 			id,
-			functionalType.value(),
+			functionalType == null ? null : functionalType.value(),
 			requiredMemory,
 			requiredStorage
 		);

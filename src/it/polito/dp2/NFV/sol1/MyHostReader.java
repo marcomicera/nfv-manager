@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Set;
 
 import it.polito.dp2.NFV.NodeReader;
-import it.polito.dp2.NFV.VNFTypeReader;
 
 public class MyHostReader extends MyNamedEntity implements it.polito.dp2.NFV.HostReader {
 	/**
@@ -26,6 +25,12 @@ public class MyHostReader extends MyNamedEntity implements it.polito.dp2.NFV.Hos
 						int availableStorage, 
 						int maxVNFs) {
 		super(id);
+		
+		if(availableMemory < 0 || availableStorage < 0 || maxVNFs < 0) {
+			System.err.println("Invalid host's parameters");
+			System.exit(1);
+		}
+		
 		this.availableMemory = availableMemory;
 		this.availableStorage = availableStorage;
 		this.maxVNFs = maxVNFs;
@@ -49,6 +54,9 @@ public class MyHostReader extends MyNamedEntity implements it.polito.dp2.NFV.Hos
 
 	@Override
 	public Set<NodeReader> getNodes() {
+		if(nodes == null)
+			return null;
+		
 		return new HashSet<NodeReader>(nodes.values());
 	}
 	
@@ -57,7 +65,10 @@ public class MyHostReader extends MyNamedEntity implements it.polito.dp2.NFV.Hos
 	 * @param nodeName	The new allocated node's ID
 	 * @param node		The new allocated node's reader
 	 */
-	public void addNode(String nodeName, NodeReader node) { 
+	public void addNode(String nodeName, NodeReader node) {
+		if(nodes == null)
+			nodes = new HashMap<String, NodeReader>();
+		
 		nodes.put(nodeName, node);
 	}
 }

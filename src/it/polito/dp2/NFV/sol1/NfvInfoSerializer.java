@@ -27,15 +27,6 @@ import it.polito.dp2.NFV.sol1.jaxb.NFVType;
 
 public class NfvInfoSerializer {
 	private NfvJAXBConverter converter;
-	
-
-	/**
-	 * Creates a NfvInfoSerializer with a given monitor
-	 * @param monitor
-	 */
-	public NfvInfoSerializer(NfvReader monitor) {
-		converter = new NfvJAXBConverter(monitor);
-	}
 
 	/**
 	 * Default constructor
@@ -43,6 +34,19 @@ public class NfvInfoSerializer {
 	 */
 	public NfvInfoSerializer() throws NfvReaderException {
 		this(NfvReaderFactory.newInstance().newNfvReader());
+	}
+	
+	/**
+	 * Creates a NfvInfoSerializer with a given monitor
+	 * @param monitor
+	 */
+	public NfvInfoSerializer(NfvReader monitor) {
+		if(monitor == null) {
+			System.err.println("Invalid monitor");
+			System.exit(1);
+		}
+		
+		converter = new NfvJAXBConverter(monitor);
 	}
 	
 	/**
