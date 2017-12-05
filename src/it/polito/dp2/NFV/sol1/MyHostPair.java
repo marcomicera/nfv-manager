@@ -18,7 +18,7 @@ public class MyHostPair {
 	public int hashCode() {
 		/*TODO delete*/System.out.println("hashCode() function called on " + this + " (bucket is: " + (host1.getName().hashCode() + host2.getName().hashCode()) + ")");
 		
-		return (host1.getName().hashCode() + host2.getName().hashCode());
+		return (host1.getName() + host2.getName()).hashCode();
 	}
 
 	@Override
@@ -32,11 +32,11 @@ public class MyHostPair {
 			(	host1.getName().compareTo(otherPair.host1.getName()) == 0  
 					&& 
 				host2.getName().compareTo(otherPair.host2.getName()) == 0
-			) || (
+			) /*|| (
 				host1.getName().compareTo(otherPair.host2.getName()) == 0
 					&& 
 				host2.getName().compareTo(otherPair.host1.getName()) == 0 
-			)
+			)*/
 		);
 	}
 
