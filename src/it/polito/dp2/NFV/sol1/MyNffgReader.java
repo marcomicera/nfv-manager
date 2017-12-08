@@ -48,6 +48,8 @@ public class MyNffgReader extends MyNamedEntity implements it.polito.dp2.NFV.Nff
 	public Set<NodeReader> getNodes() {
 		if(nodes == null)
 			return null;
+		if(nodes.isEmpty())
+			return new HashSet<NodeReader>();
 		
 		return new HashSet<NodeReader>(nodes.values());
 	}

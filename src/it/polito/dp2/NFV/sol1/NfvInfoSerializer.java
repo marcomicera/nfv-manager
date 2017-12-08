@@ -30,7 +30,7 @@ public class NfvInfoSerializer {
 
 	/**
 	 * Default constructor
-	 * @throws NfvReaderException
+	 * @throws NfvReaderException thrown if an implementation of NfvReader cannot be created
 	 */
 	public NfvInfoSerializer() throws NfvReaderException {
 		this(NfvReaderFactory.newInstance().newNfvReader());
@@ -38,20 +38,19 @@ public class NfvInfoSerializer {
 	
 	/**
 	 * Creates a NfvInfoSerializer with a given monitor
-	 * @param monitor
+	 * @param monitor				monitor to be used
+	 * @throws NfvReaderException	thrown if an implementation of NfvReader cannot be created
 	 */
-	public NfvInfoSerializer(NfvReader monitor) {
-		if(monitor == null) {
-			System.err.println("Invalid monitor");
-			System.exit(1);
-		}
+	public NfvInfoSerializer(NfvReader monitor) throws NfvReaderException {
+		if(monitor == null) 
+			throw new NfvReaderException("Invalid monitor");
 		
 		converter = new NfvJAXBConverter(monitor);
 	}
 	
 	/**
 	 * Main application serializing data about the DP2-NFV system 
-	 * @param args
+	 * @param args args[0] represents the output file name
 	 */
 	public static void main(String[] args) {
 		if(args.length != 1) {
@@ -65,7 +64,7 @@ public class NfvInfoSerializer {
 		FileOutputStream fos = null;
 		try {
 			fos = new FileOutputStream(new File(filename), false);
-		} catch(FileNotFoundException e) {
+		} catch (FileNotFoundException e) {
 			System.err.println("Could not create output file");
 			e.printStackTrace();
 			System.exit(1);
@@ -146,6 +145,13 @@ public class NfvInfoSerializer {
 			System.exit(1);
 		} catch (IOException e) {
 			System.err.println("An I/O exception occurred");
+			e.printStackTrace();
+			System.exit(1);
+		} catch(IllegalArgumentException e) {
+			if(obj == null)
+				System.err.println("Cannot marshal null object");
+			else if(os == null)
+				System.err.println("Invalid output stream");
 			e.printStackTrace();
 			System.exit(1);
 		}

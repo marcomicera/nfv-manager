@@ -31,9 +31,13 @@ class NfvReaderImpl implements it.polito.dp2.NFV.NfvReader {
 	private Map<MyHostPair, ConnectionPerformanceReader> channels;
 	private Map<String, NffgReader> nffgs;
 	
+	/**
+	 * Default constructor creating a NFV reader
+	 * @throws NfvReaderException if the input file name is invalid
+	 */
 	public NfvReaderImpl() throws NfvReaderException {
 		inputFile = System.getProperty(NfvConfig.inputFileProperty);
-		if(inputFile != null) {
+		if(inputFile != null || inputFile.isEmpty()) {
 			readFile();
 			
 			catalog = new HashMap<String, VNFTypeReader>();

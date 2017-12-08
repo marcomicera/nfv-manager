@@ -13,8 +13,15 @@ import it.polito.dp2.NFV.*;
 import it.polito.dp2.NFV.sol1.jaxb.*;
 
 public class NfvJAXBConverter {
+	/**
+	 * Reader from which data has to be retrieved
+	 */
 	private NfvReader monitor;
 
+	/**
+	 * Default constructor creating a converter with a given monitor
+	 * @param monitor NFV reader object from which data can be read
+	 */
 	public NfvJAXBConverter(NfvReader monitor) {
 		this.monitor = monitor;
 	}
@@ -42,6 +49,10 @@ public class NfvJAXBConverter {
 		return new ObjectFactory().createNfvInfo(nfvInfo);
 	}
 	
+	/**
+	 * Retrieves the NFV's catalog
+	 * @return the catalog containing VNFs
+	 */
 	private CatalogType getCatalog() {
 		CatalogType catalog = new CatalogType();
 		List<VNFType> catalogList = catalog.getVNF();
@@ -61,6 +72,10 @@ public class NfvJAXBConverter {
 		return catalog;
 	}
 	
+	/**
+	 * Retrieves the physical network 
+	 * @return the infrastructure network (IN) composed by hosts and channels
+	 */
 	private NetworkType getNetwork() {
 		NetworkType network = new NetworkType();
 		HostsType hosts = getHosts();
@@ -71,6 +86,10 @@ public class NfvJAXBConverter {
 		return network;
 	}
 	
+	/**
+	 * Retrieves the infrastructure network's (IN) hosts
+	 * @return hosts belonging to the network
+	 */
 	private HostsType getHosts() {
 		HostsType hosts = new HostsType();
 		List<HostType> hostsList = hosts.getHost();
@@ -97,6 +116,10 @@ public class NfvJAXBConverter {
 		return hosts;
 	}
 	
+	/**
+	 * Retrieves the infrastructure network's (IN) channels
+	 * @return channels present in the network
+	 */
 	private ChannelsType getChannels() {
 		ChannelsType channels = new ChannelsType();
 		List<ChannelType> channelsList = channels.getChannel();
@@ -119,6 +142,10 @@ public class NfvJAXBConverter {
 		return channels;
 	}
 	
+	/**
+	 * Retrieves the NF-FGs of the NFV system
+	 * @return hosts belonging to the network
+	 */
 	private NffgsType getNffgs() {
 		NffgsType nffgs = new NffgsType();
 		List<NffgType> nffgList = nffgs.getNffg();
@@ -145,6 +172,11 @@ public class NfvJAXBConverter {
 		return nffgs;
 	}
 	
+	/**
+	 * Retrieves all nodes belonging to a given NF-FG
+	 * @param nffg		the NF-FG of which nodes have to be retrieved		
+	 * @param tempNffg	the NF-FG JAXB compatible object to be filled
+	 */
 	private void getNodes(NffgReader nffg, NffgType tempNffg) {
 		NodesType nodes = new NodesType();
 		List<NodeType> nodesList = nodes.getNode();
@@ -165,6 +197,11 @@ public class NfvJAXBConverter {
 		tempNffg.setNodes(nodes);
 	}
 
+	/**
+	 * Retrieves all links involving a specific node
+	 * @param nffg		the node of which links have to be retrieved		
+	 * @param tempNffg	the node JAXB compatible object to be filled
+	 */
 	private void getLinks(NodeReader node, NodeType tempNode) {
 		if(!node.getLinks().isEmpty()) {
 			List<LinkType> linksList = tempNode.getLink();

@@ -45,6 +45,8 @@ public class MyNodeReader extends MyNamedEntity implements it.polito.dp2.NFV.Nod
 	public Set<LinkReader> getLinks() {
 		if(links == null)
 			return null;
+		if(links.isEmpty())
+			return new HashSet<LinkReader>();
 		
 		return new HashSet<LinkReader>(links.values());
 	}
