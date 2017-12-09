@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!DOCTYPE NFV SYSTEM "nfvInfo.dtd">
+<!DOCTYPE nfvInfo SYSTEM "nfvInfo.dtd">
 
 <nfvInfo>
 
@@ -56,14 +56,14 @@
   		<nffg id="nffg2412">
 			<deployTime>2011-05-11T08:38:17-02:00</deployTime>
 			<nodes>
-				<node id="n2818" functionalType="NATt">
+				<node id="n2818" functionalType="NATb">
 					<link 	id="Link0"
 							sourceNode="n1580"
 							destinationNode="n4318"
 							minimumThroughput="5"/>
 				</node>
 				<node id="n4570" functionalType="DPIt" host="h6401"/>
-				<node id="n1580" functionalType="FWtt">
+				<node id="n1580" functionalType="FWt">
 					<link	id="Link2"
 							sourceNode="n2818"
 							destinationNode="n1703"

@@ -50,7 +50,7 @@
   		<nffg id="nffg2412">
 			<deployTime>2011-05-11T08:38:17-02:00</deployTime>
 			<nodes>
-				<node id="n2818" functionalType="FWt">
+				<node id="n2818" functionalType="NATb">
 					<link 	id="Link0"
 							sourceNode="n1580"
 							destinationNode="n4318"

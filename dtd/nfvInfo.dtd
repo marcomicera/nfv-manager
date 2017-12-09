@@ -27,7 +27,7 @@
 	averageThroughput	NMTOKEN	#IMPLIED
 	averageLatency		NMTOKEN	#IMPLIED>
 
-<!ELEMENT nffgs (nffg*)>
+<!ELEMENT nffgs (nffg+)>
 <!ELEMENT nffg (deployTime,nodes)>
 <!ATTLIST nffg
 	id	ID	#REQUIRED>
@@ -36,7 +36,7 @@
 <!ELEMENT node (link*)>
 <!ATTLIST node
 	id					ID		#REQUIRED
-	functionalType		NMTOKEN	#REQUIRED
+	functionalType		IDREF	#REQUIRED
 	host				IDREF	#IMPLIED>
 <!ELEMENT link EMPTY>
 <!ATTLIST link
