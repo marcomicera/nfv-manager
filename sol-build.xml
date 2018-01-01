@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project basedir="." default="generate-artifacts" name="NFV-SOL2">
+	<description>
+			Script for NFV Assignment 2 solution
+	</description>
+	
+	<property name="lab2.location" location="." />
+	<property name="gen.dir" location="${lab2.location}/gen-src" />
+
+	<target name="generate-artifacts">
+	</target>
+
+</project>
