@@ -5,10 +5,35 @@
 			Script for NFV Assignment 2 solution
 	</description>
 	
-	<property name="lab2.location" location="." />
-	<property name="gen.dir" location="${lab2.location}/gen-src" />
+	<!-- Project directory -->
+	<property name="root.location" location="." />
+	<property name="dp2.dir" location="${root.location}/lib-dp2" /> <!-- TODO set it to /opt/dp2/shared -->
+	<property name="gen.dir" location="${root.location}/gen-src" />
+	
+	<!-- WADL location -->
+	<property name="application.name" value="Neo4JSimpleXML" />
+	<property name="application.location" value="webapi" />
+	<property name="application.wadl" value="http://localhost:8080/${application.name}/${application.location}/application.wadl" />
 
+	<!-- wjc task definition (WADL to Java) -->
+	<taskdef name="wjc" classname="org.jvnet.ws.wadl2java.WJCTask">
+		<classpath>
+			<fileset dir="${dp2.dir}" includes="*.jar" />
+		</classpath>
+	</taskdef>
+	
 	<target name="generate-artifacts">
+		<mkdir dir="${gen.dir}" />
+		<echo message="Compiling the descriptions..." />
+		<wjc	description="${application.wadl}"
+				package="it.polito.dp2.NFV.sol2"
+				autoSchemaPackage="false" 
+				target="${gen.dir}"
+		>
+	     	<customizations dir="${root.location}" includes="binding.xjc"/>
+	     	<produces dir="${gen.dir}/boh" includes="*.java"/>
+	     	<depends dir="${root.location}" includes="build.xml"/>
+	    </wjc>
 	</target>
 
 </project>
