@@ -79,5 +79,6 @@
 	<classpathentry kind="lib" path="lib-dp2/wadl-core-1.1.6.jar"/>
 	<classpathentry kind="lib" path="lib-dp2/wadl-xslt-1.1.6.jar"/>
 	<classpathentry kind="lib" path="lib-dp2/xsom-20140925.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/CDC-1.0%Foundation-1.0"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

@@ -31,7 +31,7 @@
 				target="${gen.dir}"
 		>
 	     	<customizations dir="${root.location}" includes="binding.xjc"/>
-	     	<produces dir="${gen.dir}/boh" includes="*.java"/>
+	     	<produces dir="${gen.dir}" includes="*.java"/>
 	     	<depends dir="${root.location}" includes="build.xml"/>
 	    </wjc>
 	</target>

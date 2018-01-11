@@ -6,6 +6,7 @@ import java.util.Set;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
 
 import it.polito.dp2.NFV.lab2.AlreadyLoadedException;
@@ -16,22 +17,31 @@ import it.polito.dp2.NFV.lab2.ServiceException;
 import it.polito.dp2.NFV.lab2.UnknownNameException;
 
 public class ReachabilityTesterImpl implements ReachabilityTester {
-
-	@Override
-	public void loadGraph(String nffgName) 
-			throws UnknownNameException, AlreadyLoadedException, ServiceException {
+	/*TODO testing*/
+	public static void main(String[] args) {
 		// Building the JAX-RS client 
 		Client client = ClientBuilder.newClient();
 		
 		// Web target
 		WebTarget target = client.target(getBaseURI());
 		
-		target	.path("node")
-				.request();
+		String test = target.path("currentNodes")
+							.request()
+							.accept(MediaType.TEXT_PLAIN_TYPE)
+							.get(String.class);
+		
+		System.out.println(test);
+	}
+
+	@Override
+	public void loadGraph(String nffgName) 
+			throws UnknownNameException, AlreadyLoadedException, ServiceException {
+		// TODO Auto-generated method stub
+		return;
 	}
 	
 	private static URI getBaseURI() {
-	    return UriBuilder.fromUri("localhost:8080/Neo4JSimpleXML/webapi/data/").build();
+	    return UriBuilder.fromUri("http://localhost:8080/Neo4JSimpleXML/webapi/data/").build();
 	}
 
 	@Override
