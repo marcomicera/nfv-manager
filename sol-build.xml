@@ -7,7 +7,7 @@
 	
 	<!-- Project directory -->
 	<property name="root.location" location="." />
-	<property name="dp2.dir" location="${root.location}/lib-dp2" /> <!-- TODO set it to /opt/dp2/shared -->
+	<property name="dp2.dir" location="G:\OneDrive\Ingegneria\Turin\Distributed programming II\lib-dp2" /> <!-- TODO set it to /opt/dp2/shared -->
 	<property name="gen.dir" location="${root.location}/gen-src" />
 	
 	<!-- WADL location -->
@@ -22,6 +22,7 @@
 		</classpath>
 	</taskdef>
 	
+	<!-- http://cxf.apache.org/docs/jaxrs-services-description.html#JAXRSServicesDescription-WADL-firstDevelopment -->
 	<target name="generate-artifacts">
 		<mkdir dir="${gen.dir}" />
 		<echo message="Compiling the descriptions..." />

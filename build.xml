@@ -29,9 +29,9 @@
 	<property name="gen.dir" location="${lab2.location}/gen-src" />
 	
 	<!-- <property name="shared.location" location="/opt/dp2/shared"/> -->
-	<!-- TODO delete line and restore the above one --><property name="shared.location" location="G:\OneDrive\Ingegneria\Turin\Distributed programming II\Assignments\Assignment 2"/>
+	<!-- TODO delete line and restore the above one --><property name="shared.location" location="."/>
 	<!-- <property name="ext.lib.dir" location="${shared.location}/lib" /> -->
-	<!-- TODO delete line and restore the above one --><property name="ext.lib.dir" location="${shared.location}/lib-dp2" />
+	<!-- TODO delete line and restore the above one --><property name="ext.lib.dir" location="G:\OneDrive\Ingegneria\Turin\Distributed programming II\lib-dp2" />
 	
 	<property name="debug" value="true" />
 	<property name="debuglevel" value="source,lines,vars" />
