@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -34,7 +35,7 @@ public class ReachabilityTesterImpl implements ReachabilityTester {
 	/**
 	 * Class containing all informations about the DP2-NFV system 
 	 */
-	/*TODO has to be private*/ public NfvReader nfvReader;
+	/*TODO has to be private*/public NfvReader nfvReader;
 	
 	private WebTarget target;
 	
@@ -77,7 +78,7 @@ public class ReachabilityTesterImpl implements ReachabilityTester {
 		loadedHosts = new HashMap<String, String>();
 	}
 	
-	/*TODO debug*/public static void main(String[] args) {
+	/*TODO debug*/public static void main(String[] args) throws Exception {
 		System.setProperty("it.polito.dp2.NFV.NfvReaderFactory", "it.polito.dp2.NFV.Random.NfvReaderFactoryImpl");
 		ReachabilityTesterImpl rt = new ReachabilityTesterImpl();
 		
@@ -156,16 +157,22 @@ public class ReachabilityTesterImpl implements ReachabilityTester {
 		// Loading all relationships
 		loadRelationships(nffg.getNodes());
 		
-		// Adding this NF-FG to the set of already-loaded NF-FGs
+		/**
+		 * Adding this NF-FG to the set of already-loaded NF-FGs if
+		 * successfully loaded
+		 */
 		loadedNffgs.add(nffgName);
 	}
 	
 	/**
 	 * Loads all nodes belonging to the specified node list {@code nodes}
 	 * through the Neo4JSimpleXML web service.
-	 * @param nodes		the node list to be uploaded to the web service.
+	 * @param nodes					the node list to be uploaded to the 
+	 * 								web service.
+	 * @throws ServiceException		if any other error occurs when trying 
+	 * 								to upload a node.
 	 */
-	private void loadNodes(Set<NodeReader> nodes) {
+	private void loadNodes(Set<NodeReader> nodes) throws ServiceException {
 		// For each node belonging to the NF-FG nodes list
 		for(NodeReader node: nodes)
 			try {
@@ -186,8 +193,10 @@ public class ReachabilityTesterImpl implements ReachabilityTester {
 	 * database through the Neo4JSimpleXML web service. 
 	 * @param node							node to be loaded.
 	 * @throws AlreadyLoadedException		if it already has been loaded.
+	 * @throws ServiceException				if any other error occurs when 
+	 * 										trying to upload the node.
 	 */
-	private void loadNode(NodeReader node) throws AlreadyLoadedException {
+	private void loadNode(NodeReader node) throws AlreadyLoadedException, ServiceException {
 		// Checking if the node has been already loaded
 		if(loadedNodes.containsKey(node.getName()))
 			throw new AlreadyLoadedException(
@@ -211,11 +220,16 @@ public class ReachabilityTesterImpl implements ReachabilityTester {
 		tempNode.setProperties(properties);
 		
 		// Loading the temporary node
-		Host loadedNode = target	
-    		.path("node")
-			.request()
-			.post(Entity.entity(tempNode, MediaType.APPLICATION_XML), Host.class)
-		;
+		Host loadedNode;
+		try {
+			loadedNode = target	
+	    		.path("node")
+				.request()
+				.post(Entity.entity(tempNode, MediaType.APPLICATION_XML), Host.class)
+			;
+		} catch(ProcessingException e) {
+			throw new ServiceException("Could not load node " + node.getName());
+		}
 		
 		// Storing the loaded node's Neo4j ID
 		loadedNodes.put(node.getName(), loadedNode.getId());
@@ -229,18 +243,23 @@ public class ReachabilityTesterImpl implements ReachabilityTester {
 		labelsList.add("Node");
 		
 		// Loading the node's labels
-		target
-			.path("node")
-			.path(loadedNode.getId())
-			.path("labels")
-			.request()
-			.post(Entity.entity(labels, MediaType.APPLICATION_XML))
-		;
+		try {
+			target
+				.path("node")
+				.path(loadedNode.getId())
+				.path("labels")
+				.request()
+				.post(Entity.entity(labels, MediaType.APPLICATION_XML))
+			;
+		} catch(ProcessingException e) {
+			throw new ServiceException("Could not load node " + node.getName() + "'s label");
+		}
 		
 		// If the node has been allocated on a physical host
 		if(node.getHost() != null) {
 			// New temporary relationship creation
 			Relationship tempRelationship = new Relationship();
+			String relationshipName = "AllocatedOn";
 			
 			// Setting the source node
 			tempRelationship.setSrcNode(loadedNode.getId());
@@ -256,25 +275,35 @@ public class ReachabilityTesterImpl implements ReachabilityTester {
 			);
 			
 			// Setting the relationship type
-			tempRelationship.setType("AllocatedOn");
+			tempRelationship.setType(relationshipName);
 			
 			// Loading the temporary relationship
-			target	
-	    		.path("node")
-	    		.path(loadedNode.getId())
-	    		.path("relationships")
-				.request()
-				.post(Entity.entity(tempRelationship, MediaType.APPLICATION_XML), Relationship.class)
-			;
+			try {
+				target	
+		    		.path("node")
+		    		.path(loadedNode.getId())
+		    		.path("relationships")
+					.request()
+					.post(Entity.entity(tempRelationship, MediaType.APPLICATION_XML), Relationship.class)
+				;
+			} catch(ProcessingException e) {
+				throw new ServiceException(
+					"Could not load \"" + relationshipName + "\" relationship between node " + 
+					node.getName() + " and host " + node.getHost().getName()
+				);
+			}
 		}			
 	}
 	
 	/**
 	 * Loads all relationships belonging to the specified node list {@code nodes}
 	 * through the Neo4JSimpleXML web service.
-	 * @param nodes		nodes from which relationships have to be uploaded.
+	 * @param nodes					nodes from which relationships have to
+	 * 								 be uploaded.
+	 * @throws ServiceException		if any other error occurs when trying 
+	 * 								to upload a relationship.
 	 */
-	private void loadRelationships(Set<NodeReader> nodes) {
+	private void loadRelationships(Set<NodeReader> nodes) throws ServiceException {
 		// For each node belonging to the NF-FG nodes list
 		for(NodeReader node: nodes)
 			// For each node's link
@@ -285,11 +314,14 @@ public class ReachabilityTesterImpl implements ReachabilityTester {
 	/**
 	 * Load the specified relationship (if not already loaded) into the Neo4J 
 	 * database through the Neo4JSimpleXML web service. 
-	 * @param relationship					relationship to be loaded.
+	 * @param relationship			relationship to be loaded.
+	 * @throws ServiceException		if any other error occurs when trying 
+	 * 								to upload the relationship.
 	 */
-	private void loadRelationship(LinkReader relationship) {
+	private void loadRelationship(LinkReader relationship) throws ServiceException {
 		// New temporary relationship creation
 		Relationship tempRelationship = new Relationship();
+		String relationshipName = "ForwardsTo";
 		
 		// Setting the source node
 		tempRelationship.setSrcNode(loadedNodes.get(relationship.getSourceNode().getName()));
@@ -305,24 +337,35 @@ public class ReachabilityTesterImpl implements ReachabilityTester {
 		);
 		
 		// Setting the relationship type
-		tempRelationship.setType("ForwardsTo");
+		tempRelationship.setType(relationshipName);
 		
 		// Loading the temporary relationship
-		target	
-    		.path("node")
-    		.path(loadedNodes.get(relationship.getSourceNode().getName()))
-    		.path("relationships")
-			.request()
-			.post(Entity.entity(tempRelationship, MediaType.APPLICATION_XML), Relationship.class)
-		;
+		try {
+			target	
+	    		.path("node")
+	    		.path(loadedNodes.get(relationship.getSourceNode().getName()))
+	    		.path("relationships")
+				.request()
+				.post(Entity.entity(tempRelationship, MediaType.APPLICATION_XML), Relationship.class)
+			;
+		} catch(ProcessingException e) {
+				throw new ServiceException(
+					"Could not load \"" + relationshipName + "\" relationship between node " + 
+					relationship.getSourceNode().getName() +
+					" and node " + relationship.getDestinationNode().getName()
+				);
+			}
 	}
 
 	/**
 	 * Loads all hosts belonging to the specified host list {@code hosts}
 	 * through the Neo4JSimpleXML web service.
-	 * @param hosts		the host list to be uploaded to the web service.
+	 * @param hosts					the host list to be uploaded to the
+	 * 								web service.
+	 * @throws ServiceException		if any other error occurs when trying 
+	 * 								to upload a host.
 	 */
-	private void loadHosts(Set<HostReader> hosts) {
+	private void loadHosts(Set<HostReader> hosts) throws ServiceException {
 		// For each node belonging to the NF-FG nodes list
 		for(HostReader host: hosts)
 			try {
@@ -343,8 +386,10 @@ public class ReachabilityTesterImpl implements ReachabilityTester {
 	 * database through the Neo4JSimpleXML web service. 
 	 * @param host							host to be loaded.
 	 * @throws AlreadyLoadedException		if it already has been loaded.
+	 * @throws ServiceException				if any other error occurs when 
+	 * 										trying to upload the host.
 	 */
-	private void loadHost(HostReader host) throws AlreadyLoadedException {
+	private void loadHost(HostReader host) throws AlreadyLoadedException, ServiceException {
 		// Checking if the host has been already loaded
 		if(loadedHosts.containsKey(host.getName()))
 			throw new AlreadyLoadedException(
@@ -368,11 +413,16 @@ public class ReachabilityTesterImpl implements ReachabilityTester {
 		tempHost.setProperties(properties);
 		
 		// Loading the temporary host
-		Host loadedHost = target	
-    		.path("node")
-			.request()
-			.post(Entity.entity(tempHost, MediaType.APPLICATION_XML), Host.class)
-		;
+		Host loadedHost;
+		try {
+			loadedHost = target	
+	    		.path("node")
+				.request()
+				.post(Entity.entity(tempHost, MediaType.APPLICATION_XML), Host.class)
+			;
+		} catch(ProcessingException e) {
+			throw new ServiceException("Could not load host " + host.getName());
+		}
 		
 		// Storing the loaded host's Neo4j ID
 		loadedHosts.put(host.getName(), loadedHost.getId());
@@ -386,13 +436,17 @@ public class ReachabilityTesterImpl implements ReachabilityTester {
 		labelsList.add("Host");
 		
 		// Loading the host's labels
-		target
-			.path("node")
-			.path(loadedHost.getId())
-			.path("labels")
-			.request()
-			.post(Entity.entity(labels, MediaType.APPLICATION_XML))
-		;
+		try {
+			target
+				.path("node")
+				.path(loadedHost.getId())
+				.path("labels")
+				.request()
+				.post(Entity.entity(labels, MediaType.APPLICATION_XML))
+			;
+		} catch(ProcessingException e) {
+			throw new ServiceException("Could not load host " + host.getName() + "'s label");
+		}
 	}
 	
 	@Override
