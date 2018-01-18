@@ -1,43 +1,37 @@
 package it.polito.dp2.NFV.sol1;
 
 import it.polito.dp2.NFV.NodeReader;
+import it.polito.dp2.NFV.sol1.jaxb.LinkType;
 
 public class MyLinkReader extends MyNamedEntity implements it.polito.dp2.NFV.LinkReader {
-	private int latency;
-	private float throughput;
-	private NodeReader	sourceNode,
-						destinationNode;
+	private LinkType info;
+	private NodeReader sourceNode;
+	private NodeReader destinationNode;
 	
-	public MyLinkReader(String id, 
-						int latency, 
-						float throughput,
-						NodeReader sourceNode,
-						NodeReader destinationNode) {
-		super(id);
+	public MyLinkReader(LinkType info, 
+						NodeReader sourceNode, 
+						NodeReader destinationNode
+	) {
+		super(info.getId() != null ? info.getId() : null);
 		
-		if(	latency < 0 || 
-			throughput < 0 ||
-			sourceNode == null ||
-			destinationNode == null
-		) {
+		if(sourceNode == null || destinationNode == null) {
 			System.err.println("Invalid link parameters");
 			System.exit(1);
 		}
 		
-		this.latency = latency;
-		this.throughput = throughput;
+		this.info = info;
 		this.sourceNode = sourceNode;
 		this.destinationNode = destinationNode;
 	}
 
 	@Override
 	public int getLatency() {
-		return latency;
+		return info.getMaximumLatency();
 	}
 
 	@Override
 	public float getThroughput() {
-		return throughput;
+		return info.getMinimumThroughput();
 	}
 	
 	@Override

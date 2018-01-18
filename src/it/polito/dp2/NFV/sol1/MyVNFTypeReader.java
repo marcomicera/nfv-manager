@@ -8,7 +8,7 @@ public class MyVNFTypeReader extends MyNamedEntity implements it.polito.dp2.NFV.
 	
     MyVNFTypeReader(VNFType info) {
 		super(info.getId() != null ? info.getId() : null);
-				
+		
 		this.info = info;
 	}
     
