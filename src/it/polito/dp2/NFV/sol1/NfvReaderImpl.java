@@ -112,12 +112,7 @@ class NfvReaderImpl implements it.polito.dp2.NFV.NfvReader {
 			try {
 				catalog.put(
 					vnf.getId(), 
-					new MyVNFReader(
-						vnf.getId(),
-						vnf.getFunctionalType(),
-						vnf.getRequiredMemory(),
-						vnf.getRequiredStorage()
-					)
+					new MyVNFTypeReader(vnf)
 				);
 			} catch(NullPointerException e) {
 				e.printStackTrace();
