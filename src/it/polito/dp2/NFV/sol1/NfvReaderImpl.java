@@ -121,10 +121,7 @@ class NfvReaderImpl implements it.polito.dp2.NFV.NfvReader {
 
 	private void readNffgs() {
 		for(NffgType nffg: nfvInfo.getNffgs().getNffg()) {
-			MyNffgReader tempNffgReader = new MyNffgReader(
-				nffg.getId(),
-				nffg.getDeployTime()
-			);
+			MyNffgReader tempNffgReader = new MyNffgReader(nffg);
 			
 			Map<String, NodeReader> tempNodeReaders = readNodes(nffg, tempNffgReader); 
 			
@@ -150,17 +147,20 @@ class NfvReaderImpl implements it.polito.dp2.NFV.NfvReader {
 		Map<String, NodeReader> nodes = new HashMap<String, NodeReader>();
 		for(NodeType node: nffg.getNodes().getNode()) {
 			MyNodeReader tempNodeReader = new MyNodeReader(
-				node, 
+				node,
 				nffgReader,
 				catalog.get(node.getFunctionalType()),
 				hosts.get(node.getHost())
 			);
 			
-			nodes.put(node.getId(), tempNodeReader);
+			nodes.put(
+				node.getId(), 
+				tempNodeReader
+			);
 			
 			if(node.getHost() != null) {
 				MyHostReader host = (MyHostReader)hosts.get(node.getHost());
-				host.addNode(node.getId(), tempNodeReader);
+				host.addNode(tempNodeReader);
 			}
 		}
 		
@@ -171,12 +171,7 @@ class NfvReaderImpl implements it.polito.dp2.NFV.NfvReader {
 		for(HostType host: nfvInfo.getNetwork().getHosts().getHost())
 			hosts.put(
 				host.getId(),
-				new MyHostReader(
-					host.getId(),
-					host.getAvailableMemory(),
-					host.getAvailableStorage(),
-					host.getMaxVNFs()
-				)
+				new MyHostReader(host)
 			);
 	}
 	
