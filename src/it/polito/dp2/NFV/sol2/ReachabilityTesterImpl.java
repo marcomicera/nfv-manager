@@ -35,7 +35,7 @@ public class ReachabilityTesterImpl implements ReachabilityTester {
 	/**
 	 * Class containing all informations about the DP2-NFV system 
 	 */
-	/*TODO has to be private*/public NfvReader nfvReader;
+	private NfvReader nfvReader;
 	
 	private WebTarget target;
 	
@@ -71,82 +71,70 @@ public class ReachabilityTesterImpl implements ReachabilityTester {
 		target = client.target(getBaseURI());
 	}
 	
+	/**
+	 * Static fields initialization
+	 */
 	static {
 		loadedNffgs = new HashSet<String>();
 		
 		loadedNodes = new HashMap<String, String>();
 		loadedHosts = new HashMap<String, String>();
 	}
-	
-	/*TODO debug*/public static void main(String[] args) throws Exception {
-		System.setProperty("it.polito.dp2.NFV.NfvReaderFactory", "it.polito.dp2.NFV.Random.NfvReaderFactoryImpl");
-		ReachabilityTesterImpl rt = new ReachabilityTesterImpl();
-		
-		// Reading the corresponding NF-FG
-		String nffgName = "Nffg0";
-		NffgReader nffg = rt.nfvReader.getNffg(nffgName);
-		
-		// Nffg infos
-		System.out.print("Trying to load NF-FG " + nffgName + " with " + nffg.getNodes().size() + " nodes, with ");
-		int linksNumber = 0;
-		for(NodeReader node: nffg.getNodes())
-			for(LinkReader link: node.getLinks())
-				++linksNumber;
-		System.out.print(linksNumber + " links.");
-		System.out.println("Content: \n");
-		for(NodeReader node: nffg.getNodes()) {
-			System.out.println(node.getName());
-			for(LinkReader link: node.getLinks())
-				System.out.println(
-					"Link from " + link.getSourceNode().getName() +
-					" to " + link.getDestinationNode().getName()
-				);
-			System.out.println();
-		}
-		
-		/*TODO debug*/System.out.println("*** Loading nodes... ***");
-		rt.loadNodes(nffg.getNodes());
-		
-		/*TODO debug*/System.out.println("*** Loading relationships... ***");
-		rt.loadRelationships(nffg.getNodes());
-	}
-	
-	private static URI getBaseURI() {
-		return UriBuilder.fromUri("http://localhost:8080/Neo4JSimpleXML/webapi/data/").build();
-	}
-	
-	@Override
-	public void loadGraph(String nffgName) 
-			throws UnknownNameException, AlreadyLoadedException, ServiceException {
-		
+
+	/**
+	 * Retrieves the corresponding NF-FG reader object, performing all
+	 * needed checks.
+	 * @param nffgName					the NF-FG's name of which the
+	 * 									reader object should be returned.
+	 * @return							the NF-FG reader object.
+	 * @throws UnknownNameException		if the name of the NF-FG is unknown or null.
+	 */
+	private NffgReader getNffg(String nffgName) throws UnknownNameException {
 		// If the NF-FG name is null
-		if(nffgName == null) {
-			/*TODO debug*/System.err.println("The specified NF-FG name is null.");
+		if(nffgName == null)
 			throw new UnknownNameException("The specified NF-FG name is null.");
-		}
 		
-		// If the NF-FG has been already loaded
-		if(loadedNffgs.contains(nffgName)) {
-			/*TODO debug*/System.err.println(nffgName + " has been already loaded.");
-			throw new AlreadyLoadedException(nffgName + " has been already loaded.");
-		}
-		
-		// Reading the corresponding NF-FG
+		// Retrieving the corresponding NF-FG
 		NffgReader nffg = nfvReader.getNffg(nffgName);
 		
 		// If the NF-FG does not exist
-		if(nffg == null) {
-			/*TODO debug*/System.err.println("The specified NF-FG is unknown.");
+		if(nffg == null)
 			throw new UnknownNameException("The specified NF-FG is unknown.");
+		
+		return nffg;
+	}
+	
+	/**
+	 * Returns the base URI of the Neo4JSimpleXML web service.
+	 * @return	base Neo4JSimpleXML's URI.
+	 */
+	private static URI getBaseURI() {
+		String baseURI;
+		try {
+			baseURI = System.getProperty("it.polito.dp2.NFV.lab2.URL");
+		} catch(SecurityException | NullPointerException e) {
+			baseURI = "http://localhost:8080/Neo4JSimpleXML/webapi";
 		}
 		
+		return UriBuilder.fromUri(baseURI + "/data/").build();
+	}
+
+	@Override
+	public void loadGraph(String nffgName) 
+			throws UnknownNameException, AlreadyLoadedException, ServiceException {
 		// TODO debug
-		System.out.print("Trying to load NF-FG " + nffgName + " with " + nffg.getNodes().size() + " nodes, with ");
-		int linksNumber = 0;
-		for(NodeReader node: nffg.getNodes())
-			for(LinkReader link: node.getLinks())
-				++linksNumber;
-		System.out.print(linksNumber + " links.");
+		System.out.println("loadedNffgs: " + loadedNffgs);
+		
+		// Retrieving the NF-FG reader
+		NffgReader nffg = getNffg(nffgName);
+		
+		// If the NF-FG has been already loaded
+		if(loadedNffgs.contains(nffgName)) {
+			// TODO debug
+			System.out.println(nffgName + " has been already loaded.");
+			
+			throw new AlreadyLoadedException(nffgName + " has been already loaded.");
+		}
 		
 		// Loading all hosts
 		loadHosts(nfvReader.getHosts());
@@ -164,6 +152,102 @@ public class ReachabilityTesterImpl implements ReachabilityTester {
 		loadedNffgs.add(nffgName);
 	}
 	
+	/**
+	 * Loads all hosts belonging to the specified host list {@code hosts}
+	 * through the Neo4JSimpleXML web service.
+	 * @param hosts					the host list to be uploaded to the
+	 * 								web service.
+	 * @throws ServiceException		if any other error occurs when trying 
+	 * 								to upload a host.
+	 */
+	private void loadHosts(Set<HostReader> hosts) throws ServiceException {
+		// For each node belonging to the NF-FG nodes list
+		for(HostReader host: hosts)
+			try {
+				/*TODO debug*/System.out.println("Loading host " + host.getName());
+				
+				// Load the single node
+				loadHost(host);
+			} catch(AlreadyLoadedException e) {
+				System.err.println(e.getMessage());
+				
+				// If the host has been already loaded, skip it
+				continue;
+			}
+	}
+
+	/**
+	 * Loads the specified host (if not already loaded) into the Neo4J 
+	 * database through the Neo4JSimpleXML web service. 
+	 * @param host							host to be loaded.
+	 * @throws AlreadyLoadedException		if it already has been loaded.
+	 * @throws ServiceException				if any other error occurs when 
+	 * 										trying to upload the host.
+	 */
+	private void loadHost(HostReader host) throws AlreadyLoadedException, ServiceException {
+		// Checking if the host has been already loaded
+		if(loadedHosts.containsKey(host.getName())) {
+			// TODO debug
+			System.out.println("Host " + host.getName() + "has been already uploaded.");
+			
+			throw new AlreadyLoadedException(
+				"Host " + host.getName() + "has been already uploaded."
+			);	
+		}
+		
+		// New temporary host creation
+		Host tempHost = new Host();
+		
+		// Temporary node's properties
+		Properties properties = new Properties();
+		List<Property> propertiesList = properties.getProperty();
+		
+		// "name" property
+		Property nameProperty = new Property();
+		nameProperty.setName("name");
+		nameProperty.setValue(host.getName());
+		propertiesList.add(nameProperty);		
+		
+		// Setting the host's properties
+		tempHost.setProperties(properties);
+		
+		// Loading the temporary host
+		Host loadedHost;
+		try {
+			loadedHost = target	
+	    		.path("node")
+				.request()
+				.post(Entity.entity(tempHost, MediaType.APPLICATION_XML), Host.class)
+			;
+		} catch(ProcessingException e) {
+			throw new ServiceException("Could not load host " + host.getName());
+		}
+		
+		// Storing the loaded host's Neo4j ID
+		loadedHosts.put(host.getName(), loadedHost.getId());
+		/*TODO debug*/System.out.println("loadedHosts: " + loadedHosts);
+		
+		// Temporary host's labels
+		Labels labels = new Labels();
+		List<String> labelsList = labels.getLabel();
+		
+		// "Node" label
+		labelsList.add("Host");
+		
+		// Loading the host's labels
+		try {
+			target
+				.path("node")
+				.path(loadedHost.getId())
+				.path("labels")
+				.request()
+				.post(Entity.entity(labels, MediaType.APPLICATION_XML))
+			;
+		} catch(ProcessingException e) {
+			throw new ServiceException("Could not load host " + host.getName() + "'s label");
+		}
+	}
+
 	/**
 	 * Loads all nodes belonging to the specified node list {@code nodes}
 	 * through the Neo4JSimpleXML web service.
@@ -198,10 +282,14 @@ public class ReachabilityTesterImpl implements ReachabilityTester {
 	 */
 	private void loadNode(NodeReader node) throws AlreadyLoadedException, ServiceException {
 		// Checking if the node has been already loaded
-		if(loadedNodes.containsKey(node.getName()))
+		if(loadedNodes.containsKey(node.getName())) {
+			// TODO debug
+			System.out.println("Node " + node.getName() + " has been already uploaded.");
+			
 			throw new AlreadyLoadedException(
-				"Node " + node.getName() + "has been already uploaded."
+				"Node " + node.getName() + " has been already uploaded."
 			);
+		}
 		
 		// New temporary node creation
 		Host tempNode = new Host();
@@ -220,12 +308,12 @@ public class ReachabilityTesterImpl implements ReachabilityTester {
 		tempNode.setProperties(properties);
 		
 		// Loading the temporary node
-		Host loadedNode;
+		Node loadedNode;
 		try {
 			loadedNode = target	
 	    		.path("node")
 				.request()
-				.post(Entity.entity(tempNode, MediaType.APPLICATION_XML), Host.class)
+				.post(Entity.entity(tempNode, MediaType.APPLICATION_XML), Node.class)
 			;
 		} catch(ProcessingException e) {
 			throw new ServiceException("Could not load node " + node.getName());
@@ -264,10 +352,14 @@ public class ReachabilityTesterImpl implements ReachabilityTester {
 			// Setting the source node
 			tempRelationship.setSrcNode(loadedNode.getId());
 			
-			// Setting the destination node
+			/**
+			 * Setting the destination node: this is the reason why
+			 * all hosts must be loaded before nodes.
+			 */
 			tempRelationship.setDstNode(loadedHosts.get(node.getHost().getName()));
 			
-			/*TODO debug*/System.out.println(
+			// TODO debug
+			System.out.println(
 				"Relationship b/w " + node.getName() + 
 				" (" + loadedNode.getId() + ") and " +
 				node.getHost().getName() + " (" + 
@@ -357,109 +449,55 @@ public class ReachabilityTesterImpl implements ReachabilityTester {
 			}
 	}
 
-	/**
-	 * Loads all hosts belonging to the specified host list {@code hosts}
-	 * through the Neo4JSimpleXML web service.
-	 * @param hosts					the host list to be uploaded to the
-	 * 								web service.
-	 * @throws ServiceException		if any other error occurs when trying 
-	 * 								to upload a host.
-	 */
-	private void loadHosts(Set<HostReader> hosts) throws ServiceException {
-		// For each node belonging to the NF-FG nodes list
-		for(HostReader host: hosts)
-			try {
-				/*TODO debug*/System.out.println("Loading host " + host.getName());
-				
-				// Load the single node
-				loadHost(host);
-			} catch(AlreadyLoadedException e) {
-				System.err.println(e.getMessage());
-				
-				// If the host has been already loaded, skip it
-				continue;
-			}
-	}
-
-	/**
-	 * Loads the specified host (if not already loaded) into the Neo4J 
-	 * database through the Neo4JSimpleXML web service. 
-	 * @param host							host to be loaded.
-	 * @throws AlreadyLoadedException		if it already has been loaded.
-	 * @throws ServiceException				if any other error occurs when 
-	 * 										trying to upload the host.
-	 */
-	private void loadHost(HostReader host) throws AlreadyLoadedException, ServiceException {
-		// Checking if the host has been already loaded
-		if(loadedHosts.containsKey(host.getName()))
-			throw new AlreadyLoadedException(
-				"Host " + host.getName() + "has been already uploaded."
-			);
-		
-		// New temporary host creation
-		Host tempHost = new Host();
-		
-		// Temporary node's properties
-		Properties properties = new Properties();
-		List<Property> propertiesList = properties.getProperty();
-		
-		// "name" property
-		Property nameProperty = new Property();
-		nameProperty.setName("name");
-		nameProperty.setValue(host.getName());
-		propertiesList.add(nameProperty);		
-		
-		// Setting the host's properties
-		tempHost.setProperties(properties);
-		
-		// Loading the temporary host
-		Host loadedHost;
-		try {
-			loadedHost = target	
-	    		.path("node")
-				.request()
-				.post(Entity.entity(tempHost, MediaType.APPLICATION_XML), Host.class)
-			;
-		} catch(ProcessingException e) {
-			throw new ServiceException("Could not load host " + host.getName());
-		}
-		
-		// Storing the loaded host's Neo4j ID
-		loadedHosts.put(host.getName(), loadedHost.getId());
-		/*TODO debug*/System.out.println("loadedHosts: " + loadedHosts);
-		
-		// Temporary host's labels
-		Labels labels = new Labels();
-		List<String> labelsList = labels.getLabel();
-		
-		// "Node" label
-		labelsList.add("Host");
-		
-		// Loading the host's labels
-		try {
-			target
-				.path("node")
-				.path(loadedHost.getId())
-				.path("labels")
-				.request()
-				.post(Entity.entity(labels, MediaType.APPLICATION_XML))
-			;
-		} catch(ProcessingException e) {
-			throw new ServiceException("Could not load host " + host.getName() + "'s label");
-		}
-	}
-	
 	@Override
 	public Set<ExtendedNodeReader> getExtendedNodes(String nffgName)
 			throws UnknownNameException, NoGraphException, ServiceException {
-		// TODO Auto-generated method stub
-		return null;
+		// TODO debug
+		System.out.println("Requesting extended nodes for NF-FG " + nffgName);
+		
+		// Retrieving the NF-FG reader
+		NffgReader nffg = getNffg(nffgName);
+		
+		// If the NF-FG exists but it has not been loaded
+		if(!loadedNffgs.contains(nffg.getName())) {
+			// TODO debug
+			System.out.println("The specified NF-FG has not been loaded.");
+			
+			throw new NoGraphException("The specified NF-FG has not been loaded.");
+		}
+		
+		// TODO debug
+		System.out.println("The specified NF-FG exist: proceeding...");
+		
+		// This function's result
+		Set<ExtendedNodeReader> result = new HashSet<ExtendedNodeReader>();
+		
+		// For all nodes belonging to the specified NF-FG
+		for(NodeReader node: nffg.getNodes()) {
+			NodeType nodeInfo = new NodeType();
+			nodeInfo.setFunctionalType(node.getFuncType().getName());
+			nodeInfo.setHost(node.getHost().getName());
+			nodeInfo.setId(node.getName());
+			
+			result.add(
+				new MyExtendedNodeReader(
+					node, 
+					nodeInfo, 
+					loadedNodes.get(node.getName()),
+					nfvReader,
+					target
+				)
+			);
+		}
+		
+		return result;
 	}
 
 	@Override
 	public boolean isLoaded(String nffgName) throws UnknownNameException {
-		// TODO Auto-generated method stub
-		return false;
+		// Checking the NF-FG name
+		getNffg(nffgName);
+		
+		return loadedNffgs.contains(nffgName);
 	}
-
 }
