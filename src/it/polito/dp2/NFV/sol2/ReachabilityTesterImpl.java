@@ -42,18 +42,18 @@ public class ReachabilityTesterImpl implements ReachabilityTester {
 	/**
 	 * Keeps track of already-loaded NF-FGs
 	 */
-	private static Set<String> loadedNffgs;
+	private Set<String> loadedNffgs;
 	
 	/**
 	 * Keeps track of already-loaded nodes, with their 
 	 * corresponding ID assigned by Neo4J.
 	 */
-	private static Map<String, String> loadedNodes;
+	private Map<String, String> loadedNodes;
 	
 	/**
 	 * Keeps track of already-loaded hosts
 	 */
-	private static Map<String, String> loadedHosts;
+	private Map<String, String> loadedHosts;
 	
 	/**
 	 * Default constructor
@@ -69,16 +69,18 @@ public class ReachabilityTesterImpl implements ReachabilityTester {
 		
 		Client client = ClientBuilder.newClient();
 		target = client.target(getBaseURI());
+		
+		loadedNffgs = new HashSet<String>();
+		
+		loadedNodes = new HashMap<String, String>();
+		loadedHosts = new HashMap<String, String>();
 	}
 	
 	/**
 	 * Static fields initialization
 	 */
 	static {
-		loadedNffgs = new HashSet<String>();
 		
-		loadedNodes = new HashMap<String, String>();
-		loadedHosts = new HashMap<String, String>();
 	}
 
 	/**
@@ -128,12 +130,12 @@ public class ReachabilityTesterImpl implements ReachabilityTester {
 		// Retrieving the NF-FG reader
 		NffgReader nffg = getNffg(nffgName);
 		
-		// If the NF-FG has been already loaded
+		// If the NF-FG has already been loaded
 		if(loadedNffgs.contains(nffgName)) {
 			// TODO debug
-			System.out.println(nffgName + " has been already loaded.");
+			System.out.println(nffgName + " has already been loaded.");
 			
-			throw new AlreadyLoadedException(nffgName + " has been already loaded.");
+			throw new AlreadyLoadedException(nffgName + " has already been loaded.");
 		}
 		
 		// Loading all hosts
@@ -171,7 +173,7 @@ public class ReachabilityTesterImpl implements ReachabilityTester {
 			} catch(AlreadyLoadedException e) {
 				System.err.println(e.getMessage());
 				
-				// If the host has been already loaded, skip it
+				// If the host has already been loaded, skip it
 				continue;
 			}
 	}
@@ -185,15 +187,19 @@ public class ReachabilityTesterImpl implements ReachabilityTester {
 	 * 										trying to upload the host.
 	 */
 	private void loadHost(HostReader host) throws AlreadyLoadedException, ServiceException {
-		// Checking if the host has been already loaded
+		// Checking if the host has already been loaded
 		if(loadedHosts.containsKey(host.getName())) {
 			// TODO debug
-			System.out.println("Host " + host.getName() + "has been already uploaded.");
+			System.out.println("Host " + host.getName() + "has already been uploaded.");
 			
 			throw new AlreadyLoadedException(
-				"Host " + host.getName() + "has been already uploaded."
+				"Host " + host.getName() + "has already been uploaded."
 			);	
 		}
+		
+		// If the host has no node allocated on, it won't be uploaded
+		if(host.getNodes().size() == 0)
+			return;
 		
 		// New temporary host creation
 		Host tempHost = new Host();
@@ -267,7 +273,7 @@ public class ReachabilityTesterImpl implements ReachabilityTester {
 			} catch(AlreadyLoadedException e) {
 				System.err.println(e.getMessage());
 				
-				// If the node has been already loaded, skip it
+				// If the node has already been loaded, skip it
 				continue;
 			}
 	}
@@ -281,13 +287,13 @@ public class ReachabilityTesterImpl implements ReachabilityTester {
 	 * 										trying to upload the node.
 	 */
 	private void loadNode(NodeReader node) throws AlreadyLoadedException, ServiceException {
-		// Checking if the node has been already loaded
+		// Checking if the node has already been loaded
 		if(loadedNodes.containsKey(node.getName())) {
 			// TODO debug
-			System.out.println("Node " + node.getName() + " has been already uploaded.");
+			System.out.println("Node " + node.getName() + " has already been uploaded.");
 			
 			throw new AlreadyLoadedException(
-				"Node " + node.getName() + " has been already uploaded."
+				"Node " + node.getName() + " has already been uploaded."
 			);
 		}
 		

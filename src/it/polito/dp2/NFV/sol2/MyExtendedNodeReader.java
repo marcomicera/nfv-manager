@@ -131,7 +131,7 @@ public class MyExtendedNodeReader extends MyNodeReader implements ExtendedNodeRe
 			}
 		} else {
 			// TODO debug
-			System.out.println("This node " + node.id + " has been already visited");
+			System.out.println("This node " + node.id + " has already been visited");
 		}
 	}
 
