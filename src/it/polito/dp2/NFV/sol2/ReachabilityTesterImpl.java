@@ -75,13 +75,6 @@ public class ReachabilityTesterImpl implements ReachabilityTester {
 		loadedNodes = new HashMap<String, String>();
 		loadedHosts = new HashMap<String, String>();
 	}
-	
-	/**
-	 * Static fields initialization
-	 */
-	static {
-		
-	}
 
 	/**
 	 * Retrieves the corresponding NF-FG reader object, performing all
@@ -124,22 +117,17 @@ public class ReachabilityTesterImpl implements ReachabilityTester {
 	@Override
 	public void loadGraph(String nffgName) 
 			throws UnknownNameException, AlreadyLoadedException, ServiceException {
-		// TODO debug
-		System.out.println("loadedNffgs: " + loadedNffgs);
+		// System.out.println("loadedNffgs: " + loadedNffgs);
 		
 		// Retrieving the NF-FG reader
 		NffgReader nffg = getNffg(nffgName);
 		
 		// If the NF-FG has already been loaded
 		if(loadedNffgs.contains(nffgName)) {
-			// TODO debug
-			System.out.println(nffgName + " has already been loaded.");
+			// System.out.println(nffgName + " has already been loaded.");
 			
 			throw new AlreadyLoadedException(nffgName + " has already been loaded.");
 		}
-		
-		// Loading all hosts
-		loadHosts(nfvReader.getHosts());
 		
 		// Loading all nodes
 		loadNodes(nffg.getNodes());
@@ -153,30 +141,6 @@ public class ReachabilityTesterImpl implements ReachabilityTester {
 		 */
 		loadedNffgs.add(nffgName);
 	}
-	
-	/**
-	 * Loads all hosts belonging to the specified host list {@code hosts}
-	 * through the Neo4JSimpleXML web service.
-	 * @param hosts					the host list to be uploaded to the
-	 * 								web service.
-	 * @throws ServiceException		if any other error occurs when trying 
-	 * 								to upload a host.
-	 */
-	private void loadHosts(Set<HostReader> hosts) throws ServiceException {
-		// For each node belonging to the NF-FG nodes list
-		for(HostReader host: hosts)
-			try {
-				/*TODO debug*/System.out.println("Loading host " + host.getName());
-				
-				// Load the single node
-				loadHost(host);
-			} catch(AlreadyLoadedException e) {
-				System.err.println(e.getMessage());
-				
-				// If the host has already been loaded, skip it
-				continue;
-			}
-	}
 
 	/**
 	 * Loads the specified host (if not already loaded) into the Neo4J 
@@ -189,8 +153,7 @@ public class ReachabilityTesterImpl implements ReachabilityTester {
 	private void loadHost(HostReader host) throws AlreadyLoadedException, ServiceException {
 		// Checking if the host has already been loaded
 		if(loadedHosts.containsKey(host.getName())) {
-			// TODO debug
-			System.out.println("Host " + host.getName() + "has already been uploaded.");
+			// System.out.println("Host " + host.getName() + "has already been uploaded.");
 			
 			throw new AlreadyLoadedException(
 				"Host " + host.getName() + "has already been uploaded."
@@ -231,7 +194,7 @@ public class ReachabilityTesterImpl implements ReachabilityTester {
 		
 		// Storing the loaded host's Neo4j ID
 		loadedHosts.put(host.getName(), loadedHost.getId());
-		/*TODO debug*/System.out.println("loadedHosts: " + loadedHosts);
+		// System.out.println("loadedHosts: " + loadedHosts);
 		
 		// Temporary host's labels
 		Labels labels = new Labels();
@@ -266,7 +229,7 @@ public class ReachabilityTesterImpl implements ReachabilityTester {
 		// For each node belonging to the NF-FG nodes list
 		for(NodeReader node: nodes)
 			try {
-				/*TODO debug*/System.out.println("Loading node " + node.getName());
+				// System.out.println("Loading node " + node.getName());
 				
 				// Load the single node
 				loadNode(node);
@@ -289,8 +252,7 @@ public class ReachabilityTesterImpl implements ReachabilityTester {
 	private void loadNode(NodeReader node) throws AlreadyLoadedException, ServiceException {
 		// Checking if the node has already been loaded
 		if(loadedNodes.containsKey(node.getName())) {
-			// TODO debug
-			System.out.println("Node " + node.getName() + " has already been uploaded.");
+			// System.out.println("Node " + node.getName() + " has already been uploaded.");
 			
 			throw new AlreadyLoadedException(
 				"Node " + node.getName() + " has already been uploaded."
@@ -327,7 +289,7 @@ public class ReachabilityTesterImpl implements ReachabilityTester {
 		
 		// Storing the loaded node's Neo4j ID
 		loadedNodes.put(node.getName(), loadedNode.getId());
-		/*TODO debug*/System.out.println("loadedNodes: " + loadedNodes);
+		// System.out.println("loadedNodes: " + loadedNodes);
 		
 		// Temporary node's labels
 		Labels labels = new Labels();
@@ -351,6 +313,16 @@ public class ReachabilityTesterImpl implements ReachabilityTester {
 		
 		// If the node has been allocated on a physical host
 		if(node.getHost() != null) {
+			try {
+				// Load the corresponding host object to the Neo4J database
+				loadHost(node.getHost());
+			} catch(AlreadyLoadedException e) {
+				/*
+				 * If the host object has already been uploaded,
+				 * nothing has to be done.
+				 */
+			}
+			
 			// New temporary relationship creation
 			Relationship tempRelationship = new Relationship();
 			String relationshipName = "AllocatedOn";
@@ -364,13 +336,12 @@ public class ReachabilityTesterImpl implements ReachabilityTester {
 			 */
 			tempRelationship.setDstNode(loadedHosts.get(node.getHost().getName()));
 			
-			// TODO debug
-			System.out.println(
+			/*System.out.println(
 				"Relationship b/w " + node.getName() + 
 				" (" + loadedNode.getId() + ") and " +
 				node.getHost().getName() + " (" + 
 				loadedHosts.get(node.getHost().getName()) + ")"
-			);
+			);*/
 			
 			// Setting the relationship type
 			tempRelationship.setType(relationshipName);
@@ -427,12 +398,12 @@ public class ReachabilityTesterImpl implements ReachabilityTester {
 		// Setting the destination node
 		tempRelationship.setDstNode(loadedNodes.get(relationship.getDestinationNode().getName()));
 		
-		/*TODO debug*/System.out.println(
+		/* System.out.println(
 			"Relationship b/w " + relationship.getSourceNode().getName() + 
 			" (" + loadedNodes.get(relationship.getSourceNode().getName()) + ") and " +
 			relationship.getDestinationNode().getName() + " (" + 
 			loadedNodes.get(relationship.getDestinationNode().getName()) + ")"
-		);
+		);*/
 		
 		// Setting the relationship type
 		tempRelationship.setType(relationshipName);
@@ -458,22 +429,19 @@ public class ReachabilityTesterImpl implements ReachabilityTester {
 	@Override
 	public Set<ExtendedNodeReader> getExtendedNodes(String nffgName)
 			throws UnknownNameException, NoGraphException, ServiceException {
-		// TODO debug
-		System.out.println("Requesting extended nodes for NF-FG " + nffgName);
+		// System.out.println("Requesting extended nodes for NF-FG " + nffgName);
 		
 		// Retrieving the NF-FG reader
 		NffgReader nffg = getNffg(nffgName);
 		
 		// If the NF-FG exists but it has not been loaded
 		if(!loadedNffgs.contains(nffg.getName())) {
-			// TODO debug
-			System.out.println("The specified NF-FG has not been loaded.");
+			// System.out.println("The specified NF-FG has not been loaded.");
 			
 			throw new NoGraphException("The specified NF-FG has not been loaded.");
 		}
 		
-		// TODO debug
-		System.out.println("The specified NF-FG exist: proceeding...");
+		// System.out.println("The specified NF-FG exist: proceeding...");
 		
 		// This function's result
 		Set<ExtendedNodeReader> result = new HashSet<ExtendedNodeReader>();

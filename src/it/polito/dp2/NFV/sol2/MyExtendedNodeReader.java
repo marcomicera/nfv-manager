@@ -47,8 +47,7 @@ public class MyExtendedNodeReader extends MyNodeReader implements ExtendedNodeRe
 	
 	@Override
 	public Set<HostReader> getReachableHosts() throws NoGraphException, ServiceException {
-		// TODO debug
-		System.out.println("Retrieving reachable hosts from node " + info.id + " (Neo4j ID: " + neo4jNode.id + ")");
+		// System.out.println("Retrieving reachable hosts from node " + info.id + " (Neo4j ID: " + neo4jNode.id + ")");
 		
 		setReachableHosts();
 		return reachableHosts;
@@ -62,13 +61,12 @@ public class MyExtendedNodeReader extends MyNodeReader implements ExtendedNodeRe
 	// recursively visits reachable nodes and collects reachable hosts
 	private void visit(Nodes.Node node, Set<String> visitedNodeIds, Set<HostReader> visitedNodeReachableHosts)
 			throws ServiceException {
-		// TODO debug
-		System.out.println("Visiting node with ID " + node.id);
+		// System.out.println("Visiting node with ID " + node.id);
 		
 		// If this node has not been visited yet
 		if(!visitedNodeIds.contains(node.id)) {
-			// TODO debug
-			System.out.println("This node " + node.id + " has not been visited before");
+			// System.out.println("This node " + node.id + " has not been visited before");
+			
 			// Add the current node to the set of visited ones
 			visitedNodeIds.add(node.id);
 			
@@ -79,8 +77,7 @@ public class MyExtendedNodeReader extends MyNodeReader implements ExtendedNodeRe
 				"Host"
 			);
 			
-			// TODO debug
-			System.out.println("Node " + node.id + " hosts: " + neo4jHostResponse);
+			// System.out.println("Node " + node.id + " hosts: " + neo4jHostResponse);
 			
 			/*
 			 * Adding the physical host to the physical set of reachable
@@ -90,8 +87,7 @@ public class MyExtendedNodeReader extends MyNodeReader implements ExtendedNodeRe
 				// Retrieving the actual host Neo4j object
 				Nodes.Node neo4jHost = neo4jHostResponse.get(0);
 				
-				// TODO debug
-				System.out.println("Node " + node.id + " is allocated on host " + neo4jHost.id);
+				// System.out.println("Node " + node.id + " is allocated on host " + neo4jHost.id);
 				
 				// Retrieving the host name
 				String hostName = null;
@@ -101,8 +97,7 @@ public class MyExtendedNodeReader extends MyNodeReader implements ExtendedNodeRe
 						break;
 					}
 				
-				// TODO debug
-				System.out.println("Node " + node.id + " is allocated on a host named " + hostName);
+				// System.out.println("Node " + node.id + " is allocated on a host named " + hostName);
 				
 				// Adding the host reader to the set of reachable hosts
 				if(hostName == null)
@@ -113,8 +108,7 @@ public class MyExtendedNodeReader extends MyNodeReader implements ExtendedNodeRe
 				else {
 					visitedNodeReachableHosts.add(nfvReader.getHost(hostName));
 					
-					// TODO debug
-					System.out.println("Node " + node.id + " reachableHosts: " + reachableHosts);
+					// System.out.println("Node " + node.id + " reachableHosts: " + reachableHosts);
 				}
 			}
 			
@@ -130,8 +124,7 @@ public class MyExtendedNodeReader extends MyNodeReader implements ExtendedNodeRe
 					visit(neighbor, visitedNodeIds, visitedNodeReachableHosts);
 			}
 		} else {
-			// TODO debug
-			System.out.println("This node " + node.id + " has already been visited");
+			// System.out.println("This node " + node.id + " has already been visited");
 		}
 	}
 
@@ -160,24 +153,4 @@ public class MyExtendedNodeReader extends MyNodeReader implements ExtendedNodeRe
 		
 		return reachableNodes == null ? new ArrayList<Nodes.Node>() : reachableNodes.getNode();
 	}
-	
-	/*private Node getEntityInfo(String entityId) throws ServiceException {
-		Node node = null;
-		
-		try {
-			node = target	
-				.path("node")
-				.path(entityId)
-				.request()
-				.accept(MediaType.APPLICATION_XML)
-				.get(Node.class)
-			;
-		} catch(ProcessingException e) {
-			throw new ServiceException(
-				"Could not get " + entityId + "'s informations"
-			);
-		}
-		
-		return node;
-	}*/
 }
