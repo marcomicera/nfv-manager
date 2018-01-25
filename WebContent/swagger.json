@@ -1,0 +1,552 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "description" : "XML-based RESTful API for remote access to the DP2-NFV system",
+    "version" : "1.0.0",
+    "title" : "NfvDeployer API",
+    "contact" : {
+      "email" : "marco.micera@gmail.com"
+    },
+    "license" : {
+      "name" : "Apache 2.0",
+      "url" : "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "tags" : [ {
+    "name" : "catalog",
+    "description" : "Getting to know all supported network function types"
+  }, {
+    "name" : "hosts",
+    "description" : "Informations regarding physical IN hosts"
+  }, {
+    "name" : "channels",
+    "description" : "Informations regarding physical IN channels, connecting IN hosts"
+  }, {
+    "name" : "nffgs",
+    "description" : "NF-FGs management calls"
+  } ],
+  "paths" : {
+    "/catalog" : {
+      "get" : {
+        "tags" : [ "catalog" ],
+        "summary" : "retrieves the entire catalog of functional types",
+        "operationId" : "getCatalog",
+        "description" : "Retrieves a set containing all Virtual Network Function (VNF) type objects",
+        "produces" : [ "application/xml" ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "$ref" : "#/definitions/CatalogType"
+            }
+          }
+        }
+      }
+    },
+    "/hosts" : {
+      "get" : {
+        "tags" : [ "hosts" ],
+        "summary" : "retrieves all physical hosts in the DP2-NFV system",
+        "operationId" : "getHosts",
+        "description" : "Retrieves a set containing all physical IN host objects in the DP2-NFV system",
+        "produces" : [ "application/xml" ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "$ref" : "#/definitions/HostsType"
+            }
+          }
+        }
+      }
+    },
+    "/hosts/{host_id}" : {
+      "get" : {
+        "tags" : [ "hosts" ],
+        "summary" : "retrieves a single host object",
+        "operationId" : "getHost",
+        "description" : "Retrieves a single host object having the ID specified in the resource path",
+        "produces" : [ "application/xml" ],
+        "parameters" : [ {
+          "name" : "host_id",
+          "in" : "path",
+          "required" : true,
+          "type" : "string",
+          "description" : "The desired host's ID"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "$ref" : "#/definitions/HostType"
+            }
+          },
+          "404" : {
+            "description" : "(Host) Not found"
+          }
+        }
+      }
+    },
+    "/channels" : {
+      "get" : {
+        "tags" : [ "channels" ],
+        "summary" : "retrievs all physical channels",
+        "operationId" : "getChannels",
+        "description" : "Retrieves a set containing all physical channels connecting physical IN hosts",
+        "produces" : [ "application/XML" ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "$ref" : "#/definitions/ChannelsType"
+            }
+          }
+        }
+      }
+    },
+    "/channels/{source_host_id}/{destination_host_id}" : {
+      "get" : {
+        "tags" : [ "channels" ],
+        "summary" : "retrieves a channel between two specified hosts",
+        "operationId" : "getChannel",
+        "description" : "Retrieves a single physical channel given two physical hosts specified in the resource path",
+        "produces" : [ "application/xml" ],
+        "parameters" : [ {
+          "name" : "source_host_id",
+          "in" : "path",
+          "required" : true,
+          "type" : "string",
+          "description" : "The source host from which the channel starts"
+        }, {
+          "name" : "destination_host_id",
+          "in" : "path",
+          "required" : true,
+          "type" : "string",
+          "description" : "The destination host in which the channel ends"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "$ref" : "#/definitions/ChannelType"
+            }
+          },
+          "404" : {
+            "description" : "(Channel) Not found"
+          }
+        }
+      }
+    },
+    "/nffgs" : {
+      "get" : {
+        "tags" : [ "nffgs" ],
+        "summary" : "retrieves all NF-FGs",
+        "operationId" : "getNffgs",
+        "description" : "Retrieves all NF-FGs requested by end-users",
+        "produces" : [ "application/xml" ],
+        "consumes" : [ "text/plain" ],
+        "parameters" : [ {
+          "name" : "since",
+          "in" : "query",
+          "type" : "string",
+          "required" : false,
+          "description" : "the deploy date and time since when we are considering NF-FGs. A null value means that all NF-FGs are considered."
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "$ref" : "#/definitions/NffgsType"
+            }
+          },
+          "404" : {
+            "description" : "(Channel) Not found"
+          }
+        }
+      },
+      "put" : {
+        "tags" : [ "nffgs" ],
+        "summary" : "deploys a NF-FG",
+        "operationId" : "deployNffg",
+        "description" : "Deploys a new NF-FG into the system (when a new NF-FG is deployed, its nodes are allocated onto the IN hosts; if it is not possible to allocate all the NF-FG nodes, deployment fails, and nothing is added). If deployment is successful, deploy time is set to the current time.",
+        "consumes" : [ "application/xml" ],
+        "parameters" : [ {
+          "name" : "nffg",
+          "in" : "body",
+          "schema" : {
+            "$ref" : "#/definitions/NffgType"
+          },
+          "description" : "NF-FG to be inserted"
+        } ],
+        "responses" : {
+          "201" : {
+            "description" : "(Resource) Created",
+            "schema" : {
+              "type" : "string",
+              "example" : "Nffg15",
+              "description" : "The created NF-FG's name"
+            }
+          },
+          "400" : {
+            "description" : "Bad request. The XML NF-FG object contained in the HTTP body was not valid."
+          },
+          "500" : {
+            "description" : "Internal server error: it was not possible to create the specified NF-FG."
+          }
+        }
+      }
+    },
+    "/nffgs/{nffg_id}" : {
+      "get" : {
+        "tags" : [ "nffgs" ],
+        "summary" : "retrieves a single NF-FG object",
+        "operationId" : "getNffg",
+        "description" : "Retrieves all info about the NF-FG specified in the resource path",
+        "produces" : [ "application/xml" ],
+        "parameters" : [ {
+          "name" : "nffg_id",
+          "in" : "path",
+          "required" : true,
+          "type" : "string",
+          "description" : "The desired NF-FG's ID"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "$ref" : "#/definitions/NffgType"
+            }
+          },
+          "404" : {
+            "description" : "(NF-FG) Not found"
+          }
+        }
+      },
+      "delete" : {
+        "tags" : [ "nffgs" ],
+        "summary" : "undeploys a NF-FG",
+        "operationId" : "undeployNffg",
+        "description" : "Undeploy an NF-FG (when an NF-FG is undeployed, its allocation relationships are removed).",
+        "parameters" : [ {
+          "name" : "nffg_id",
+          "in" : "path",
+          "required" : true,
+          "type" : "string",
+          "description" : "The NF-FG's ID to be deleted"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK (NF-FG deleted)"
+          },
+          "404" : {
+            "description" : "(NF-FG) Not found"
+          }
+        }
+      }
+    }
+  },
+  "definitions" : {
+    "CatalogType" : {
+      "type" : "array",
+      "xml" : {
+        "name" : "catalog",
+        "wrapped" : true
+      },
+      "items" : {
+        "$ref" : "#/definitions/VNFType"
+      }
+    },
+    "VNFType" : {
+      "type" : "object",
+      "xml" : {
+        "name" : "VNF"
+      },
+      "required" : [ "id", "functionalType", "requiredMemory", "requiredStorage" ],
+      "properties" : {
+        "id" : {
+          "type" : "string",
+          "example" : "WEBSERVERt",
+          "xml" : {
+            "attribute" : true
+          }
+        },
+        "functionalType" : {
+          "type" : "string",
+          "example" : "WEB_SERVER",
+          "enum" : [ "CACHE", "DPI", "FW", "MAIL_CLIENT", "MAIL_SERVER", "NAT", "SPAM", "VPN", "WEB_CLIENT", "WEB_SERVER" ],
+          "xml" : {
+            "attribute" : true
+          }
+        },
+        "requiredMemory" : {
+          "type" : "integer",
+          "example" : 60,
+          "xml" : {
+            "attribute" : true
+          }
+        },
+        "requiredStorage" : {
+          "type" : "integer",
+          "example" : 7400,
+          "xml" : {
+            "attribute" : true
+          }
+        }
+      }
+    },
+    "HostsType" : {
+      "type" : "array",
+      "xml" : {
+        "wrapped" : true,
+        "name" : "hosts"
+      },
+      "items" : {
+        "$ref" : "#/definitions/HostType"
+      }
+    },
+    "HostType" : {
+      "type" : "object",
+      "xml" : {
+        "name" : "host"
+      },
+      "required" : [ "id", "maxVNFs" ],
+      "properties" : {
+        "id" : {
+          "type" : "string",
+          "example" : "H5",
+          "xml" : {
+            "attribute" : true
+          }
+        },
+        "availableMemory" : {
+          "type" : "integer",
+          "example" : 5200,
+          "default" : 0,
+          "xml" : {
+            "attribute" : true
+          }
+        },
+        "availableStorage" : {
+          "type" : "integer",
+          "example" : 65000,
+          "default" : 0,
+          "xml" : {
+            "attribute" : true
+          }
+        },
+        "maxVNFs" : {
+          "type" : "integer",
+          "example" : 7,
+          "xml" : {
+            "attribute" : true
+          }
+        },
+        "nodes" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/NodeRefType"
+          },
+          "xml" : {
+            "wrapped" : false
+          }
+        }
+      }
+    },
+    "NodeRefType" : {
+      "type" : "object",
+      "xml" : {
+        "name" : "node",
+        "wrapped" : false
+      },
+      "required" : [ "id" ],
+      "properties" : {
+        "id" : {
+          "type" : "string",
+          "example" : "WEBSERVERt2Nffg2",
+          "xml" : {
+            "attribute" : true
+          }
+        }
+      }
+    },
+    "ChannelsType" : {
+      "type" : "array",
+      "xml" : {
+        "name" : "channels",
+        "wrapped" : false
+      },
+      "items" : {
+        "$ref" : "#/definitions/ChannelType"
+      }
+    },
+    "ChannelType" : {
+      "type" : "object",
+      "xml" : {
+        "name" : "channel"
+      },
+      "required" : [ "host1", "host2" ],
+      "properties" : {
+        "host1" : {
+          "type" : "string",
+          "example" : "H3",
+          "xml" : {
+            "attribute" : true
+          }
+        },
+        "host2" : {
+          "type" : "string",
+          "example" : "H5",
+          "xml" : {
+            "attribute" : true
+          }
+        },
+        "averageThroughput" : {
+          "type" : "number",
+          "example" : 21.31,
+          "xml" : {
+            "attribute" : true
+          }
+        },
+        "averageLatency" : {
+          "type" : "integer",
+          "example" : 56,
+          "xml" : {
+            "attribute" : true
+          }
+        }
+      }
+    },
+    "NffgsType" : {
+      "type" : "array",
+      "xml" : {
+        "name" : "nffgs",
+        "wrapped" : false
+      },
+      "items" : {
+        "$ref" : "#/definitions/NffgType"
+      }
+    },
+    "NffgType" : {
+      "type" : "object",
+      "xml" : {
+        "name" : "nffg"
+      },
+      "required" : [ "id", "deployTime", "nodes" ],
+      "properties" : {
+        "id" : {
+          "type" : "string",
+          "example" : "Nffg2",
+          "xml" : {
+            "attribute" : true
+          }
+        },
+        "deployTime" : {
+          "type" : "string",
+          "example" : "H5",
+          "xml" : {
+            "attribute" : false
+          }
+        },
+        "nodes" : {
+          "$ref" : "#/definitions/NodesType"
+        }
+      }
+    },
+    "NodesType" : {
+      "type" : "array",
+      "xml" : {
+        "name" : "nodes",
+        "wrapped" : false
+      },
+      "items" : {
+        "$ref" : "#/definitions/NodeType"
+      }
+    },
+    "NodeType" : {
+      "type" : "object",
+      "xml" : {
+        "name" : "node"
+      },
+      "required" : [ "id", "functionalType", "links" ],
+      "properties" : {
+        "id" : {
+          "type" : "string",
+          "example" : "WEBSERVERt4Nffg2",
+          "xml" : {
+            "attribute" : true
+          }
+        },
+        "functionalType" : {
+          "type" : "string",
+          "example" : "DPIa",
+          "xml" : {
+            "attribute" : true
+          }
+        },
+        "host" : {
+          "type" : "string",
+          "example" : "H7",
+          "xml" : {
+            "attribute" : true
+          }
+        },
+        "links" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/LinkType"
+          },
+          "xml" : {
+            "wrapped" : false
+          }
+        }
+      }
+    },
+    "LinkType" : {
+      "type" : "object",
+      "xml" : {
+        "name" : "link"
+      },
+      "required" : [ "id", "sourceNode", "destinationNode" ],
+      "properties" : {
+        "id" : {
+          "type" : "string",
+          "example" : "Link12",
+          "xml" : {
+            "attribute" : true
+          }
+        },
+        "sourceNode" : {
+          "type" : "string",
+          "example" : "MAILSERVERt3Nffg2",
+          "xml" : {
+            "attribute" : true
+          }
+        },
+        "destinationNode" : {
+          "type" : "string",
+          "example" : "SPAMb5Nffg2",
+          "xml" : {
+            "attribute" : true
+          }
+        },
+        "minimumThroughput" : {
+          "type" : "number",
+          "example" : 1.24,
+          "xml" : {
+            "attribute" : true
+          }
+        },
+        "maximumLatency" : {
+          "type" : "integer",
+          "example" : 0,
+          "xml" : {
+            "attribute" : true
+          }
+        }
+      }
+    }
+  },
+  "host" : "virtserver.swaggerhub.com",
+  "basePath" : "/marcomicera/NFVDeployer/1.0.0",
+  "schemes" : [ "https" ]
+}
