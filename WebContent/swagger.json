@@ -93,7 +93,7 @@
         "summary" : "retrievs all physical channels",
         "operationId" : "getChannels",
         "description" : "Retrieves a set containing all physical channels connecting physical IN hosts",
-        "produces" : [ "application/XML" ],
+        "produces" : [ "application/xml" ],
         "responses" : {
           "200" : {
             "description" : "OK",
@@ -173,6 +173,7 @@
         "parameters" : [ {
           "name" : "nffg",
           "in" : "body",
+          "required" : true,
           "schema" : {
             "$ref" : "#/definitions/NffgType"
           },
@@ -237,6 +238,195 @@
         "responses" : {
           "200" : {
             "description" : "OK (NF-FG deleted)"
+          },
+          "404" : {
+            "description" : "(NF-FG) Not found"
+          }
+        }
+      }
+    },
+    "/nffgs/{nffg_id}/links" : {
+      "put" : {
+        "tags" : [ "nffgs" ],
+        "summary" : "adds a single link to the NF-FG",
+        "operationId" : "addLink",
+        "description" : "Adds a single link in an already deployed NF-FG (the client must be able to specify what should happen if the link is already present, i.e. whether the link information should be overwritten or an error should be returned).",
+        "consumes" : [ "text/boolean", "application/xml" ],
+        "parameters" : [ {
+          "name" : "nffg_id",
+          "in" : "path",
+          "required" : true,
+          "type" : "string",
+          "description" : "The NF-FG's ID on which the link should be added."
+        }, {
+          "name" : "overwrite",
+          "in" : "query",
+          "required" : true,
+          "type" : "boolean",
+          "description" : "If the link is already present, it specifies whether the link information should be overwritten or an error should be returned."
+        }, {
+          "name" : "link",
+          "in" : "body",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/LinkType"
+          },
+          "description" : "Link to be inserted"
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No content (link added successfully)"
+          },
+          "403" : {
+            "description" : "Forbidden (when overwrite = false, hence the link has not been overwritten)"
+          },
+          "404" : {
+            "description" : "(NF-FG) Not found"
+          }
+        }
+      }
+    },
+    "/nffgs/{nffg_id}/links/{link_id}" : {
+      "delete" : {
+        "tags" : [ "nffgs" ],
+        "summary" : "removes a single link",
+        "operationId" : "deleteLink",
+        "description" : "Removes a single link in an already deployed NF-FG",
+        "parameters" : [ {
+          "name" : "nffg_id",
+          "in" : "path",
+          "required" : true,
+          "type" : "string",
+          "description" : "The NF-FG's ID from which the link has to be deleted"
+        }, {
+          "name" : "link_id",
+          "in" : "path",
+          "required" : true,
+          "type" : "string",
+          "description" : "The link's ID to be deleted"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK (link deleted)"
+          },
+          "404" : {
+            "description" : "(NF-FG or link) Not found"
+          }
+        }
+      }
+    },
+    "/nffgs/{nffg_id}/nodes" : {
+      "get" : {
+        "tags" : [ "nffgs" ],
+        "summary" : "retrieves all nodes from an NF-FG",
+        "operationId" : "getNodes",
+        "description" : "Retrieves all node objects from an existing NF-FG",
+        "produces" : [ "application/xml" ],
+        "parameters" : [ {
+          "name" : "nffg_id",
+          "in" : "path",
+          "required" : true,
+          "type" : "string",
+          "description" : "The NF-FG's ID of which nodes should be obtained."
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "$ref" : "#/definitions/NodesType"
+            }
+          },
+          "404" : {
+            "description" : "(NF-FG) Not found"
+          }
+        }
+      },
+      "put" : {
+        "tags" : [ "nffgs" ],
+        "summary" : "adds a single node to the NF-FG",
+        "operationId" : "addLink",
+        "description" : "Adds single node in an already deployed NF-FG (it is added without links and it is also allocated on a host; if allocation is not possible, the addition of the node fails and nothing is added).",
+        "consumes" : [ "application/xml" ],
+        "parameters" : [ {
+          "name" : "nffg_id",
+          "in" : "path",
+          "required" : true,
+          "type" : "string",
+          "description" : "The NF-FG's ID on which the node should be added."
+        }, {
+          "name" : "node",
+          "in" : "body",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/NodeType"
+          },
+          "description" : "Node to be inserted"
+        } ],
+        "responses" : {
+          "204" : {
+            "description" : "No content (node added successfully)"
+          },
+          "403" : {
+            "description" : "Forbidden (allocation constraints not satisfied)"
+          },
+          "404" : {
+            "description" : "(NF-FG) Not found"
+          }
+        }
+      }
+    },
+    "/nffgs/{nffg_id}/nodes/{node_id}" : {
+      "delete" : {
+        "tags" : [ "nffgs" ],
+        "summary" : "removes a single node",
+        "operationId" : "deleteNode",
+        "description" : "Removes a single node in an already deployed NF-FG (removal must be possible only if the node has no incoming links and no outgoing links; removing the node also removes its allocation).",
+        "parameters" : [ {
+          "name" : "nffg_id",
+          "in" : "path",
+          "required" : true,
+          "type" : "string",
+          "description" : "The NF-FG's ID from which the node has to be deleted"
+        }, {
+          "name" : "node_id",
+          "in" : "path",
+          "required" : true,
+          "type" : "string",
+          "description" : "The node's ID to be deleted"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK (node deleted)"
+          },
+          "403" : {
+            "description" : "Forbidden (node is connected in some way)"
+          },
+          "404" : {
+            "description" : "(NF-FG or node) Not found"
+          }
+        }
+      }
+    },
+    "/nffgs/{nffg_id}/extendedNodes" : {
+      "get" : {
+        "tags" : [ "nffgs" ],
+        "summary" : "retrieves node objects with host reachability informations",
+        "operationId" : "getExtendedNodes",
+        "description" : "Retrieves a set containing extended node objects, each one of those containing a set of host objects representing physical IN hosts that are reachable starting from the node.",
+        "produces" : [ "application/xml" ],
+        "parameters" : [ {
+          "name" : "nffg_id",
+          "in" : "path",
+          "required" : true,
+          "type" : "string",
+          "description" : "The NF-FG's ID of which extended node objects should be obtained."
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "$ref" : "#/definitions/ExtendedNodesType"
+            }
           },
           "404" : {
             "description" : "(NF-FG) Not found"
@@ -373,7 +563,7 @@
       "type" : "array",
       "xml" : {
         "name" : "channels",
-        "wrapped" : false
+        "wrapped" : true
       },
       "items" : {
         "$ref" : "#/definitions/ChannelType"
@@ -420,7 +610,7 @@
       "type" : "array",
       "xml" : {
         "name" : "nffgs",
-        "wrapped" : false
+        "wrapped" : true
       },
       "items" : {
         "$ref" : "#/definitions/NffgType"
@@ -456,7 +646,7 @@
       "type" : "array",
       "xml" : {
         "name" : "nodes",
-        "wrapped" : false
+        "wrapped" : true
       },
       "items" : {
         "$ref" : "#/definitions/NodeType"
@@ -541,6 +731,65 @@
           "example" : 0,
           "xml" : {
             "attribute" : true
+          }
+        }
+      }
+    },
+    "ExtendedNodesType" : {
+      "type" : "array",
+      "xml" : {
+        "name" : "extendedNodes",
+        "wrapped" : true
+      },
+      "items" : {
+        "$ref" : "#/definitions/ExtendedNodeType"
+      }
+    },
+    "ExtendedNodeType" : {
+      "type" : "object",
+      "xml" : {
+        "name" : "extendedNode"
+      },
+      "required" : [ "id", "functionalType", "links" ],
+      "properties" : {
+        "id" : {
+          "type" : "string",
+          "example" : "WEBSERVERt4Nffg2",
+          "xml" : {
+            "attribute" : true
+          }
+        },
+        "functionalType" : {
+          "type" : "string",
+          "example" : "DPIa",
+          "xml" : {
+            "attribute" : true
+          }
+        },
+        "host" : {
+          "type" : "string",
+          "example" : "H7",
+          "xml" : {
+            "attribute" : true
+          }
+        },
+        "links" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/LinkType"
+          },
+          "xml" : {
+            "wrapped" : false
+          }
+        },
+        "reachableHosts" : {
+          "type" : "array",
+          "xml" : {
+            "name" : "reachableHosts",
+            "wrapped" : true
+          },
+          "items" : {
+            "$ref" : "#/definitions/HostType"
           }
         }
       }
