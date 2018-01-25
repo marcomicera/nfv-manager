@@ -11,6 +11,7 @@ import io.swagger.annotations.Api;
 @Api(value = "/catalog", description = "a collection of supported network function types")
 public class CatalogResource {
 	public String getCatalogsXML() {
-		
+		// TODO implement
+		return null;
 	}
 }
