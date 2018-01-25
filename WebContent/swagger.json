@@ -344,7 +344,7 @@
       "put" : {
         "tags" : [ "nffgs" ],
         "summary" : "adds a single node to the NF-FG",
-        "operationId" : "addLink",
+        "operationId" : "addNode",
         "description" : "Adds single node in an already deployed NF-FG (it is added without links and it is also allocated on a host; if allocation is not possible, the addition of the node fails and nothing is added).",
         "consumes" : [ "application/xml" ],
         "parameters" : [ {
