@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	
+	<!-- Possible XML body objects -->
+	<xsd:element name="catalog" type="CatalogType"/>
+	
+	<xsd:element name="hosts" type="HostsType"/>
+	<xsd:element name="host" type="HostType"/>
+	
+	<xsd:element name="channels" type="ChannelsType"/>
+	<xsd:element name="channel" type="ChannelType"/>
+	
+	<xsd:element name="nffgs" type="NffgsType"/>
+	<xsd:element name="nffg" type="NffgType"/>
+	
+	<xsd:element name="nodes" type="NodesType"/>
+	<xsd:element name="node" type="NodeType"/>
+	
+	<xsd:element name="link" type="LinkType"/>
+	
+	<!-- Catalog types -->
+	<xsd:complexType name="CatalogType">
+		<xsd:sequence>
+			<xsd:element name="VNF" maxOccurs="unbounded" type="VNFType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="VNFType">
+		<xsd:attribute name="id" type="xsd:token" use="required"/>
+		<xsd:attribute name="functionalType" type="functionalTypeType" use="required"/>
+		<xsd:attribute name="requiredMemory" type="xsd:int" use="required"/>
+		<xsd:attribute name="requiredStorage" type="xsd:int" use="required"/>
+	</xsd:complexType>
+	
+	<xsd:simpleType name="functionalTypeType">
+  		<xsd:restriction base="xsd:token">
+    		<xsd:enumeration value="CACHE"/>
+    		<xsd:enumeration value="DPI"/>
+    		<xsd:enumeration value="FW"/>
+    		<xsd:enumeration value="MAIL_CLIENT"/>
+    		<xsd:enumeration value="MAIL_SERVER"/>
+    		<xsd:enumeration value="NAT"/>
+    		<xsd:enumeration value="SPAM"/>
+    		<xsd:enumeration value="VPN"/>
+    		<xsd:enumeration value="WEB_CLIENT"/>
+    		<xsd:enumeration value="WEB_SERVER"/>
+  		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<!-- Host types -->
+	<xsd:complexType name="HostsType">
+		<xsd:sequence>
+			<xsd:element name="host" maxOccurs="unbounded" type="HostType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="HostType">
+		<xsd:sequence>
+			<xsd:element name="node" minOccurs="0" maxOccurs="unbounded" type="NodeRefType"/>
+		</xsd:sequence>
+				
+		<xsd:attribute name="id" type="xsd:token" use="required"/>
+		<xsd:attribute name="availableMemory" type="xsd:int" default="0"/>
+		<xsd:attribute name="availableStorage" type="xsd:int" default="0"/>
+		<xsd:attribute name="maxVNFs" type="xsd:int" use="required"/>
+	</xsd:complexType>
+	
+	<xsd:complexType name="NodeRefType">
+		<xsd:attribute name="id" type="xsd:token" use="required"/>
+	</xsd:complexType>
+	
+	<!-- Channel types -->
+	<xsd:complexType name="ChannelsType">
+		<xsd:sequence>
+			<xsd:element name="channel" minOccurs="1" maxOccurs="unbounded"	type="ChannelType"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="ChannelType">
+		<xsd:attribute name="host1" type="xsd:token" use="required"/>
+		<xsd:attribute name="host2" type="xsd:token" use="required"/>
+		<xsd:attribute name="averageThroughput" type="xsd:float" use="optional"/>
+		<xsd:attribute name="averageLatency" type="xsd:int" use="optional"/>
+	</xsd:complexType>
+	
+	<!-- NF-FG types -->
+	<xsd:complexType name="NffgsType">
+		<xsd:sequence>
+			<xsd:element name="nffg" minOccurs="0" maxOccurs="unbounded" type="NffgType">
+				<!-- Link's id key -->
+				<xsd:unique name="uniqueLinkId">
+					<xsd:selector xpath="nodes/node/link"/>
+					<xsd:field xpath="@id"/>
+				</xsd:unique>
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<xsd:complexType name="NffgType">
+		<xsd:all>
+			<xsd:element name="deployTime" type="xsd:dateTime"/>
+			<xsd:element name="nodes" type="NodesType"/>
+		</xsd:all>
+		<xsd:attribute type="xsd:token" name="id" use="required"/>
+	</xsd:complexType>
+	
+	<!-- Node types -->
+	<xsd:complexType name="NodesType">
+		<xsd:sequence>
+			<xsd:element name="node" minOccurs="1" maxOccurs="unbounded" type="NodeType"/>
+		</xsd:sequence> 
+	</xsd:complexType>
+	
+	<xsd:complexType name="NodeType">
+		<xsd:sequence>
+			<xsd:element name="link" minOccurs="0" maxOccurs="unbounded" type="LinkType"/>
+		</xsd:sequence>
+	
+		<xsd:attribute name="id" type="xsd:token" use="required"/>
+		<xsd:attribute name="functionalType" type="xsd:token" use="required"/>
+		<xsd:attribute name="host" type="xsd:token" use="optional"/>
+	</xsd:complexType>
+	
+	<!-- Link types -->
+	<xsd:complexType name="LinkType">
+		<xsd:attribute name="id" type="xsd:token" use="required"/>
+		<xsd:attribute name="sourceNode" type="xsd:token" use="required"/>
+		<xsd:attribute name="destinationNode" type="xsd:token" use="required"/>
+		<xsd:attribute name="minimumThroughput" type="xsd:float" use="optional"/>
+		<xsd:attribute name="maximumLatency" type="xsd:int" use="optional"/>
+	</xsd:complexType>
+	
+</xsd:schema>
