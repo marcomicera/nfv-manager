@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+<!DOCTYPE nfvInfo SYSTEM "nfvInfo.dtd">
+
+<nfvInfo>
+
+	<catalog>
+  		<VNF id="CACHEt" functionalType="CACHE" requiredMemory="512" requiredStorage="2048"/>
+    	<VNF id="DPIt" functionalType="DPI" requiredMemory="256" requiredStorage="1024"/>
+    	<VNF id="FWt" functionalType="FW" requiredMemory="128" requiredStorage="1024"/>
+    	<VNF id="MAIL_CLIENTt" functionalType="MAIL_CLIENT" requiredMemory="128" requiredStorage="1024"/>
+   		<VNF id="MAIL_SERVERt" functionalType="MAIL_SERVER" requiredMemory="1024" requiredStorage="4096"/>
+    	<VNF id="NATa" functionalType="NAT" requiredMemory="512" requiredStorage="512"/>
+    	<VNF id="NATb" functionalType="NAT" requiredMemory="1024" requiredStorage="128"/>
+    	<VNF id="SPAMt" functionalType="SPAM" requiredMemory="128" requiredStorage="512"/>
+    	<VNF id="VPNt" functionalType="VPN" requiredMemory="128" requiredStorage="512"/>
+    	<VNF id="WEB_CLIENTt" functionalType="WEB_CLIENT" requiredMemory="2048" requiredStorage="4096"/>
+    	<VNF id="WEB_SERVERt" functionalType="WEB_SERVER" requiredMemory="8192" requiredStorage="8192"/>
+  	</catalog>
+  	
+  	<network>
+  		<hosts>
+  			<host	id="h2918" 
+  					availableMemory="8192" 
+  					availableStorage="218112" 
+  					maxVNFs="2" 
+  					nodes="n4318"/>
+	  		<host 	id="h8153" 
+	  				availableMemory="4096" 
+	  				availableStorage="204800" 
+	  				maxVNFs="5"/>
+	  		<host 	id="h6401" 
+	  				availableMemory="3072" 
+	  				availableStorage="71890" 
+	  				maxVNFs="3" 
+	  				nodes="n4570 n1703"/>
+  		</hosts>
+  		<channels>
+  			<channel host1="h2918" host2="h8153" averageThroughput="20" averageLatency="25" />
+	  		<channel host1="h2918" host2="h6401" averageThroughput="7" averageLatency="40" />
+	  		<channel host1="h8153" host2="h6401" averageThroughput="8" averageLatency="35" />
+  		</channels>
+  	</network>
+  	
+  	<nffgs>
+  		<nffg id="nffg7142">
+  			<deployTime>2012-11-24T14:25:01+01:00</deployTime>
+  			<nodes>
+  				<node id="n5123" functionalType="FWt">
+  					<link 	id="Link0"
+							sourceNode="n1580"
+							destinationNode="n4318"
+							minimumThroughput="5"/>
+  				</node>
+  			</nodes>
+  		</nffg>
+  		<nffg id="nffg2412">
+			<deployTime>2011-05-11T08:38:17-02:00</deployTime>
+			<nodes>
+				<node id="n2818" functionalType="NATb">
+					<link 	id="Link0"
+							sourceNode="n1580"
+							destinationNode="n4318"
+							minimumThroughput="5"/>
+				</node>
+				<node id="n4570" functionalType="DPIt" host="h6401"/>
+				<node id="n1580" functionalType="FWt">
+					<link	id="Link2"
+							sourceNode="n2818"
+							destinationNode="n1703"
+							maximumLatency="55"/>
+				</node>
+				<node id="n4318" functionalType="CACHEt" host="h2918">
+					<link	id="Link1"
+							sourceNode="n4318"
+							destinationNode="n1580"
+							minimumThroughput="5"/>
+				</node>
+				<node id="n1703" functionalType="MAIL_SERVERt" host="h8153">
+					<link	id="Link3"
+							sourceNode="n4570"
+							destinationNode="n1580"/>
+				</node>
+			</nodes>
+		</nffg>
+  	</nffgs>
+  	
+</nfvInfo>

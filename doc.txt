@@ -1,0 +1,45 @@
+1. DTD design
+
+I decided to split the XML file in three parts: the catalog, the network
+(the physical Infrastructure Network IN) and a part concerning NF-FGs.
+I thought this latter part was optional since XML files respecting this DTD
+could also be used useful just to describe physical networks without still any
+NF-FG. The catalog anyway has to be defined because it would not be possible
+to create any NF-FG since they have to contain at least one node, and nodes
+have to specify the functional type that is associated to them: this is done
+with the IDREF type, so it requires the corresponding functional type's ID
+to exist. I implemented the VNF's functionalType attribute as an enum since
+in the DP2-NFV system's JavaDoc, functional types cannot assume any other values
+except for those one accepted by the Java it.polito.dp2.NFV.FunctionalType enum.
+The network element has an hosts element and an optional channels element, since
+there could be a network with hosts still not connected to each other.
+Every host could have a list of nodes allocated to it. In the channel element,
+I decided to specify the hosts connected to it by means of two IDREF attributes,
+since a single IDREFS attribute cannot impose a limit on the number of hosts.
+Even though it was not specified in the specification, a channel's latency is
+optional since a virtual channel connecting an host to itself has a meaningless
+latency value. I also supposed that, in the same previous case, a throughput
+could assume a value tending towards infinity (even though the random generator
+always produces a finite value), so that is why that attribute is also optional.
+NF-FGs are identified by an ID attribute, and their deployTime is an element
+with the (#PCDATA) model (text), because there is no other way to specify a
+complete date and time instant including the time zone. Each node has an ID and
+it refers to the functional type and to the host on which it has been allocated
+by means of two IDREF attributes. Same thing with the links that have to specify
+which are the source and destination node. As the specifications say, a link's
+latency and throughput value is optional.
+
+2. XSD design
+
+For the sake of brevity, I will only list the differences concerning the
+additional features that the XML Schema offers with respect to the DTD.
+First, keys now have a scope: for example, link IDs are unique within a NF-FG.
+NF-FG IDs instead are not keys but unique elements, as they are not referenced
+by any other attribute in the document. In general, DTD's IDREFS attributes
+have been transformed into a list of "reference elements", having just one
+attribute referencing a key (xsd:keyref element). This was done because there
+is no way to gather more keyrefs into one single attribute, as DTD allowed to
+do with the IDREFS attribute type which could have grouped more IDREF attributes.
+NF-FG deployTime now has a proper dateTime type (and not a general text type).
+More specific data types are available in the XML schema, such as the xsd:token
+data type which is a restriction of the string one.
