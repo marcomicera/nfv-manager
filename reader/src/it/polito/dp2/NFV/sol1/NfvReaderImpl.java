@@ -112,12 +112,7 @@ class NfvReaderImpl implements it.polito.dp2.NFV.NfvReader {
 			try {
 				catalog.put(
 					vnf.getId(), 
-					new MyVNFReader(
-						vnf.getId(),
-						vnf.getFunctionalType(),
-						vnf.getRequiredMemory(),
-						vnf.getRequiredStorage()
-					)
+					new MyVNFTypeReader(vnf)
 				);
 			} catch(NullPointerException e) {
 				e.printStackTrace();
@@ -126,10 +121,7 @@ class NfvReaderImpl implements it.polito.dp2.NFV.NfvReader {
 
 	private void readNffgs() {
 		for(NffgType nffg: nfvInfo.getNffgs().getNffg()) {
-			MyNffgReader tempNffgReader = new MyNffgReader(
-				nffg.getId(),
-				nffg.getDeployTime()
-			);
+			MyNffgReader tempNffgReader = new MyNffgReader(nffg);
 			
 			Map<String, NodeReader> tempNodeReaders = readNodes(nffg, tempNffgReader); 
 			
@@ -140,12 +132,7 @@ class NfvReaderImpl implements it.polito.dp2.NFV.NfvReader {
 				
 				while(it.hasNext()) {
 					MyNodeReader tempNodeReader = (MyNodeReader)it.next();
-					tempNodeReader.setLinks(
-						readLinks(
-							readNodeInfo(tempNodeReader),
-							tempNffgReader
-						)
-					);
+					tempNodeReader.setLinks();
 				}
 			}
 			
@@ -160,10 +147,10 @@ class NfvReaderImpl implements it.polito.dp2.NFV.NfvReader {
 		Map<String, NodeReader> nodes = new HashMap<String, NodeReader>();
 		for(NodeType node: nffg.getNodes().getNode()) {
 			MyNodeReader tempNodeReader = new MyNodeReader(
-				node.getId(),
+				node,
+				nffgReader,
 				catalog.get(node.getFunctionalType()),
-				hosts.get(node.getHost()),
-				nffgReader
+				hosts.get(node.getHost())
 			);
 			
 			nodes.put(
@@ -173,59 +160,19 @@ class NfvReaderImpl implements it.polito.dp2.NFV.NfvReader {
 			
 			if(node.getHost() != null) {
 				MyHostReader host = (MyHostReader)hosts.get(node.getHost());
-				host.addNode(node.getId(), tempNodeReader);
+				host.addNode(tempNodeReader);
 			}
 		}
 		
 		return nodes;
 	}
 	
-	private Map<String, LinkReader> readLinks(NodeType node, MyNffgReader nffgReader) {
-		Map<String, LinkReader> links = new HashMap<String, LinkReader>();
-		
-		for(LinkType link: node.getLink()) {
-			NodeReader sourceNode = nffgReader.getNode(link.getSourceNode());
-			NodeReader destinationNode = nffgReader.getNode(link.getDestinationNode());
-			
-			links.put(
-				link.getId(),
-				new MyLinkReader(
-					link.getId(),
-					link.getMaximumLatency() == null ? 0 : link.getMaximumLatency(),
-					link.getMinimumThroughput() == null ? 0 : link.getMinimumThroughput(),
-					sourceNode,
-					destinationNode
-				)
-			);
-		}
-		
-		return links;
-	}
-	
 	private void readHosts() {
 		for(HostType host: nfvInfo.getNetwork().getHosts().getHost())
 			hosts.put(
 				host.getId(),
-				new MyHostReader(
-					host.getId(),
-					host.getAvailableMemory(),
-					host.getAvailableStorage(),
-					host.getMaxVNFs()
-				)
+				new MyHostReader(host)
 			);
-	}
-
-	private NodeType readNodeInfo(String nodeRef) {
-		for(NffgType nffg: nfvInfo.getNffgs().getNffg()) 
-			for(NodeType node: nffg.getNodes().getNode()) 
-				if(nodeRef.compareTo(node.getId()) == 0)
-					return node;
-		
-		return null;
-	}
-	
-	private NodeType readNodeInfo(NodeReader node) {
-		return readNodeInfo(node.getName());
 	}
 	
 	private void readChannels() {
