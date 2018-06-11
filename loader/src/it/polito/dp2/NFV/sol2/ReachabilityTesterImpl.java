@@ -165,7 +165,7 @@ public class ReachabilityTesterImpl implements ReachabilityTester {
 			return;
 		
 		// New temporary host creation
-		Host tempHost = new Host();
+		Node tempHost = new Node();
 		
 		// Temporary node's properties
 		Properties properties = new Properties();
@@ -181,12 +181,12 @@ public class ReachabilityTesterImpl implements ReachabilityTester {
 		tempHost.setProperties(properties);
 		
 		// Loading the temporary host
-		Host loadedHost;
+		Node loadedHost;
 		try {
 			loadedHost = target	
 	    		.path("node")
 				.request()
-				.post(Entity.entity(tempHost, MediaType.APPLICATION_XML), Host.class)
+				.post(Entity.entity(tempHost, MediaType.APPLICATION_XML), Node.class)
 			;
 		} catch(ProcessingException e) {
 			throw new ServiceException("Could not load host " + host.getName());
@@ -260,7 +260,7 @@ public class ReachabilityTesterImpl implements ReachabilityTester {
 		}
 		
 		// New temporary node creation
-		Host tempNode = new Host();
+		Node tempNode = new Node();
 		
 		// Temporary node's properties
 		Properties properties = new Properties();

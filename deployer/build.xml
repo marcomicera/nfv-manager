@@ -41,7 +41,7 @@
 	<property name="gen.dir" location="${sol3.dir}/service/model" />
 	
 	<!-- The location for extra jar files -->
-    <property name="shared.location" location="G:\OneDrive\Ingegneria\Turin\Distributed programming II"/> <!-- /opt/dp2/shared -->
+    <property name="shared.location" location="X:\OneDrive\Ingegneria\Turin\Distributed programming II"/> <!-- /opt/dp2/shared -->
 	<property name="ext.lib.dir" location="${shared.location}/lib-dp2" /> <!-- ${shared.location}/lib -->
 	
     <!-- The location of the Neo4JSimpleXML web service -->

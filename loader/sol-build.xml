@@ -4,12 +4,13 @@
 	<description>
 			Script for NFV Assignment 2 solution
 	</description>
-	
+
 	<!-- Project directory -->
 	<property name="root.location" location="." />
-	<property name="dp2.dir" location="G:\OneDrive\Ingegneria\Turin\Distributed programming II\lib-dp2" /> <!-- TODO set it to /opt/dp2/shared -->
+	<property name="dp2.dir" location="X:\OneDrive\Ingegneria\Turin\Distributed programming II\lib-dp2" />
+	<!-- TODO set it to /opt/dp2/shared -->
 	<property name="gen.dir" location="${root.location}/gen-src" />
-	
+
 	<!-- WADL location -->
 	<property name="application.name" value="Neo4JSimpleXML" />
 	<property name="application.location" value="webapi" />
@@ -21,7 +22,7 @@
 			<fileset dir="${dp2.dir}" includes="*.jar" />
 		</classpath>
 	</taskdef>
-	
+
 	<!-- http://cxf.apache.org/docs/jaxrs-services-description.html#JAXRSServicesDescription-WADL-firstDevelopment -->
 	<target name="generate-artifacts">
 		<mkdir dir="${gen.dir}" />
@@ -31,10 +32,10 @@
 				autoSchemaPackage="false" 
 				target="${gen.dir}"
 		>
-	     	<customizations dir="${root.location}" includes="binding.xjc"/>
-	     	<produces dir="${gen.dir}" includes="*.java"/>
-	     	<depends dir="${root.location}" includes="build.xml"/>
-	    </wjc>
+			<customizations dir="${root.location}" includes="binding.xjc"/>
+			<produces dir="${gen.dir}" includes="*.java"/>
+			<depends dir="${root.location}" includes="build.xml"/>
+		</wjc>
 	</target>
 
 </project>
