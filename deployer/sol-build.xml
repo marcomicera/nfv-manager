@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project basedir="." default="build-service" name="NFV-SOL3">
+	<description>
+			Script for NFV Assignment 3 solution
+	</description>
+
+	<property name="serviceName" value="NfvDeployer" />
+	<property name="root.location" location="${basedir}" />
+	<property name="gen.dir" location="${basedir}/src" />
+	<!-- TODO set it to /opt/dp2/shared -->
+	<property name="dp2.dir" location="${root.location}/../../../lib-dp2" />
+	
+	<!-- define wjc task (WADL to JAVA) -->
+	<taskdef name="wjc" classname="org.jvnet.ws.wadl2java.WJCTask">
+		<classpath>
+			<fileset dir="${dp2.dir}" includes="*.jar" />
+		</classpath>
+	</taskdef>
+
+	<target name="generate-artifacts" description="generate Java classes from schema">
+		<exec executable="xjc" failonerror="true" >
+			<arg value="-d" />
+			<arg value="${gen.dir}" />
+			<arg value="-p" />
+			<arg value="it.polito.dp2.NFV.sol3.service.gen.model" />
+			<arg value="${root.location}/xsd/${serviceName}.xsd" />
+		</exec>
+	</target>
+
+	<!-- define generate-wadl generation path -->
+	<target name="generate-wadl">
+		<mkdir dir="${gen.dir}" />
+		<wjc
+			target="${src.dir}" 
+			autoSchemaPackage="false" 
+			package="it.polito.dp2.NFV.sol3.service.neo4j"
+			description="${Neo4JSimpleXMLWADL}" />
+	</target>
+
+	<!-- Service builder target -->
+	<target name="build-service" depends="generate-artifacts, generate-wadl">
+
+	</target>
+</project>

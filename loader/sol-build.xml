@@ -6,10 +6,10 @@
 	</description>
 
 	<!-- Project directory -->
-	<property name="root.location" location="." />
-	<property name="dp2.dir" location="X:\OneDrive\Ingegneria\Turin\Distributed programming II\lib-dp2" />
+	<property name="basedir" location="." />
 	<!-- TODO set it to /opt/dp2/shared -->
-	<property name="gen.dir" location="${root.location}/gen-src" />
+	<property name="dp2.dir" location="X:\OneDrive\Ingegneria\Turin\Distributed programming II\lib-dp2" />
+	<property name="gen.dir" location="${basedir}/gen-src" />
 
 	<!-- WADL location -->
 	<property name="application.name" value="Neo4JSimpleXML" />
@@ -32,10 +32,13 @@
 				autoSchemaPackage="false" 
 				target="${gen.dir}"
 		>
-			<customizations dir="${root.location}" includes="binding.xjc"/>
+			<customizations dir="${basedir}" includes="binding.xjc"/>
 			<produces dir="${gen.dir}" includes="*.java"/>
-			<depends dir="${root.location}" includes="build.xml"/>
+			<depends dir="${basedir}" includes="build.xml"/>
 		</wjc>
 	</target>
 
+	<target name="build-service" depends="generate-artifacts">
+		<echo message="Building service..."/>
+	</target>
 </project>

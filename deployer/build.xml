@@ -38,10 +38,9 @@
 	<property name="xsd.dir" location="${lab3.location}/xsd" />
 	<!-- The location for documentation files -->
 	<property name="doc.dir" location="${lab3.location}/doc" />
-	<property name="gen.dir" location="${sol3.dir}/service/model" />
 	
 	<!-- The location for extra jar files -->
-    <property name="shared.location" location="X:\OneDrive\Ingegneria\Turin\Distributed programming II"/> <!-- /opt/dp2/shared -->
+	<property name="shared.location" location="X:\OneDrive\Ingegneria\Turin\Distributed programming II"/> <!-- /opt/dp2/shared -->
 	<property name="ext.lib.dir" location="${shared.location}/lib-dp2" /> <!-- ${shared.location}/lib -->
 	
     <!-- The location of the Neo4JSimpleXML web service -->
@@ -49,7 +48,7 @@
 	<property name="Neo4JSimpleXMLWADL" value="${Neo4JSimpleXMLURL}/application.wadl"/>
 
 	<!-- The ant file to be provided for client and service compilation -->
-	<property name="sol.build.file" value="sol_build.xml" />
+	<property name="sol.build.file" value="sol-build.xml" />
 	<property name="sol.build.filepath" location="${lab3.location}/${sol.build.file}" />
 	
 	<!-- Properties for generation of war file -->
@@ -222,12 +221,10 @@
 		<delete dir="${build.dir}" />
 		<delete dir="${gen.tomcat.service.dir}"/>
 		<delete file="${gen.war.dir}/${service.name}.war"/>
-		<delete dir="${gen.dir}"/>
 	</target>
 
 	<!--target for building the final zip containing the solution -->
 	<target name="make-zip" description="Make zip to be submitted">
-		<delete dir="${gen.dir}"/>
 		<zip destfile="${sol.zip}" 
 			basedir="${lab3.location}" 
 			includes="${sol.build.file} custom/* xsd/* doc/* WebContent/**/* ${sol3.dir}/service/**/*.java ${sol3.dir}/client1/**/*.java ${sol3.dir}/client2/**/*.java" />

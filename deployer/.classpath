@@ -1,13 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER">
-		<attributes>
-			<attribute name="owner.project.facets" value="java"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
-	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
+	<classpathentry kind="lib" path="lib-src/javax.ws.rs-api-2.0.1-sources.jar"/>
+	<classpathentry kind="lib" path="lib-src/junit-4.5-sources.jar"/>
 	<classpathentry kind="lib" path="lib/junit-4.5.jar"/>
 	<classpathentry kind="lib" path="lib/lab3.jar"/>
 	<classpathentry kind="lib" path="lib/NFV.jar"/>
@@ -17,8 +13,8 @@
 	<classpathentry kind="lib" path="lib/swagger-jaxrs-1.5.0.jar"/>
 	<classpathentry kind="lib" path="lib/swagger-jersey2-jaxrs-1.5.0.jar"/>
 	<classpathentry kind="lib" path="lib/swagger-models-1.5.0.jar"/>
-	<classpathentry kind="lib" path="lib-src/javax.ws.rs-api-2.0.1-sources.jar"/>
-	<classpathentry kind="lib" path="lib-src/junit-4.5-sources.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
 	<classpathentry kind="lib" path="X:/OneDrive/Ingegneria/Turin/Distributed programming II/lib-dp2/activation-1.1.jar"/>
 	<classpathentry kind="lib" path="X:/OneDrive/Ingegneria/Turin/Distributed programming II/lib-dp2/annotations-2.0.1.jar"/>
 	<classpathentry kind="lib" path="X:/OneDrive/Ingegneria/Turin/Distributed programming II/lib-dp2/ant-1.6.5.jar"/>
@@ -85,5 +81,5 @@
 	<classpathentry kind="lib" path="X:/OneDrive/Ingegneria/Turin/Distributed programming II/lib-dp2/wadl-core-1.1.6.jar"/>
 	<classpathentry kind="lib" path="X:/OneDrive/Ingegneria/Turin/Distributed programming II/lib-dp2/wadl-xslt-1.1.6.jar"/>
 	<classpathentry kind="lib" path="X:/OneDrive/Ingegneria/Turin/Distributed programming II/lib-dp2/xsom-20140925.jar"/>
-	<classpathentry kind="output" path="build/classes"/>
+	<classpathentry kind="output" path="build"/>
 </classpath>
