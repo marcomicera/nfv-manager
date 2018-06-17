@@ -5,11 +5,36 @@
 			Script for NFV Assignment 3 solution
 	</description>
 
+	<!-- Service to which this Ant file refers to -->
 	<property name="serviceName" value="NfvDeployer" />
-	<property name="root.location" location="${basedir}" />
-	<property name="gen.dir" location="${basedir}/src" />
+	
+	<!-- Directories -->
+	<property name="src.dir" location="${basedir}/src" />
+	<property name="xsd.dir" location="${basedir}/xsd" />
+	<property name="sol3.dir" location="${src.dir}/it/polito/dp2/NFV/sol3" />
+	<property name="service.dir" location="${sol3.dir}/service" />
+	<property name="client1.dir" location="${sol3.dir}/client1" />
+	<property name="client2.dir" location="${sol3.dir}/client2" />
 	<!-- TODO set it to /opt/dp2/shared -->
-	<property name="dp2.dir" location="${root.location}/../../../lib-dp2" />
+	<property name="dp2.dir" location="${basedir}/../../../lib-dp2" />
+	
+	<!-- The classpath to be used for running the tests -->
+	<path id="test.classpath">
+		<pathelement location="${build.dir}" />
+		<fileset dir="${lib.dir}">
+		    <include name="*.jar" />
+		</fileset>
+		<fileset dir="${ext.lib.dir}">
+		    <include name="*.jar" />
+			<exclude name="ant-*.jar"/>
+		</fileset>
+	</path>
+	
+	<!-- Java compiler settings -->
+	<!-- <property name="debug" value="true" />
+	<property name="debuglevel" value="source,lines,vars" />
+	<property name="target" value="1.8" />
+	<property name="source" value="1.8" /> -->
 	
 	<!-- define wjc task (WADL to JAVA) -->
 	<taskdef name="wjc" classname="org.jvnet.ws.wadl2java.WJCTask">
@@ -21,16 +46,16 @@
 	<target name="generate-artifacts" description="generate Java classes from schema">
 		<exec executable="xjc" failonerror="true" >
 			<arg value="-d" />
-			<arg value="${gen.dir}" />
+			<arg value="${src.dir}" />
 			<arg value="-p" />
 			<arg value="it.polito.dp2.NFV.sol3.service.gen.model" />
-			<arg value="${root.location}/xsd/${serviceName}.xsd" />
+			<arg value="${xsd.dir}/${serviceName}.xsd" />
 		</exec>
 	</target>
 
 	<!-- define generate-wadl generation path -->
-	<target name="generate-wadl">
-		<mkdir dir="${gen.dir}" />
+	<target name="generate-neo4jsimplexml-wadl">
+		<mkdir dir="${src.dir}" />
 		<wjc
 			target="${src.dir}" 
 			autoSchemaPackage="false" 
@@ -39,7 +64,44 @@
 	</target>
 
 	<!-- Service builder target -->
-	<target name="build-service" depends="generate-artifacts, generate-wadl">
-
+	<target name="build-service" depends="generate-artifacts, generate-neo4jsimplexml-wadl">
+		<echo message="Building ${serviceName}..." />
+		<javac destdir="${build.dir}" debug="${debug}" debuglevel="${debuglevel}" source="${source}" target="${target}" includeantruntime="false">
+			<src path="${service.dir}" />
+			<!-- <src path="${src.dir}" /> -->
+			<classpath>
+				<path refid="test.classpath" />
+			</classpath>
+		</javac>
+		<echo message="${serviceName} built." />
+	</target>
+	
+	<target name="build-client">
+		<antcall target="build-client1" />
+		<antcall target="build-client2" />
+	</target>
+	
+	<target name="build-client1">
+		<echo>Building client 1...</echo>
+		<javac destdir="${build.dir}" debug="${debug}" debuglevel="${debuglevel}" source="${source}" target="${target}" includeantruntime="false">
+			<src path="${client1.dir}" />
+			<!-- <src path="${src.dir}" /> -->
+			<classpath>
+				<path refid="sol.classpath" />
+			</classpath>
+		</javac>
+		<echo>Done.</echo>
+	</target>
+	
+	<target name="build-client2">
+		<echo>Building client 2...</echo>
+		<javac destdir="${build.dir}" debug="${debug}" debuglevel="${debuglevel}" source="${source}" target="${target}" includeantruntime="false">
+			<src path="${client2.dir}" />
+			<!-- <src path="${src.dir}" /> -->
+			<classpath>
+				<path refid="sol.classpath" />
+			</classpath>
+		</javac>
+		<echo>Done.</echo>
 	</target>
 </project>
