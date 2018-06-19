@@ -1,7 +1,9 @@
 package it.polito.dp2.NFV.sol3.service;
 
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -47,7 +49,7 @@ public class NfvDeployerDatabase {
 	 * NFV data
 	 */
 	private static CatalogType catalog = new CatalogType();
-	private static HostsType hosts = new HostsType();
+	private static Map<String, HostType> hosts = new HashMap<>();
 	private static ChannelsType channels = new ChannelsType();
 
 	/**
@@ -69,33 +71,33 @@ public class NfvDeployerDatabase {
 			
 			// Downloading the database
 			downloadDatabase();
-			
+
 			// Setting the database download status flag
 			databaseAlreadyLoaded = true;
 		}
 	}
-	
+
 	/**
-	 * It retrieves the whole database content, 
-	 * storing it into this class' private fields.
+	 * It retrieves the whole database content, storing it into this class' private
+	 * fields.
 	 */
 	private static void downloadDatabase() {
 		// Downloading catalog and IN data
 		dowloadCatalog();
 		downloadNetwork();
 	}
-	
+
 	/**
 	 * It deploys the Nffg0 (which is always among the ones returned by NfvReader)
 	 */
 	private static void deployNffg0() {
 		// Retrieving data about Nffg0
 		NffgReader retrievedNffg0 = monitor.getNffg("Nffg0");
-		
+
 		// Nffg0 JAXB annotated class to be deployed
 		NffgType newNffg0 = new NffgType();
 		newNffg0.setId("Nffg0");
-		
+
 		// Setting the Nffg0 JAXB annotated class' deploy time
 		GregorianCalendar gregorianDeployTime = new GregorianCalendar();
 		gregorianDeployTime.setTime(retrievedNffg0.getDeployTime().getTime());
@@ -184,14 +186,9 @@ public class NfvDeployerDatabase {
 		// Retrieving hosts information
 		Set<HostReader> retrievedHosts = monitor.getHosts();
 		
-		// The host list contained in the local hosts object
-		List<HostType> hostList = hosts.getHost();
-		
-		// Adding retrieved hosts in the local hosts object
-		for(HostReader host: retrievedHosts) {
-			// Adding the temporary host object to the local hosts object
-			hostList.add(getHost(host));
-		}
+		// Adding retrieved hosts in the local hosts map
+		for(HostReader host: retrievedHosts)
+			hosts.put(host.getName(), getHost(host));
 	}
 	
 	/**
@@ -254,7 +251,14 @@ public class NfvDeployerDatabase {
 	}
 
 	public static HostsType getHosts() {
-		return hosts;
+		HostsType hostsResult = new HostsType();
+		hostsResult.getHost().addAll(hosts.values());
+		
+		return hostsResult;
+	}
+	
+	public static HostType getHost(String id) {
+		return hosts.get(id);
 	}
 	
 	public static ChannelsType getChannels() {
