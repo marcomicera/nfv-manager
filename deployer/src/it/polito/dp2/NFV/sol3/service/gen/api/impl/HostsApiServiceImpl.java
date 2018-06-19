@@ -20,7 +20,7 @@ public class HostsApiServiceImpl extends HostsApiService {
 
 		// If no host object has been found
 		if (retrievedHost == null) {
-			// Returning a NOT_FOUND reponse
+			// Returning a NOT_FOUND response
 			return Response.status(Status.NOT_FOUND)
 					.entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "No host found with ID " + hostId))
 					.build();
@@ -29,10 +29,7 @@ public class HostsApiServiceImpl extends HostsApiService {
 		// Returning the corresponding host object
 		return Response.ok().entity(
 				// XmlRootObject wrapper
-				new ObjectFactory().createHost(
-						// Retrieving data from the NFV database
-						NfvDeployerDatabase.getHost(hostId)))
-				.build();
+				new ObjectFactory().createHost(retrievedHost)).build();
 	}
 
 	@Override

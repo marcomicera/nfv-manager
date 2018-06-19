@@ -50,7 +50,7 @@ public class NfvDeployerDatabase {
 	 */
 	private static CatalogType catalog = new CatalogType();
 	private static Map<String, HostType> hosts = new HashMap<>();
-	private static ChannelsType channels = new ChannelsType();
+	private static Map<MyHostPair, ChannelType> channels = new HashMap<>();
 
 	/**
 	 * It initializes the NFV database, by first loading the Nffg0
@@ -199,9 +199,6 @@ public class NfvDeployerDatabase {
 		// Retrieving hosts information
 		Set<HostReader> retrievedHosts = monitor.getHosts();
 		
-		// The channel list contained in the local channels object 
-		List<ChannelType> channelList = channels.getChannel();
-		
 		// For each host pair
 		 for(HostReader host1: retrievedHosts) {
 			 for(HostReader host2: retrievedHosts) {
@@ -219,9 +216,12 @@ public class NfvDeployerDatabase {
 				 
 				 /*
 				  * Adding the temporary channel object to the
-				  * local channels object
+				  * local channels map
 				  */
-				 channelList.add(tempChannel);
+				 channels.put(
+					 new MyHostPair(host1, host2),
+					 tempChannel
+				 );
 			 }
 		 }
 	}
@@ -262,6 +262,13 @@ public class NfvDeployerDatabase {
 	}
 	
 	public static ChannelsType getChannels() {
-		return channels;
+		ChannelsType channelsResult = new ChannelsType();
+		channelsResult.getChannel().addAll(channels.values());
+		
+		return channelsResult;
+	}
+	
+	public static ChannelType getChannel(String host1, String host2) {
+		return channels.get(new MyHostPair(host1, host2));
 	}
 }
