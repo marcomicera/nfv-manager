@@ -8,6 +8,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
+import it.polito.dp2.NFV.lab3.ServiceException;
+import it.polito.dp2.NFV.sol3.service.gen.RestApplication;
 import it.polito.dp2.NFV.sol3.service.gen.api.factories.ChannelsApiServiceFactory;
 import it.polito.dp2.NFV.sol3.service.gen.model.ChannelType;
 import it.polito.dp2.NFV.sol3.service.gen.model.ChannelsType;
@@ -15,12 +17,17 @@ import it.polito.dp2.NFV.sol3.service.gen.model.ChannelsType;
 @Path("/channels")
 
 @io.swagger.annotations.Api(description = "the channels API")
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaResteasyServerCodegen", date = "2018-06-13T16:17:44.690Z")
-public class ChannelsApi {
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaResteasyServerCodegen", date = "2018-06-18T15:27:35.051Z")
+public class ChannelsApi extends RestApplication {
 	private final ChannelsApiService delegate = ChannelsApiServiceFactory.getChannelsApi();
+
+	public ChannelsApi() throws ServiceException {
+		super();
+	}
 
 	@GET
 	@Path("/{source_host_id}/{destination_host_id}")
+
 	@Produces({ "application/xml" })
 	@io.swagger.annotations.ApiOperation(value = "retrieves a channel between two specified hosts", notes = "Retrieves a single physical channel given two physical hosts specified in the resource path", response = ChannelType.class, tags = {
 			"channels", })
@@ -35,6 +42,7 @@ public class ChannelsApi {
 	}
 
 	@GET
+
 	@Produces({ "application/xml" })
 	@io.swagger.annotations.ApiOperation(value = "retrievs all physical channels", notes = "Retrieves a set containing all physical channels connecting physical IN hosts", response = ChannelsType.class, tags = {
 			"channels", })
