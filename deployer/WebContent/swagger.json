@@ -164,7 +164,7 @@
           }
         }
       },
-      "put" : {
+      "post" : {
         "tags" : [ "nffgs" ],
         "summary" : "deploys a NF-FG",
         "operationId" : "deployNffg",
@@ -181,7 +181,7 @@
         } ],
         "responses" : {
           "204" : {
-            "description" : "No content (nffg added successfully)"
+            "description" : "Nffg added successfully"
           },
           "400" : {
             "description" : "Bad request. The XML NF-FG object contained in the HTTP body was not valid."
@@ -241,7 +241,7 @@
       }
     },
     "/nffgs/{nffg_id}/links" : {
-      "put" : {
+      "post" : {
         "tags" : [ "nffgs" ],
         "summary" : "adds a single link to the NF-FG",
         "operationId" : "addLink",
@@ -270,7 +270,7 @@
         } ],
         "responses" : {
           "204" : {
-            "description" : "No content (link added successfully)"
+            "description" : "Link added successfully"
           },
           "403" : {
             "description" : "Forbidden (when overwrite = false, hence the link has not been overwritten)"
@@ -336,7 +336,7 @@
           }
         }
       },
-      "put" : {
+      "post" : {
         "tags" : [ "nffgs" ],
         "summary" : "adds a single node to the NF-FG",
         "operationId" : "addNode",
@@ -359,7 +359,7 @@
         } ],
         "responses" : {
           "204" : {
-            "description" : "No content (node added successfully)"
+            "description" : "Node added successfully"
           },
           "403" : {
             "description" : "Forbidden (allocation constraints not satisfied)"
