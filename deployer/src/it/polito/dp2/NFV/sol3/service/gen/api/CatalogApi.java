@@ -24,7 +24,6 @@ public class CatalogApi extends RestApplication {
 	}
 
 	@GET
-	
 	@Produces({ "application/xml" })
 	@io.swagger.annotations.ApiOperation(value = "retrieves the entire catalog of functional types", notes = "Retrieves a set containing all Virtual Network Function (VNF) type objects", response = CatalogType.class, tags = {
 			"catalog", })

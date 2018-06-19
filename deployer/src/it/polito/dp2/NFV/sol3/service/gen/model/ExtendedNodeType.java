@@ -1,14 +1,14 @@
 package it.polito.dp2.NFV.sol3.service.gen.model;
 
-import java.util.Objects;
 import java.util.ArrayList;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import it.polito.dp2.NFV.sol3.service.gen.model.HostType;
-import it.polito.dp2.NFV.sol3.service.gen.model.LinkType;
 import java.util.List;
-import javax.validation.constraints.*;
-import io.swagger.annotations.*;
+import java.util.Objects;
+
+import javax.validation.constraints.NotNull;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import io.swagger.annotations.ApiModelProperty;
 
 
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaResteasyServerCodegen", date = "2018-06-18T15:27:35.051Z")

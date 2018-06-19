@@ -27,7 +27,6 @@ public class ChannelsApi extends RestApplication {
 
 	@GET
 	@Path("/{source_host_id}/{destination_host_id}")
-
 	@Produces({ "application/xml" })
 	@io.swagger.annotations.ApiOperation(value = "retrieves a channel between two specified hosts", notes = "Retrieves a single physical channel given two physical hosts specified in the resource path", response = ChannelType.class, tags = {
 			"channels", })
@@ -42,7 +41,6 @@ public class ChannelsApi extends RestApplication {
 	}
 
 	@GET
-
 	@Produces({ "application/xml" })
 	@io.swagger.annotations.ApiOperation(value = "retrievs all physical channels", notes = "Retrieves a set containing all physical channels connecting physical IN hosts", response = ChannelsType.class, tags = {
 			"channels", })

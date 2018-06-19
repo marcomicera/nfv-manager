@@ -1,12 +1,7 @@
 package it.polito.dp2.NFV.sol3.service.gen.model;
 
+import java.util.ArrayList;
 import java.util.Objects;
-import java.util.ArrayList;
-import it.polito.dp2.NFV.sol3.service.gen.model.ExtendedNodeType;
-import java.util.ArrayList;
-import java.util.List;
-import javax.validation.constraints.*;
-import io.swagger.annotations.*;
 
 
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaResteasyServerCodegen", date = "2018-06-18T15:27:35.051Z")

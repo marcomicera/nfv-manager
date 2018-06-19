@@ -20,11 +20,11 @@ public class HostsApiServiceImpl extends HostsApiService {
 	@Override
 	public Response getHosts(SecurityContext securityContext) throws NotFoundException {
 		return Response.ok().entity(
-				// XmlRootObject wrapper
-				new ObjectFactory().createHosts(
-					// Retrieving data from the NFV database
-					NfvDeployerDatabase.getHosts()
-				)
-			).build();
+			// XmlRootObject wrapper
+			new ObjectFactory().createHosts(
+				// Retrieving data from the NFV database
+				NfvDeployerDatabase.getHosts()
+			)
+		).build();
 	}
 }
