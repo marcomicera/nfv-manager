@@ -4,7 +4,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.SecurityContext;
 
-import it.polito.dp2.NFV.sol3.service.NfvDeployerDatabase;
+import it.polito.dp2.NFV.sol3.service.database.NfvDatabase;
 import it.polito.dp2.NFV.sol3.service.gen.api.ApiResponseMessage;
 import it.polito.dp2.NFV.sol3.service.gen.api.ChannelsApiService;
 import it.polito.dp2.NFV.sol3.service.gen.api.NotFoundException;
@@ -17,7 +17,7 @@ public class ChannelsApiServiceImpl extends ChannelsApiService {
 	public Response getChannel(String sourceHostId, String destinationHostId, SecurityContext securityContext)
 			throws NotFoundException {
 		// Retrieving the desired channel object
-		ChannelType retrievedChannel = NfvDeployerDatabase.getChannel(sourceHostId, destinationHostId);
+		ChannelType retrievedChannel = NfvDatabase.getChannel(sourceHostId, destinationHostId);
 
 		// If no channel object has been found
 		if (retrievedChannel == null) {
@@ -38,7 +38,7 @@ public class ChannelsApiServiceImpl extends ChannelsApiService {
 				// XmlRootObject wrapper
 				new ObjectFactory().createChannels(
 						// Retrieving data from the NFV database
-						NfvDeployerDatabase.getChannels()))
+						NfvDatabase.getChannels()))
 				.build();
 	}
 }

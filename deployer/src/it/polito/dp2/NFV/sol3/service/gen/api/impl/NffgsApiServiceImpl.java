@@ -4,13 +4,22 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.SecurityContext;
 
+import com.sun.jersey.api.client.ClientResponse;
+
 import it.polito.dp2.NFV.sol3.service.NfvValidationProvider;
+import it.polito.dp2.NFV.sol3.service.database.NffgManager;
+import it.polito.dp2.NFV.sol3.service.database.NodeManager;
 import it.polito.dp2.NFV.sol3.service.gen.api.ApiResponseMessage;
 import it.polito.dp2.NFV.sol3.service.gen.api.NffgsApiService;
 import it.polito.dp2.NFV.sol3.service.gen.api.NotFoundException;
 import it.polito.dp2.NFV.sol3.service.gen.model.LinkType;
 import it.polito.dp2.NFV.sol3.service.gen.model.NffgType;
 import it.polito.dp2.NFV.sol3.service.gen.model.NodeType;
+import it.polito.dp2.NFV.sol3.service.neo4j.Labels;
+import it.polito.dp2.NFV.sol3.service.neo4j.Localhost_Neo4JSimpleXMLWebapi;
+import it.polito.dp2.NFV.sol3.service.neo4j.Node;
+import it.polito.dp2.NFV.sol3.service.neo4j.Properties;
+import it.polito.dp2.NFV.sol3.service.neo4j.Property;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaResteasyServerCodegen", date = "2018-06-18T15:27:35.051Z")
 public class NffgsApiServiceImpl extends NffgsApiService {
@@ -23,8 +32,14 @@ public class NffgsApiServiceImpl extends NffgsApiService {
 
 	@Override
 	public Response addNode(String nffgId, NodeType node, SecurityContext securityContext) throws NotFoundException {
-		// do some magic!
-		return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "magic!")).build();
+		// TODO adding checks
+		
+		// Deploying the node
+		NodeManager.addNode(nffgId, node);
+
+		// Returning a CREATED response
+		return Response.status(Status.CREATED)
+				.entity(new ApiResponseMessage(ApiResponseMessage.OK, "Node added successfully")).build();
 	}
 
 	@Override
@@ -47,9 +62,9 @@ public class NffgsApiServiceImpl extends NffgsApiService {
 			return Response.status(Status.BAD_REQUEST)
 					.entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "NF-FG object is invalid")).build();
 		}
-
-		// Deployment
-		// ...
+		
+		// Deploying the NF-FG object
+		NffgManager.deployNffg(nffg);
 
 		return Response.ok().entity(new ApiResponseMessage(ApiResponseMessage.OK, "Nffg added successfully")).build();
 	}

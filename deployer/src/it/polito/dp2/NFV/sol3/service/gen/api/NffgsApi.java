@@ -42,7 +42,9 @@ public class NffgsApi extends RestApplication {
 	@io.swagger.annotations.ApiOperation(value = "adds a single link to the NF-FG", notes = "Adds a single link in an already deployed NF-FG (the client must be able to specify what should happen if the link is already present, i.e. whether the link information should be overwritten or an error should be returned).", response = Void.class, tags = {
 			"nffgs", })
 	@io.swagger.annotations.ApiResponses(value = {
-			@io.swagger.annotations.ApiResponse(code = 204, message = "No content (link added successfully)", response = Void.class),
+			@io.swagger.annotations.ApiResponse(code = 204, message = "Link added successfully", response = Void.class),
+
+			@io.swagger.annotations.ApiResponse(code = 400, message = "Bad request. The XML link object contained in the HTTP body was not valid.", response = Void.class),
 
 			@io.swagger.annotations.ApiResponse(code = 403, message = "Forbidden (when overwrite = false, hence the link has not been overwritten)", response = Void.class),
 
@@ -60,7 +62,9 @@ public class NffgsApi extends RestApplication {
 	@io.swagger.annotations.ApiOperation(value = "adds a single node to the NF-FG", notes = "Adds single node in an already deployed NF-FG (it is added without links and it is also allocated on a host; if allocation is not possible, the addition of the node fails and nothing is added).", response = Void.class, tags = {
 			"nffgs", })
 	@io.swagger.annotations.ApiResponses(value = {
-			@io.swagger.annotations.ApiResponse(code = 204, message = "No content (node added successfully)", response = Void.class),
+			@io.swagger.annotations.ApiResponse(code = 204, message = "Node added successfully", response = Void.class),
+
+			@io.swagger.annotations.ApiResponse(code = 400, message = "Bad request. The XML node object contained in the HTTP body was not valid.", response = Void.class),
 
 			@io.swagger.annotations.ApiResponse(code = 403, message = "Forbidden (allocation constraints not satisfied)", response = Void.class),
 

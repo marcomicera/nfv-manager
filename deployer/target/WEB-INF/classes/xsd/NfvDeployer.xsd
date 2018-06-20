@@ -1,0 +1,296 @@
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<xsd:element name="Nfv">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="Catalogue"/>
+				<xsd:element ref="HostS"/>
+				<xsd:element ref="NffgS"/>
+				<xsd:element ref="PerfHost" />
+			</xsd:sequence>
+		</xsd:complexType>
+		
+		<xsd:key name="nffg-Key">
+			<xsd:selector xpath="NffgS/Nffg"/>
+			<xsd:field xpath="@name" />
+		</xsd:key>
+		<xsd:key name="node-Key">
+			<xsd:selector xpath="NffgS/Nffg/NodeS/Node"/>
+			<xsd:field xpath="@name" />
+		</xsd:key>
+		<xsd:key name="host-Key">
+			<xsd:selector xpath="HostS/Host"/>
+			<xsd:field xpath="@name" />
+		</xsd:key>
+		<xsd:key name="type-Key">
+			<xsd:selector xpath="Catalogue/Type"/>
+			<xsd:field xpath="@name" />
+		</xsd:key>
+		
+		<xsd:keyref name="host-node" refer="node-Key">
+			<xsd:selector xpath="HostS/Host/HostNodes/Noderef"/>
+			<xsd:field xpath="@name" />
+		</xsd:keyref>		
+		<xsd:keyref name="node-host" refer="host-Key">
+			<xsd:selector xpath="NffgS/Nffg/NodeS/Node"/>
+			<xsd:field xpath="@host" />
+		</xsd:keyref>
+		<!-- <xsd:keyref name="node-link" refer="link-Key">
+			<xsd:selector xpath="nffgs/nffg/nodes/node/links/linkref"/>
+			<xsd:field xpath="@name" />
+		</xsd:keyref> -->
+		<xsd:keyref name="node-nffg" refer="nffg-Key">
+			<xsd:selector xpath="NffgS/Nffg/NodeS/Node"/>
+			<xsd:field xpath="@nffg" />
+		</xsd:keyref>
+		<xsd:keyref name="node-type" refer="type-Key">
+			<xsd:selector xpath="NffgS/Nffg/NodeS/Node"/>
+			<xsd:field xpath="@type" />
+		</xsd:keyref>
+		<xsd:keyref name="link-source" refer="node-Key">
+			<xsd:selector xpath="NffgS/Nffg/LinkS/Link"/>
+			<xsd:field xpath="@source" />
+		</xsd:keyref>
+		<xsd:keyref name="link-dest" refer="node-Key">
+			<xsd:selector xpath="NffgS/Nffg/LinkS/Link"/>
+			<xsd:field xpath="@dest" />
+		</xsd:keyref>
+		
+		<xsd:keyref name="perf-source" refer="host-Key">
+			<xsd:selector xpath="PerfHost/perfhostS"/>
+			<xsd:field xpath="@name" />
+		</xsd:keyref>
+		<xsd:keyref name="perf-dest" refer="host-Key">
+			<xsd:selector xpath="Perfhost/perfhostS/perfhostD"/>
+			<xsd:field xpath="@name" />
+		</xsd:keyref>	
+	</xsd:element>
+	
+	<xsd:element name="ExtendedHost">
+		<xsd:complexType>
+			<xsd:attribute name="freeVNF" type="xsd:string" use="required"/>
+			<xsd:attribute name="freeMem" type="xsd:string" use="required"/>
+			<xsd:attribute name="freeStorage" type="xsd:string" use="required"/>
+			<xsd:attribute name="date" type="xsd:dateTime"/>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="ExtendedNode">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="ReachableHost" minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="ReachableHost">
+		<xsd:complexType>
+			<xsd:attribute name="name" type="xsd:string" use="required"/>
+		</xsd:complexType>
+	</xsd:element>
+	
+	
+	<xsd:element name="Catalogue">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="Type" minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="Type">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="reqMem" type="pos-dec-MB"/>
+				<xsd:element name="reqDisk" type="pos-dec-MB"/>
+				<xsd:element name="VNFType" type="xsd:string"/>
+			</xsd:sequence>
+			<xsd:attribute name="name" type="xsd:string" use="required"/>
+			<xsd:attribute name="id" type="xsd:string"/>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="HostS">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="Host" minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="Host">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="maxVNF" type="xsd:positiveInteger"/>
+				<xsd:element name="aMem" type="pos-dec-MB"/>
+				<xsd:element name="aDisk" type="pos-dec-MB"/>
+				<xsd:sequence>
+					<xsd:element ref="HostNodes"/>
+				</xsd:sequence>
+			</xsd:sequence>
+			<xsd:attribute name="name" type="xsd:string" use="required"/>
+			<xsd:attribute name="id" type="xsd:string"/>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="HostNodes">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="Noderef" minOccurs="0" maxOccurs="unbounded"/>
+				
+			</xsd:sequence>
+		</xsd:complexType>
+		<xsd:unique name="dummy1">
+				<xsd:selector xpath="noderef" />
+				<xsd:field xpath="@name" />			
+		</xsd:unique>
+	</xsd:element>
+	
+	<xsd:element name="Noderef">
+		<xsd:complexType>
+			<xsd:attribute name="name" type="xsd:string" use="required"/>
+			<xsd:attribute name="type" type="xsd:string" use="required"/>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="NffgS">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="Nffg" minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="Nffg">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="LinkS"/>
+				<xsd:element ref="NodeS"/>
+			</xsd:sequence>
+			<xsd:attribute name="name" type="xsd:string"/>
+			<xsd:attribute name="date" type="xsd:dateTime"/>
+			<xsd:attribute name="id" type="xsd:string"/>
+		</xsd:complexType>
+		<xsd:key name="link-Key">
+			<xsd:selector xpath="LinkS/Link" />
+			<xsd:field xpath="@name" />
+		</xsd:key>
+		<xsd:keyref name="node-link" refer="link-Key">
+			<xsd:selector xpath="NodeS/Node/NodeLinks/Linkref"/>
+			<xsd:field xpath="@name" />
+		</xsd:keyref>
+	</xsd:element>
+	
+	
+	<xsd:element name="LinkS">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="Link" minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="Link">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="latency" type="pos-dec-ms" minOccurs="0" maxOccurs="1"/>
+				<xsd:element name="throug" type="pos-dec-Mbps" minOccurs="0" maxOccurs="1"/>
+			</xsd:sequence>
+			<xsd:attribute name="name" type="xsd:string"/>
+			<xsd:attribute name="source" type="xsd:string" use="required"/>
+			<xsd:attribute name="dest" type="xsd:string" use="required"/>
+			<xsd:attribute name="id" type="xsd:string"/>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="NodeS">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="Node" minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="Node">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="NodeLinks"/>
+			</xsd:sequence>
+			<xsd:attribute name="name" type="xsd:string"/>
+			<xsd:attribute name="type" type="xsd:string" use="required"/>
+			<xsd:attribute name="nffg" type="xsd:string" use="required"/>
+			<xsd:attribute name="host" type="xsd:string"/>
+			<xsd:attribute name="id" type="xsd:string"/>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="NodeLinks">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="Linkref" minOccurs="0" maxOccurs="unbounded">
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+		
+	<xsd:element name="Linkref">
+		<xsd:complexType>
+			<xsd:attribute name="name" type="xsd:string" use="required"/>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="PerfHost">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="PerfhostS" minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:element name="PerfhostS">
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="PerfhostD"  minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:sequence>
+			<xsd:attribute name="name" type="xsd:string" use="required"/>
+			<xsd:attribute name="id" type="xsd:string"/>
+		</xsd:complexType>	
+	</xsd:element>
+	
+	<xsd:element name="PerfhostD">
+		<xsd:complexType>
+			<xsd:attribute name="name" type="xsd:string" use="required"/>
+			<xsd:attribute name="latency" type="positive-decimal" use="required"/>
+			<xsd:attribute name="throug" type="positive-decimal" use="required"/>
+		</xsd:complexType>
+	</xsd:element>
+	
+	<xsd:simpleType name="positive-decimal">
+  		<xsd:restriction base="xsd:decimal">
+    		<xsd:minInclusive value="0"/>
+  		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:complexType name="pos-dec-MB">
+		<xsd:simpleContent>
+			<xsd:extension base="positive-decimal">
+				<xsd:attribute name="unit" type="xsd:string" fixed="MB"/>
+			</xsd:extension>
+		</xsd:simpleContent>
+	</xsd:complexType>
+	
+	<xsd:complexType name="pos-dec-Mbps">
+		<xsd:simpleContent>
+			<xsd:extension base="positive-decimal">
+				<xsd:attribute name="unit" type="xsd:string" fixed="Mbps"/>
+			</xsd:extension>
+		</xsd:simpleContent>
+	</xsd:complexType>
+	
+	<xsd:complexType name="pos-dec-ms">
+		<xsd:simpleContent>
+			<xsd:extension base="positive-decimal">
+				<xsd:attribute name="unit" type="xsd:string" fixed="ms"/>
+			</xsd:extension>
+		</xsd:simpleContent>
+	</xsd:complexType>
+</xsd:schema>

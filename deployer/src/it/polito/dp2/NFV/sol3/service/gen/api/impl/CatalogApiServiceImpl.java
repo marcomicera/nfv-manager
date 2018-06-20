@@ -3,7 +3,7 @@ package it.polito.dp2.NFV.sol3.service.gen.api.impl;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 
-import it.polito.dp2.NFV.sol3.service.NfvDeployerDatabase;
+import it.polito.dp2.NFV.sol3.service.database.NfvDatabase;
 import it.polito.dp2.NFV.sol3.service.gen.api.CatalogApiService;
 import it.polito.dp2.NFV.sol3.service.gen.api.NotFoundException;
 import it.polito.dp2.NFV.sol3.service.gen.model.ObjectFactory;
@@ -16,7 +16,7 @@ public class CatalogApiServiceImpl extends CatalogApiService {
 			// XmlRootObject wrapper
 			new ObjectFactory().createCatalog(
 				// Retrieving data from the NFV database
-				NfvDeployerDatabase.getCatalog()
+				NfvDatabase.getCatalog()
 			)
 		).build();
 	}

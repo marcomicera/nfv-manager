@@ -6,14 +6,14 @@ import javax.ws.rs.core.Application;
 import it.polito.dp2.NFV.FactoryConfigurationError;
 import it.polito.dp2.NFV.NfvReaderException;
 import it.polito.dp2.NFV.lab3.ServiceException;
-import it.polito.dp2.NFV.sol3.service.NfvDeployerDatabase;
+import it.polito.dp2.NFV.sol3.service.database.NfvDatabase;
 
 @ApplicationPath("/rest")
 public class RestApplication extends Application {
 	public RestApplication() throws ServiceException {
 		try {
 			// Initializing the NFV database
-			NfvDeployerDatabase.init();
+			NfvDatabase.init();
 		} catch (NfvReaderException | FactoryConfigurationError e) {
 			throw new ServiceException("Could not load initial NFV data.");
 		}
