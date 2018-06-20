@@ -272,6 +272,9 @@
           "204" : {
             "description" : "Link added successfully"
           },
+          "400" : {
+            "description" : "Bad request. The XML link object contained in the HTTP body was not valid."
+          },
           "403" : {
             "description" : "Forbidden (when overwrite = false, hence the link has not been overwritten)"
           },
@@ -360,6 +363,9 @@
         "responses" : {
           "204" : {
             "description" : "Node added successfully"
+          },
+          "400" : {
+            "description" : "Bad request. The XML node object contained in the HTTP body was not valid."
           },
           "403" : {
             "description" : "Forbidden (allocation constraints not satisfied)"
