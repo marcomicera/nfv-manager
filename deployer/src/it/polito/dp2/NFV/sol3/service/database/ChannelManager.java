@@ -1,8 +1,8 @@
 package it.polito.dp2.NFV.sol3.service.database;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import it.polito.dp2.NFV.ConnectionPerformanceReader;
 import it.polito.dp2.NFV.HostReader;
@@ -12,16 +12,16 @@ import it.polito.dp2.NFV.sol3.service.gen.model.ChannelType;
 
 public class ChannelManager {
 	/**
-	 * Channel data
+	 * Channels data
 	 */
-	protected static Map<MyHostPair, ChannelType> channels = new HashMap<>();
+	private static Map<MyHostPair, ChannelType> channels = new ConcurrentHashMap<>();
 	
 	/**
 	 * It retrieves data about the physicals channels in the
 	 * Infrastructure Network.
 	 * @param monitor	NfvReader interface through which data must be retrieved.
 	 */
-	protected static void downloadChannels(NfvReader monitor) {
+	protected synchronized static void download(NfvReader monitor) {
 		// Retrieving hosts information
 		Set<HostReader> retrievedHosts = monitor.getHosts();
 		
@@ -51,4 +51,9 @@ public class ChannelManager {
 			 }
 		 }
 	}
+	
+	public static synchronized Map<MyHostPair, ChannelType> getChannels() {
+		return channels;
+	}
+	
 }
