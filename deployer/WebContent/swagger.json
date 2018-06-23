@@ -478,8 +478,14 @@
               "$ref" : "#/definitions/ExtendedNodesType"
             }
           },
+          "400" : {
+            "description" : "Bad request. Invalid parameters."
+          },
           "404" : {
-            "description" : "(NF-FG) Not found"
+            "description" : "(NF-FG or node) Not found"
+          },
+          "500" : {
+            "description" : "Internal server error"
           }
         }
       }
