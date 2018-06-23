@@ -161,7 +161,7 @@ public class NffgsApi extends RestApplication {
 	@io.swagger.annotations.ApiResponses(value = {
 			@io.swagger.annotations.ApiResponse(code = 200, message = "OK", response = NffgsType.class),
 
-			@io.swagger.annotations.ApiResponse(code = 404, message = "(Channel) Not found", response = Void.class) })
+			@io.swagger.annotations.ApiResponse(code = 400, message = "Bad request. Invalid date format.", response = Void.class) })
 	public Response getNffgs(@QueryParam("since") String since, @Context SecurityContext securityContext)
 			throws NotFoundException {
 		return delegate.getNffgs(since, securityContext);

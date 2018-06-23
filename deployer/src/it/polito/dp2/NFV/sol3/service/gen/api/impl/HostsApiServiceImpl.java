@@ -4,7 +4,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.SecurityContext;
 
-import it.polito.dp2.NFV.sol3.service.database.NfvDatabase;
+import it.polito.dp2.NFV.sol3.service.database.HostManager;
 import it.polito.dp2.NFV.sol3.service.gen.api.ApiResponseMessage;
 import it.polito.dp2.NFV.sol3.service.gen.api.HostsApiService;
 import it.polito.dp2.NFV.sol3.service.gen.api.NotFoundException;
@@ -16,7 +16,7 @@ public class HostsApiServiceImpl extends HostsApiService {
 	@Override
 	public Response getHost(String hostId, SecurityContext securityContext) throws NotFoundException {
 		// Retrieving the desired host object
-		HostType retrievedHost = NfvDatabase.getHost(hostId);
+		HostType retrievedHost = HostManager.getHost(hostId);
 
 		// If no host object has been found
 		if (retrievedHost == null) {
@@ -38,7 +38,7 @@ public class HostsApiServiceImpl extends HostsApiService {
 				// XmlRootObject wrapper
 				new ObjectFactory().createHosts(
 						// Retrieving data from the NFV database
-						NfvDatabase.getHosts()))
+						HostManager.getHosts()))
 				.build();
 	}
 }

@@ -1,13 +1,20 @@
 package it.polito.dp2.NFV.sol3.service.database;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NavigableSet;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import it.polito.dp2.NFV.LinkReader;
 import it.polito.dp2.NFV.NffgReader;
@@ -19,14 +26,53 @@ import it.polito.dp2.NFV.lab3.UnknownEntityException;
 import it.polito.dp2.NFV.sol3.service.NfvValidationProvider;
 import it.polito.dp2.NFV.sol3.service.gen.model.LinkType;
 import it.polito.dp2.NFV.sol3.service.gen.model.NffgType;
+import it.polito.dp2.NFV.sol3.service.gen.model.NffgsType;
 import it.polito.dp2.NFV.sol3.service.gen.model.NodeType;
 import it.polito.dp2.NFV.sol3.service.gen.model.NodesType;
 
 public class NffgManager {
+	private static final String DATE_FORMAT = "yyyy-MM-dd hh:mm:ss";
+
 	/**
 	 * NF-FGs data
 	 */
 	private static Map<String, NffgType> nffgs = new ConcurrentHashMap<>();
+
+	/**
+	 * Ordered NF-FG IDs by their deployment time
+	 */
+	private static NavigableSet<NffgDeploymentInfo> orderedNffgIds = new ConcurrentSkipListSet<>(
+			new Comparator<NffgDeploymentInfo>() {
+				@Override
+				public int compare(NffgDeploymentInfo o1, NffgDeploymentInfo o2) {
+					return o1.deployTime.compare(o2.deployTime);
+				}
+			});
+
+	/**
+	 * Nested class used to store NF-FG IDs ordered by their deploy time.
+	 */
+	static class NffgDeploymentInfo {
+		/**
+		 * NF-FG deploy time
+		 */
+		private XMLGregorianCalendar deployTime;
+
+		/**
+		 * NF-FG ID
+		 */
+		private String nffgId;
+
+		public NffgDeploymentInfo(XMLGregorianCalendar deployTime, String nffgId) {
+			this.deployTime = deployTime;
+			this.nffgId = nffgId;
+		}
+
+		@Override
+		public String toString() {
+			return "<" + nffgId + ", " + deployTime + ">";
+		}
+	}
 
 	/**
 	 * It downloads a specific NF-FG.
@@ -159,8 +205,21 @@ public class NffgManager {
 			throw new AllocationException("NF-FG " + nffg.getId() + " already had some links deployed.");
 		}
 
-		// Setting the NF-FG deploy time
-		nffgs.get(nffg.getId()).setDeployTime(dataTypeFactory.newXMLGregorianCalendar(new GregorianCalendar()));
+		/*
+		 * Setting the NF-FG deploy time
+		 */
+		
+		// If the NF-FG already has a deploy time
+		if(nffg.getDeployTime() != null) {
+			// Set its deploy time
+			nffgs.get(nffg.getId()).setDeployTime(nffg.getDeployTime());
+			orderedNffgIds.add(new NffgDeploymentInfo(nffg.getDeployTime(), nffg.getId()));
+		} else {
+			// Set the deploytime equals to the current time
+			XMLGregorianCalendar deployTime = dataTypeFactory.newXMLGregorianCalendar(new GregorianCalendar());
+			nffgs.get(nffg.getId()).setDeployTime(deployTime);
+			orderedNffgIds.add(new NffgDeploymentInfo(deployTime, nffg.getId()));
+		}
 	}
 
 	/**
@@ -243,7 +302,83 @@ public class NffgManager {
 		return (new NfvValidationProvider<NffgType>()).isReadable(nffg.getClass(), null, null, null);
 	}
 
+	public static synchronized NffgType getNffg(String nffgId) {
+		return nffgs.get(nffgId);
+	}
+
 	public static synchronized Map<String, NffgType> getNffgs() {
 		return nffgs;
+	}
+
+	/**
+	 * Returns a sub-set of NF-FG object deployed since {@code since}.
+	 * 
+	 * @param since
+	 *            the time after which deployed NF-FGs must be returned.
+	 * @return a sub-set of NF-FG object deployed after the specified time.
+	 * @throws ParseException
+	 *             if the date passed as argument does not respect the defined date
+	 *             format.
+	 */
+	public static synchronized NffgsType getNffgs(String since) throws ParseException {
+		// If the argument is null, all NF-FGs must be returned
+		if (since == null) {
+			// Converting the NF-FGs map into a list
+			NffgsType result = new NffgsType();
+			List<NffgType> resultList = result.getNffg();
+			resultList.addAll(nffgs.values());
+
+			// Return all NF-FGs
+			return result;
+		}
+
+		// Converting the date to the desired format
+		XMLGregorianCalendar gregorianCalendar = null;
+		try {
+			gregorianCalendar = convertDate(since);
+		} catch (ParseException | DatatypeConfigurationException e) {
+			throw new ParseException("Invalid date format. Expected: " + DATE_FORMAT,
+					(e instanceof ParseException) ? ((ParseException) e).getErrorOffset() : null);
+		}
+
+		// NF-FG IDs deployed after the specified date
+		NavigableSet<NffgDeploymentInfo> resultIds = orderedNffgIds
+				.tailSet(new NffgDeploymentInfo(gregorianCalendar, null), true);
+
+		// Building the result list
+		NffgsType result = new NffgsType();
+		List<NffgType> resultList = result.getNffg();
+		for (NffgDeploymentInfo nffgDeploymentInfo : resultIds) {
+			// Retrieving the corresponding NF-FG object
+			NffgType nffg = getNffg(nffgDeploymentInfo.nffgId);
+
+			// If the NF-FG object exists
+			if (nffg != null)
+				// Including it in the result map
+				resultList.add(nffg);
+		}
+
+		// Returning the sub-set of NF-FGs deployed after the specified time
+		return result;
+	}
+
+	/**
+	 * Converts a String representing a date in a XMLGregorianCalendar object.
+	 * 
+	 * @param date
+	 *            the date String to be converted.
+	 * @return the XMLGregorianCalendar date object.
+	 * @throws ParseException
+	 *             if the date passed as argument does not respect the defined date
+	 *             format.
+	 * @throws DatatypeConfigurationException
+	 *             if a data factory implementation is not available or cannot be
+	 *             instantiated.
+	 */
+	private static XMLGregorianCalendar convertDate(String date) throws ParseException, DatatypeConfigurationException {
+		Date parsedDate = new SimpleDateFormat(DATE_FORMAT).parse(date);
+		GregorianCalendar gregorianCalendar = new GregorianCalendar();
+		gregorianCalendar.setTime(parsedDate);
+		return DatatypeFactory.newInstance().newXMLGregorianCalendar(gregorianCalendar);
 	}
 }

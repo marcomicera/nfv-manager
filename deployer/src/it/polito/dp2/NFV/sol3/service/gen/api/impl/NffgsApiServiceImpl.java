@@ -1,5 +1,7 @@
 package it.polito.dp2.NFV.sol3.service.gen.api.impl;
 
+import java.text.ParseException;
+
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.SecurityContext;
@@ -17,7 +19,9 @@ import it.polito.dp2.NFV.sol3.service.gen.api.NffgsApiService;
 import it.polito.dp2.NFV.sol3.service.gen.api.NotFoundException;
 import it.polito.dp2.NFV.sol3.service.gen.model.LinkType;
 import it.polito.dp2.NFV.sol3.service.gen.model.NffgType;
+import it.polito.dp2.NFV.sol3.service.gen.model.NffgsType;
 import it.polito.dp2.NFV.sol3.service.gen.model.NodeType;
+import it.polito.dp2.NFV.sol3.service.gen.model.ObjectFactory;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaResteasyServerCodegen", date = "2018-06-18T15:27:35.051Z")
 public class NffgsApiServiceImpl extends NffgsApiService {
@@ -102,7 +106,9 @@ public class NffgsApiServiceImpl extends NffgsApiService {
 
 	@Override
 	public Response getExtendedNodes(String nffgId, SecurityContext securityContext) throws NotFoundException {
-		// TODO IMPLEMENT!
+		/*ClientResponse nodeUploadResponse = Localhost_Neo4JSimpleXMLWebapi
+				.data(Localhost_Neo4JSimpleXMLWebapi.createClient(), Localhost_Neo4JSimpleXMLWebapi.BASE_URI)
+				.nodeNodeidReachableNodes(nodeid);*/
 
 		// Returning a NOT_IMPLEMENTED response
 		return Response.status(Status.NOT_IMPLEMENTED)
@@ -111,31 +117,58 @@ public class NffgsApiServiceImpl extends NffgsApiService {
 
 	@Override
 	public Response getNffg(String nffgId, SecurityContext securityContext) throws NotFoundException {
-		// TODO IMPLEMENT!
+		// Retrieving the NF-FG object
+		NffgType retrievedNffg = NffgManager.getNffg(nffgId);
 
-		// Returning a NOT_IMPLEMENTED response
-		return Response.status(Status.NOT_IMPLEMENTED)
-				.entity(new ApiResponseMessage(ApiResponseMessage.OK, "Feature not implemented yet.")).build();
+		// If no NF-FG was found
+		if (retrievedNffg == null)
+			// Replying with a NOT_FOUND response
+			return Response.status(Status.NOT_FOUND)
+					.entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "(NF-FG) Not found")).build();
+		// If an NF-FG object has been found
+		else
+			// Returning a OK response
+			return Response.ok().entity(
+					// XmlRootObject wrapper
+					new ObjectFactory().createNffg(retrievedNffg)).build();
 	}
 
 	@Override
 	public Response getNffgs(String since, SecurityContext securityContext) throws NotFoundException {
-		// TODO since checks
+		// Result
+		NffgsType retrievedNffgs = null;
 
-		// TODO IMPLEMENT!
+		// Retrieving NF-FG objects
+		try {
+			retrievedNffgs = NffgManager.getNffgs(since);
+		} catch (ParseException e) {
+			// Returning a NOT_IMPLEMENTED response
+			return Response.status(Status.BAD_REQUEST)
+					.entity(new ApiResponseMessage(ApiResponseMessage.OK, "Bad request. Invalid date format.")).build();
+		}
 
-		// Returning a NOT_IMPLEMENTED response
-		return Response.status(Status.NOT_IMPLEMENTED)
-				.entity(new ApiResponseMessage(ApiResponseMessage.OK, "Feature not implemented yet.")).build();
+		// If no NF-FG objects have been found
+		if (retrievedNffgs == null)
+			// Return an empty map
+			return Response.ok().entity(
+					// XmlRootObject wrapper
+					new ObjectFactory().createNffgs(new NffgsType())).build();
+
+		// Returning a OK response
+		return Response.ok().entity(
+				// XmlRootObject wrapper
+				new ObjectFactory().createNffgs(retrievedNffgs)).build();
 	}
 
 	@Override
 	public Response getNodes(String nffgId, SecurityContext securityContext) throws NotFoundException {
-		// TODO IMPLEMENT!
-
-		// Returning a NOT_IMPLEMENTED response
-		return Response.status(Status.NOT_IMPLEMENTED)
-				.entity(new ApiResponseMessage(ApiResponseMessage.OK, "Feature not implemented yet.")).build();
+		// Returning a OK response
+		return Response.ok().entity(
+				// XmlRootObject wrapper
+				new ObjectFactory().createNodes(
+						// Retrieving data from the NFV database
+						NodeManager.getNodes()
+				)).build();
 	}
 
 	@Override

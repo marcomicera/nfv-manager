@@ -12,6 +12,7 @@ import it.polito.dp2.NFV.sol3.service.gen.model.HostType;
 import it.polito.dp2.NFV.sol3.service.gen.model.NffgType;
 import it.polito.dp2.NFV.sol3.service.gen.model.NodeRefType;
 import it.polito.dp2.NFV.sol3.service.gen.model.NodeType;
+import it.polito.dp2.NFV.sol3.service.gen.model.NodesType;
 import it.polito.dp2.NFV.sol3.service.neo4j.Labels;
 import it.polito.dp2.NFV.sol3.service.neo4j.Localhost_Neo4JSimpleXMLWebapi;
 import it.polito.dp2.NFV.sol3.service.neo4j.Node;
@@ -225,7 +226,7 @@ public class NodeManager {
 
 		// Adding this new object to the corresponding local map
 		if (isHost) {
-			HostManager.getHosts().put(host.getId(), host);
+			HostManager.getHostsMap().put(host.getId(), host);
 			HostManager.getNeo4jIds().put(host.getId(), neo4jObjectId);
 		} else {
 			nodes.put(node.getId(), node);
@@ -255,7 +256,7 @@ public class NodeManager {
 	}
 
 	private synchronized static boolean hostHasBeenDeployed(String hostId) {
-		return HostManager.getHosts().containsKey(hostId);
+		return HostManager.getHostsMap().containsKey(hostId);
 	}
 
 	/**
@@ -283,8 +284,12 @@ public class NodeManager {
 		return (new NfvValidationProvider<HostType>()).isReadable(host.getClass(), null, null, null);
 	}
 
-	public static synchronized Map<String, NodeType> getNodes() {
-		return nodes;
+	public static synchronized NodesType getNodes() {
+		// Building the result object
+		NodesType result = new NodesType();
+		result.getNode().addAll(nodes.values());
+
+		return result;
 	}
 
 	public static synchronized Map<String, String> getNeo4jIds() {

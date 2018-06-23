@@ -11,6 +11,7 @@ import it.polito.dp2.NFV.NfvReader;
 import it.polito.dp2.NFV.lab3.AllocationException;
 import it.polito.dp2.NFV.lab3.UnknownEntityException;
 import it.polito.dp2.NFV.sol3.service.gen.model.HostType;
+import it.polito.dp2.NFV.sol3.service.gen.model.HostsType;
 import it.polito.dp2.NFV.sol3.service.neo4j.Localhost_Neo4JSimpleXMLWebapi;
 import it.polito.dp2.NFV.sol3.service.neo4j.Relationships.Relationship;
 
@@ -148,7 +149,15 @@ public class HostManager {
 		return hosts.get(hostId);
 	}
 
-	public static synchronized Map<String, HostType> getHosts() {
+	public static synchronized HostsType getHosts() {
+		// Building the result object
+		HostsType result = new HostsType();
+		result.getHost().addAll(hosts.values());
+
+		return result;
+	}
+	
+	protected static synchronized Map<String, HostType> getHostsMap() {
 		return hosts;
 	}
 

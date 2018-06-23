@@ -11,12 +11,7 @@ import it.polito.dp2.NFV.NfvReaderFactory;
 import it.polito.dp2.NFV.lab1.NfvInfo;
 import it.polito.dp2.NFV.lab3.AllocationException;
 import it.polito.dp2.NFV.lab3.UnknownEntityException;
-import it.polito.dp2.NFV.sol3.service.MyHostPair;
-import it.polito.dp2.NFV.sol3.service.gen.model.CatalogType;
-import it.polito.dp2.NFV.sol3.service.gen.model.ChannelType;
-import it.polito.dp2.NFV.sol3.service.gen.model.ChannelsType;
 import it.polito.dp2.NFV.sol3.service.gen.model.HostType;
-import it.polito.dp2.NFV.sol3.service.gen.model.HostsType;
 import it.polito.dp2.NFV.sol3.service.gen.model.NffgType;
 
 public class NfvDatabase {
@@ -88,29 +83,4 @@ public class NfvDatabase {
 		}
 	}
 
-	public static CatalogType getCatalog() {
-		return CatalogManager.getCatalog();
-	}
-
-	public static HostsType getHosts() {
-		HostsType hostsResult = new HostsType();
-		hostsResult.getHost().addAll(HostManager.getHosts().values());
-
-		return hostsResult;
-	}
-
-	public static HostType getHost(String id) {
-		return HostManager.getHost(id);
-	}
-
-	public static ChannelsType getChannels() {
-		ChannelsType channelsResult = new ChannelsType();
-		channelsResult.getChannel().addAll(ChannelManager.getChannels().values());
-
-		return channelsResult;
-	}
-
-	public static ChannelType getChannel(String host1, String host2) {
-		return ChannelManager.getChannels().get(new MyHostPair(host1, host2));
-	}
 }
