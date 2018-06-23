@@ -377,6 +377,37 @@
       }
     },
     "/nffgs/{nffg_id}/nodes/{node_id}" : {
+      "get" : {
+        "tags" : [ "nffgs" ],
+        "summary" : "retrieves a single node object",
+        "operationId" : "getNode",
+        "description" : "Retrieves a single node object having specified the NF-FG ID in which the node belongs to and its ID in the resource path",
+        "produces" : [ "application/xml" ],
+        "parameters" : [ {
+          "name" : "nffg_id",
+          "in" : "path",
+          "required" : true,
+          "type" : "string",
+          "description" : "The NF-FG's ID of which the node belongs to"
+        }, {
+          "name" : "node_id",
+          "in" : "path",
+          "required" : true,
+          "type" : "string",
+          "description" : "The desired node's ID"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "$ref" : "#/definitions/NodeType"
+            }
+          },
+          "404" : {
+            "description" : "(NF-FG or node) Not found"
+          }
+        }
+      },
       "delete" : {
         "tags" : [ "nffgs" ],
         "summary" : "removes a single node",
@@ -408,19 +439,37 @@
         }
       }
     },
-    "/nffgs/{nffg_id}/extendedNodes" : {
+    "/nffgs/{nffg_id}/nodes/{node_id}/reachableNodes" : {
       "get" : {
         "tags" : [ "nffgs" ],
-        "summary" : "retrieves node objects with host reachability informations",
-        "operationId" : "getExtendedNodes",
-        "description" : "Retrieves a set containing extended node objects, each one of those containing a set of host objects representing physical IN hosts that are reachable starting from the node.",
+        "summary" : "get nodes reachable from node",
+        "operationId" : "getReachableNodes",
+        "description" : "Get all nodes with given label reachable from given node via one or more given relationships",
         "produces" : [ "application/xml" ],
         "parameters" : [ {
           "name" : "nffg_id",
           "in" : "path",
           "required" : true,
           "type" : "string",
-          "description" : "The NF-FG's ID of which extended node objects should be obtained."
+          "description" : "The NF-FG's ID of which the node belongs to"
+        }, {
+          "name" : "node_id",
+          "in" : "path",
+          "required" : true,
+          "type" : "string",
+          "description" : "The node's ID of which reachability information must be retrieved"
+        }, {
+          "name" : "relationshipTypes",
+          "in" : "query",
+          "required" : false,
+          "type" : "string",
+          "description" : "List [ “a ‘|’-separated list of relationship types” ]"
+        }, {
+          "name" : "nodeLabel",
+          "in" : "query",
+          "required" : false,
+          "type" : "string",
+          "description" : "List [ “the label of the nodes to be returned” ]"
         } ],
         "responses" : {
           "200" : {
