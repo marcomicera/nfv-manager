@@ -159,8 +159,8 @@
               "$ref" : "#/definitions/NffgsType"
             }
           },
-          "404" : {
-            "description" : "(Channel) Not found"
+          "400" : {
+            "description" : "Bad request. Invalid date format."
           }
         }
       },
