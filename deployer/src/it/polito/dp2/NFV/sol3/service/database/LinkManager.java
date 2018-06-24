@@ -137,13 +137,13 @@ public class LinkManager {
 			throw new AllocationException("Attempting to add link " + link.getId() + " to a non-existing NF-FG.");
 
 		// If the source node does not exist yet
-		if (!NodeManager.nodeHasBeenDeployed(link.getSourceNode()))
+		if (!NodeManager.nodeHasBeenDeployed(nffgId, link.getSourceNode()))
 			// The link cannot be deployed since it must start from a source node
 			throw new AllocationException(
 					"Attempting to add link " + link.getId() + " starting from a non-existing source node.");
 
 		// If the destination node does not exist yet
-		if (!NodeManager.nodeHasBeenDeployed(link.getDestinationNode()))
+		if (!NodeManager.nodeHasBeenDeployed(nffgId, link.getDestinationNode()))
 			// The link cannot be deployed since it must end on a destination node
 			throw new AllocationException(
 					"Attempting to add link " + link.getId() + " ending on a non-existing destination node.");
@@ -161,8 +161,8 @@ public class LinkManager {
 				"Deploying link from " + link.getSourceNode() + " towards " + link.getDestinationNode() + "...");
 
 		// Retrieving this link's source and destination node IDs
-		String sourceNodeId = NodeManager.getNeo4jIds().get(link.getSourceNode());
-		String destinationNodeId = NodeManager.getNeo4jIds().get(link.getDestinationNode());
+		String sourceNodeId = NodeManager.getNeo4jId(nffgId, link.getSourceNode());
+		String destinationNodeId = NodeManager.getNeo4jId(nffgId, link.getDestinationNode());
 
 		// Deploying this link on Neo4J
 		RelationshipManager.deployRelationship(sourceNodeId, destinationNodeId, "ForwardsTo");

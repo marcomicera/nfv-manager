@@ -1,6 +1,9 @@
 package it.polito.dp2.NFV.sol3.service.database;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.sun.jersey.api.client.ClientResponse;
@@ -9,24 +12,27 @@ import it.polito.dp2.NFV.lab3.AllocationException;
 import it.polito.dp2.NFV.lab3.UnknownEntityException;
 import it.polito.dp2.NFV.sol3.service.NfvValidationProvider;
 import it.polito.dp2.NFV.sol3.service.gen.model.HostType;
+import it.polito.dp2.NFV.sol3.service.gen.model.HostsType;
 import it.polito.dp2.NFV.sol3.service.gen.model.NffgType;
 import it.polito.dp2.NFV.sol3.service.gen.model.NodeRefType;
 import it.polito.dp2.NFV.sol3.service.gen.model.NodeType;
 import it.polito.dp2.NFV.sol3.service.gen.model.NodesType;
+import it.polito.dp2.NFV.sol3.service.gen.model.ReachableEntitiesType;
 import it.polito.dp2.NFV.sol3.service.neo4j.Labels;
 import it.polito.dp2.NFV.sol3.service.neo4j.Localhost_Neo4JSimpleXMLWebapi;
 import it.polito.dp2.NFV.sol3.service.neo4j.Node;
+import it.polito.dp2.NFV.sol3.service.neo4j.Nodes;
 import it.polito.dp2.NFV.sol3.service.neo4j.Properties;
 import it.polito.dp2.NFV.sol3.service.neo4j.Property;
 
 public class NodeManager {
 	/**
-	 * Nodes data
+	 * Nodes data. External key: NF-FG ID. Internal key: node ID. Value: node object
 	 */
-	private static Map<String, NodeType> nodes = new ConcurrentHashMap<>();
+	private static Map<String, Map<String, NodeType>> nodes = new ConcurrentHashMap<>();
 
 	/**
-	 * Entity-Neo4J ID mapping
+	 * Entity-Neo4J ID mapping. Key: "nffgId-nodeId". Value: Neo4J node ID.
 	 */
 	private static Map<String, String> neo4jIds = new ConcurrentHashMap<>();
 
@@ -160,7 +166,7 @@ public class NodeManager {
 		}
 
 		// If this object has already been deployed
-		if (hasBeenDeployed(isHost ? host : node))
+		if (hasBeenDeployed(isHost ? host : node, isHost ? null : nffgId))
 			throw new AllocationException(
 					(isHost ? ("Host " + host.getId()) : ("Node " + node.getId())) + " has already been deployed.");
 
@@ -229,8 +235,10 @@ public class NodeManager {
 			HostManager.getHostsMap().put(host.getId(), host);
 			HostManager.getNeo4jIds().put(host.getId(), neo4jObjectId);
 		} else {
-			nodes.put(node.getId(), node);
-			neo4jIds.put(node.getId(), neo4jObjectId);
+			if (!nodes.containsKey(nffgId))
+				nodes.put(nffgId, new HashMap<String, NodeType>());
+			nodes.get(nffgId).put(node.getId(), node);
+			neo4jIds.put(nffgId + "-" + node.getId(), neo4jObjectId);
 		}
 	}
 
@@ -240,19 +248,29 @@ public class NodeManager {
 	 * 
 	 * @param object
 	 *            the node/host to be checked.
+	 * @param nffgId
+	 *            the NF-FG ID on which the host should have been allocated on.
+	 *            Ignored if {@code object} represents a host.
 	 * @return true if already deployed, false otherwise.
 	 */
-	public static boolean hasBeenDeployed(Object object) {
+	public static boolean hasBeenDeployed(Object object, String nffgId) {
 		if (object instanceof NodeType)
-			return nodeHasBeenDeployed(((NodeType) object).getId());
+			return nodeHasBeenDeployed(nffgId, ((NodeType) object).getId());
 		else if (object instanceof HostType)
 			return hostHasBeenDeployed(((HostType) object).getId());
 		else
 			throw new IllegalArgumentException("The argument's typr must be either a NodeType or HostType.");
 	}
 
-	protected synchronized static boolean nodeHasBeenDeployed(String nodeId) {
-		return nodes.containsKey(nodeId);
+	protected synchronized static boolean nodeHasBeenDeployed(String nffgId, String nodeId) {
+		// Retrieving the NF-FG node map
+		Map<String, NodeType> nffgNodes = nodes.get(nffgId);
+
+		// If there is no NF-FG
+		if (nffgNodes == null)
+			return false;
+
+		return nffgNodes.containsKey(nodeId);
 	}
 
 	private synchronized static boolean hostHasBeenDeployed(String hostId) {
@@ -284,15 +302,168 @@ public class NodeManager {
 		return (new NfvValidationProvider<HostType>()).isReadable(host.getClass(), null, null, null);
 	}
 
-	public static synchronized NodesType getNodes() {
+	/**
+	 * Returns a node object belonging to the specified NF-FG.
+	 * 
+	 * @param nffgId
+	 *            the NF-FG ID whose nodes must belong to.
+	 * @param nodeId
+	 *            the node ID of the desired node.
+	 * @return the desired node object.
+	 * @throws UnknownEntityException
+	 *             if the specified NF-FG does not exist.
+	 */
+	public static synchronized NodeType getNode(String nffgId, String nodeId) throws UnknownEntityException {
+		// Retrieving nodes belonging to the specified NF-FG
+		Map<String, NodeType> nffgNodes = nodes.get(nffgId);
+
+		// If the NF-FG has no nodes
+		if (nffgNodes == null)
+			// Throw an exception
+			throw new UnknownEntityException("Trying to retrieve a node from a non-existing NF-FG.");
+
+		return nffgNodes.get(nodeId);
+	}
+
+	/**
+	 * Returns all nodes belonging to the specified NF-FG.
+	 * 
+	 * @param nffgId
+	 *            the NF-FG ID whose nodes must returned.
+	 * @return all nodes belonging to the specified NF-FG.
+	 * @throws UnknownEntityException
+	 *             if the specified NF-FG does not exist.
+	 */
+	public static synchronized NodesType getNodes(String nffgId) throws UnknownEntityException {
+		// Retrieving nodes belonging to the specified NF-FG
+		Map<String, NodeType> nffgNodes = nodes.get(nffgId);
+
+		// If the NF-FG has no nodes
+		if (nffgNodes == null)
+			// Throw an exception
+			throw new UnknownEntityException("Trying to retrieve nodes from a non-existing NF-FG.");
+
 		// Building the result object
 		NodesType result = new NodesType();
-		result.getNode().addAll(nodes.values());
+		result.getNode().addAll(nffgNodes.values());
 
 		return result;
 	}
 
-	public static synchronized Map<String, String> getNeo4jIds() {
-		return neo4jIds;
+	/**
+	 * Returns a Neo4J node ID given its node ID.
+	 * 
+	 * @param nffgId
+	 *            the NF-FG on which the node belongs to.
+	 * @param nodeId
+	 *            the node ID whose Neo4J node ID is of interest.
+	 * @return the Neo4J node ID.
+	 */
+	public static synchronized String getNeo4jId(String nffgId, String nodeId) {
+		return neo4jIds.get(nffgId + "-" + nodeId);
+	}
+
+	/**
+	 * Converts a list of nodes of {@code Nodes} type to a model-compatible object.
+	 * 
+	 * @param nodes
+	 *            nodes to be converted.
+	 * @return nodes model-compatible object.
+	 */
+	public static ReachableEntitiesType toModel(Nodes nodes) {
+		// Result model-compatible object
+		ReachableEntitiesType result = new ReachableEntitiesType();
+
+		// Result object is divided in a node part and in a host part
+		NodesType resultNodes = new NodesType();
+		HostsType resultHosts = new HostsType();
+
+		// Result object lists
+		List<NodeType> resultNodeList = resultNodes.getNode();
+		List<HostType> resultHostList = resultHosts.getHost();
+
+		// For each node to be converted
+		for (it.polito.dp2.NFV.sol3.service.neo4j.Nodes.Node node : nodes.getNode()) {
+			// Retrieving node type
+			String nodeType = node.getLabels().getLabel().get(0);
+
+			// Retrieving node name (ID)
+			String nodeName = null;
+			for (Property property : node.getProperties().getProperty()) {
+				// Searching the "name" property
+				if ("name".compareTo(property.getName()) == 0) {
+					nodeName = property.getValue();
+					break;
+				}
+			}
+
+			// If the node has no name
+			if (nodeName == null || nodeName.isEmpty() || "".compareTo(nodeName) == 0)
+				// Skip this node
+				continue;
+
+			switch (nodeType) {
+			// If the Neo4J node represents a host
+			case "Host":
+				// Add it to the result list
+				resultHostList.add(HostManager.getHost(nodeName));
+
+				break;
+
+			// If the Neo4J node represents a node
+			case "Node":
+				// Retrieving the node's NF-FG
+				String nffgId = getNffgFromNode(nodeName);
+
+				// Add it to the result list
+				try {
+					resultNodeList.add(NodeManager.getNode(nffgId, nodeName));
+				} catch (UnknownEntityException e) { // If the retrieved NF-FG does not exist
+					// Skip this node
+					break;
+				}
+
+				break;
+
+			// If the Neo4J node does not represent an host nor a node
+			default:
+				// Throw an exception
+				throw new IllegalArgumentException("Trying to convert a malformed Nodes object.");
+			}
+		}
+
+		// Adding result lists to the result object
+		result.setNodes(resultNodes);
+		result.setHosts(resultHosts);
+
+		return result;
+	}
+
+	/**
+	 * Returns the NF-FG ID whose specified node {@code nodeId} sbelongs to. In case
+	 * multiple nodes have the same ID in different NF-FGs, the first NF-FG
+	 * occurrence will be returned.
+	 * 
+	 * @param nodeId
+	 *            node ID whose NF-FG ID is of interest.
+	 * @return the NF-FG ID whose specified node {@code nodeId} belongs to. null if
+	 *         no NF-FG contains the specified node {@code nodeId}.
+	 */
+	private static synchronized String getNffgFromNode(String nodeId) {
+		// Result object
+		String nffg = null;
+
+		// For each NF-FG
+		for (Entry<String, Map<String, NodeType>> nffgEntry : nodes.entrySet()) {
+			// Iterating through the NF-FG nodes
+			for (Entry<String, NodeType> nffgNodes : nffgEntry.getValue().entrySet()) {
+				if (nodeId.compareTo(nffgNodes.getValue().getId()) == 0) {
+					nffg = nffgEntry.getKey();
+					return nffg;
+				}
+			}
+		}
+
+		return nffg;
 	}
 }

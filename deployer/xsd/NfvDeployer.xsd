@@ -18,6 +18,8 @@
 	
 	<xsd:element name="link" type="LinkType"/>
 	
+	<xsd:element name="entities" type="ReachableEntitiesType"/>
+	
 	<!-- Catalog types -->
 	<xsd:complexType name="CatalogType">
 		<xsd:sequence>
@@ -128,6 +130,14 @@
 		<xsd:attribute name="destinationNode" type="xsd:token" use="required"/>
 		<xsd:attribute name="minimumThroughput" type="xsd:float" use="optional"/>
 		<xsd:attribute name="maximumLatency" type="xsd:int" use="optional"/>
+	</xsd:complexType>
+	
+	<!-- ReachableEntities type -->
+	<xsd:complexType name="ReachableEntitiesType">
+		<xsd:all>
+			<xsd:element name="nodes" type="NodesType"/>
+			<xsd:element name="hosts" type="HostsType"/>
+		</xsd:all>
 	</xsd:complexType>
 	
 </xsd:schema>

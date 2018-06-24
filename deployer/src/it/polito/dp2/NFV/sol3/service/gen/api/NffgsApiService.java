@@ -19,13 +19,15 @@ public abstract class NffgsApiService {
       throws NotFoundException;
       public abstract Response deployNffg(NffgType nffg,SecurityContext securityContext)
       throws NotFoundException;
-      public abstract Response getExtendedNodes(String nffgId,SecurityContext securityContext)
-      throws NotFoundException;
       public abstract Response getNffg(String nffgId,SecurityContext securityContext)
       throws NotFoundException;
       public abstract Response getNffgs(String since,SecurityContext securityContext)
       throws NotFoundException;
+      public abstract Response getNode(String nffgId,String nodeId,SecurityContext securityContext)
+      throws NotFoundException;
       public abstract Response getNodes(String nffgId,SecurityContext securityContext)
+      throws NotFoundException;
+      public abstract Response getReachableEntities(String nffgId,String nodeId,String relationshipTypes,String nodeLabel,SecurityContext securityContext)
       throws NotFoundException;
       public abstract Response undeployNffg(String nffgId,SecurityContext securityContext)
       throws NotFoundException;

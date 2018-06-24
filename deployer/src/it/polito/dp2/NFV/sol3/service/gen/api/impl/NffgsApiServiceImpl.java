@@ -21,7 +21,10 @@ import it.polito.dp2.NFV.sol3.service.gen.model.LinkType;
 import it.polito.dp2.NFV.sol3.service.gen.model.NffgType;
 import it.polito.dp2.NFV.sol3.service.gen.model.NffgsType;
 import it.polito.dp2.NFV.sol3.service.gen.model.NodeType;
+import it.polito.dp2.NFV.sol3.service.gen.model.NodesType;
 import it.polito.dp2.NFV.sol3.service.gen.model.ObjectFactory;
+import it.polito.dp2.NFV.sol3.service.neo4j.Localhost_Neo4JSimpleXMLWebapi;
+import it.polito.dp2.NFV.sol3.service.neo4j.Nodes;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaResteasyServerCodegen", date = "2018-06-18T15:27:35.051Z")
 public class NffgsApiServiceImpl extends NffgsApiService {
@@ -105,17 +108,6 @@ public class NffgsApiServiceImpl extends NffgsApiService {
 	}
 
 	@Override
-	public Response getExtendedNodes(String nffgId, SecurityContext securityContext) throws NotFoundException {
-		/*ClientResponse nodeUploadResponse = Localhost_Neo4JSimpleXMLWebapi
-				.data(Localhost_Neo4JSimpleXMLWebapi.createClient(), Localhost_Neo4JSimpleXMLWebapi.BASE_URI)
-				.nodeNodeidReachableNodes(nodeid);*/
-
-		// Returning a NOT_IMPLEMENTED response
-		return Response.status(Status.NOT_IMPLEMENTED)
-				.entity(new ApiResponseMessage(ApiResponseMessage.OK, "Feature not implemented yet.")).build();
-	}
-
-	@Override
 	public Response getNffg(String nffgId, SecurityContext securityContext) throws NotFoundException {
 		// Retrieving the NF-FG object
 		NffgType retrievedNffg = NffgManager.getNffg(nffgId);
@@ -161,14 +153,70 @@ public class NffgsApiServiceImpl extends NffgsApiService {
 	}
 
 	@Override
+	public Response getNode(String nffgId, String nodeId, SecurityContext securityContext) throws NotFoundException {
+		NodeType retrievedNode = null;
+
+		try {
+			retrievedNode = NodeManager.getNode(nffgId, nodeId);
+		} catch (UnknownEntityException exception) {
+			// Returning a NOT_FOUND response
+			return Response.status(Status.NOT_FOUND)
+					.entity(new ApiResponseMessage(ApiResponseMessage.ERROR, exception.getLocalizedMessage())).build();
+		}
+
+		if (retrievedNode == null)
+			// Returning a NOT_FOUND response
+			return Response.status(Status.NOT_FOUND)
+					.entity(new ApiResponseMessage(ApiResponseMessage.ERROR, "Node not found")).build();
+
+		// Returning a OK response
+		return Response.ok().entity(
+				// XmlRootObject wrapper
+				new ObjectFactory().createNode(
+						// Retrieving data from the NFV database
+						retrievedNode))
+				.build();
+	}
+
+	@Override
 	public Response getNodes(String nffgId, SecurityContext securityContext) throws NotFoundException {
+		NodesType retrievedNodes = null;
+
+		try {
+			retrievedNodes = NodeManager.getNodes(nffgId);
+		} catch (UnknownEntityException exception) {
+			// Returning a NOT_FOUND response
+			return Response.status(Status.NOT_FOUND)
+					.entity(new ApiResponseMessage(ApiResponseMessage.ERROR, exception.getLocalizedMessage())).build();
+		}
+
 		// Returning a OK response
 		return Response.ok().entity(
 				// XmlRootObject wrapper
 				new ObjectFactory().createNodes(
 						// Retrieving data from the NFV database
-						NodeManager.getNodes()
-				)).build();
+						retrievedNodes))
+				.build();
+	}
+
+	@Override
+	public Response getReachableEntities(String nffgId, String nodeId, String relationshipTypes, String nodeLabel,
+			SecurityContext securityContext) throws NotFoundException {
+		// Retrieving the Neo4J node ID to be used with the Neo4JSimpleXML
+		String neo4jNodeId = NodeManager.getNeo4jId(nffgId, nodeId);
+
+		// Retrieving all reachable nodes from the specified one
+		Nodes reachableNodes = Localhost_Neo4JSimpleXMLWebapi
+				.data(Localhost_Neo4JSimpleXMLWebapi.createClient(), Localhost_Neo4JSimpleXMLWebapi.BASE_URI)
+				.nodeNodeidReachableNodes(neo4jNodeId).getAsNodes(relationshipTypes, nodeLabel);
+
+		// Returning a OK response
+		return Response.ok().entity(
+				// XmlRootObject wrapper
+				new ObjectFactory().createEntities(
+						// Converting Neo4J node objects into model-compatible objects
+						NodeManager.toModel(reachableNodes)))
+				.build();
 	}
 
 	@Override

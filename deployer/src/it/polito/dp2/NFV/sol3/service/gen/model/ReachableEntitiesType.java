@@ -10,29 +10,23 @@ package it.polito.dp2.NFV.sol3.service.gen.model;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import javax.xml.datatype.XMLGregorianCalendar;
 
 
 /**
- * <p>Java class for NffgType complex type.
+ * <p>Java class for ReachableEntitiesType complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="NffgType">
+ * &lt;complexType name="ReachableEntitiesType">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;all>
- *         &lt;element name="deployTime" type="{http://www.w3.org/2001/XMLSchema}dateTime"/>
  *         &lt;element name="nodes" type="{}NodesType"/>
+ *         &lt;element name="hosts" type="{}HostsType"/>
  *       &lt;/all>
- *       &lt;attribute name="id" use="required" type="{http://www.w3.org/2001/XMLSchema}token" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -41,44 +35,15 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "NffgType", propOrder = {
+@XmlType(name = "ReachableEntitiesType", propOrder = {
 
 })
-public class NffgType {
+public class ReachableEntitiesType {
 
-    @XmlElement(required = true)
-    @XmlSchemaType(name = "dateTime")
-    protected XMLGregorianCalendar deployTime;
     @XmlElement(required = true)
     protected NodesType nodes;
-    @XmlAttribute(name = "id", required = true)
-    @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    @XmlSchemaType(name = "token")
-    protected String id;
-
-    /**
-     * Gets the value of the deployTime property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link XMLGregorianCalendar }
-     *     
-     */
-    public XMLGregorianCalendar getDeployTime() {
-        return deployTime;
-    }
-
-    /**
-     * Sets the value of the deployTime property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link XMLGregorianCalendar }
-     *     
-     */
-    public void setDeployTime(XMLGregorianCalendar value) {
-        this.deployTime = value;
-    }
+    @XmlElement(required = true)
+    protected HostsType hosts;
 
     /**
      * Gets the value of the nodes property.
@@ -105,27 +70,27 @@ public class NffgType {
     }
 
     /**
-     * Gets the value of the id property.
+     * Gets the value of the hosts property.
      * 
      * @return
      *     possible object is
-     *     {@link String }
+     *     {@link HostsType }
      *     
      */
-    public String getId() {
-        return id;
+    public HostsType getHosts() {
+        return hosts;
     }
 
     /**
-     * Sets the value of the id property.
+     * Sets the value of the hosts property.
      * 
      * @param value
      *     allowed object is
-     *     {@link String }
+     *     {@link HostsType }
      *     
      */
-    public void setId(String value) {
-        this.id = value;
+    public void setHosts(HostsType value) {
+        this.hosts = value;
     }
 
 }

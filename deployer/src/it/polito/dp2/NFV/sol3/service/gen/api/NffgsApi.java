@@ -17,12 +17,12 @@ import io.swagger.annotations.ApiParam;
 import it.polito.dp2.NFV.lab3.ServiceException;
 import it.polito.dp2.NFV.sol3.service.gen.RestApplication;
 import it.polito.dp2.NFV.sol3.service.gen.api.factories.NffgsApiServiceFactory;
-import it.polito.dp2.NFV.sol3.service.gen.model.ExtendedNodesType;
 import it.polito.dp2.NFV.sol3.service.gen.model.LinkType;
 import it.polito.dp2.NFV.sol3.service.gen.model.NffgType;
 import it.polito.dp2.NFV.sol3.service.gen.model.NffgsType;
 import it.polito.dp2.NFV.sol3.service.gen.model.NodeType;
 import it.polito.dp2.NFV.sol3.service.gen.model.NodesType;
+import it.polito.dp2.NFV.sol3.service.gen.model.ReachableEntitiesType;
 
 @Path("/nffgs")
 
@@ -123,21 +123,6 @@ public class NffgsApi extends RestApplication {
 	}
 
 	@GET
-	@Path("/{nffg_id}/extendedNodes")
-
-	@Produces({ "application/xml" })
-	@io.swagger.annotations.ApiOperation(value = "retrieves node objects with host reachability informations", notes = "Retrieves a set containing extended node objects, each one of those containing a set of host objects representing physical IN hosts that are reachable starting from the node.", response = ExtendedNodesType.class, tags = {
-			"nffgs", })
-	@io.swagger.annotations.ApiResponses(value = {
-			@io.swagger.annotations.ApiResponse(code = 200, message = "OK", response = ExtendedNodesType.class),
-
-			@io.swagger.annotations.ApiResponse(code = 404, message = "(NF-FG) Not found", response = Void.class) })
-	public Response getExtendedNodes(@PathParam("nffg_id") String nffgId, @Context SecurityContext securityContext)
-			throws NotFoundException {
-		return delegate.getExtendedNodes(nffgId, securityContext);
-	}
-
-	@GET
 	@Path("/{nffg_id}")
 
 	@Produces({ "application/xml" })
@@ -168,6 +153,20 @@ public class NffgsApi extends RestApplication {
 	}
 
 	@GET
+    @Path("/{nffg_id}/nodes/{node_id}")
+    
+    @Produces({ "application/xml" })
+    @io.swagger.annotations.ApiOperation(value = "retrieves a single node object", notes = "Retrieves a single node object having specified the NF-FG ID in which the node belongs to and its ID in the resource path", response = NodeType.class, tags={ "nffgs", })
+    @io.swagger.annotations.ApiResponses(value = { 
+        @io.swagger.annotations.ApiResponse(code = 200, message = "OK", response = NodeType.class),
+        
+        @io.swagger.annotations.ApiResponse(code = 404, message = "(NF-FG or node) Not found", response = Void.class) })
+    public Response getNode( @PathParam("nffg_id") String nffgId, @PathParam("node_id") String nodeId,@Context SecurityContext securityContext)
+    throws NotFoundException {
+        return delegate.getNode(nffgId,nodeId,securityContext);
+    }
+	
+	@GET
 	@Path("/{nffg_id}/nodes")
 
 	@Produces({ "application/xml" })
@@ -181,6 +180,24 @@ public class NffgsApi extends RestApplication {
 			throws NotFoundException {
 		return delegate.getNodes(nffgId, securityContext);
 	}
+	
+	@GET
+    @Path("/{nffg_id}/nodes/{node_id}/reachableEntities")
+    
+    @Produces({ "application/xml" })
+    @io.swagger.annotations.ApiOperation(value = "get reachable node/hosts from this ndoe", notes = "Get all nodes and hosts (with a given label) reachable from this node via one or more given relationships", response = ReachableEntitiesType.class, tags={ "nffgs", })
+    @io.swagger.annotations.ApiResponses(value = { 
+        @io.swagger.annotations.ApiResponse(code = 200, message = "OK", response = ReachableEntitiesType.class),
+        
+        @io.swagger.annotations.ApiResponse(code = 400, message = "Bad request. Invalid parameters.", response = Void.class),
+        
+        @io.swagger.annotations.ApiResponse(code = 404, message = "(NF-FG or node) Not found", response = Void.class),
+        
+        @io.swagger.annotations.ApiResponse(code = 500, message = "Internal server error", response = Void.class) })
+    public Response getReachableEntities( @PathParam("nffg_id") String nffgId, @PathParam("node_id") String nodeId,  @QueryParam("relationshipTypes") String relationshipTypes,  @QueryParam("nodeLabel") String nodeLabel,@Context SecurityContext securityContext)
+    throws NotFoundException {
+        return delegate.getReachableEntities(nffgId,nodeId,relationshipTypes,nodeLabel,securityContext);
+    }
 
 	@DELETE
 	@Path("/{nffg_id}")
