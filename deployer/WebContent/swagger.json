@@ -43,6 +43,51 @@
         }
       }
     },
+    "/catalog/howmany" : {
+      "get" : {
+        "tags" : [ "catalog" ],
+        "summary" : "retrieves the total number of VNF types in the DP2-NFV system",
+        "operationId" : "getHowManyVnf",
+        "description" : "Retrieves the total number of Virtual Network Function types available in the DP2-NFV system",
+        "produces" : [ "text/plain" ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "type" : "integer",
+              "example" : 15
+            }
+          }
+        }
+      }
+    },
+    "/catalog/{vnf_id}" : {
+      "get" : {
+        "tags" : [ "catalog" ],
+        "summary" : "retrieves a single VNF type object",
+        "operationId" : "getVnf",
+        "description" : "Retrieves a single Virtual Network Function type having the ID specified in the resource path",
+        "produces" : [ "application/xml" ],
+        "parameters" : [ {
+          "name" : "vnf_id",
+          "in" : "path",
+          "required" : true,
+          "type" : "string",
+          "description" : "The desired VNF's ID"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "$ref" : "#/definitions/VNFType"
+            }
+          },
+          "404" : {
+            "description" : "(VNF) Not found"
+          }
+        }
+      }
+    },
     "/hosts" : {
       "get" : {
         "tags" : [ "hosts" ],
@@ -55,6 +100,24 @@
             "description" : "OK",
             "schema" : {
               "$ref" : "#/definitions/HostsType"
+            }
+          }
+        }
+      }
+    },
+    "/hosts/howmany" : {
+      "get" : {
+        "tags" : [ "hosts" ],
+        "summary" : "retrieves the total number of physical hosts in the DP2-NFV system",
+        "operationId" : "getHowManyHosts",
+        "description" : "Retrieves the total number of all physical IN host objects in the DP2-NFV system",
+        "produces" : [ "text/plain" ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "type" : "integer",
+              "example" : 23
             }
           }
         }
@@ -99,6 +162,24 @@
             "description" : "OK",
             "schema" : {
               "$ref" : "#/definitions/ChannelsType"
+            }
+          }
+        }
+      }
+    },
+    "/channels/howmany" : {
+      "get" : {
+        "tags" : [ "channels" ],
+        "summary" : "retrieves the total number of physical channels in the DP2-NFV system",
+        "operationId" : "getHowManyChannels",
+        "description" : "Retrieves the total number of all physical channel objects in the DP2-NFV system",
+        "produces" : [ "text/plain" ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "type" : "integer",
+              "example" : 51
             }
           }
         }
@@ -188,6 +269,24 @@
           },
           "500" : {
             "description" : "Internal server error: it was not possible to create the specified NF-FG."
+          }
+        }
+      }
+    },
+    "/nffgs/howmany" : {
+      "get" : {
+        "tags" : [ "nffgs" ],
+        "summary" : "retrieves all total number of NF-FGs",
+        "operationId" : "getHowManyNffgs",
+        "description" : "Retrieves the total number of all NF-FG objects in the DP2-NFV system",
+        "produces" : [ "text/plain" ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "type" : "integer",
+              "example" : 4
+            }
           }
         }
       }
@@ -284,6 +383,34 @@
         }
       }
     },
+    "/nffgs/{nffg_id}/links/howmany" : {
+      "get" : {
+        "tags" : [ "nffgs" ],
+        "summary" : "retrieves the total number of links in the specified NF-FG",
+        "operationId" : "getHowManyLinks",
+        "description" : "Retrieves the total number of link objects deployed in this NF-FG in the DP2-NFV system",
+        "produces" : [ "text/plain" ],
+        "parameters" : [ {
+          "name" : "nffg_id",
+          "in" : "path",
+          "required" : true,
+          "type" : "string",
+          "description" : "The NF-FG ID of which the total number of links must be returned."
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "type" : "integer",
+              "example" : 31
+            }
+          },
+          "404" : {
+            "description" : "(NF-FG) Not found"
+          }
+        }
+      }
+    },
     "/nffgs/{nffg_id}/links/{link_id}" : {
       "delete" : {
         "tags" : [ "nffgs" ],
@@ -369,6 +496,34 @@
           },
           "403" : {
             "description" : "Forbidden (allocation constraints not satisfied)"
+          },
+          "404" : {
+            "description" : "(NF-FG) Not found"
+          }
+        }
+      }
+    },
+    "/nffgs/{nffg_id}/nodes/howmany" : {
+      "get" : {
+        "tags" : [ "nffgs" ],
+        "summary" : "retrieves the total number of nodes in the specified NF-FG",
+        "operationId" : "getHowManyNodes",
+        "description" : "Retrieves the total number of nodes objects deployed in this NF-FG in the DP2-NFV system",
+        "produces" : [ "text/plain" ],
+        "parameters" : [ {
+          "name" : "nffg_id",
+          "in" : "path",
+          "required" : true,
+          "type" : "string",
+          "description" : "The NF-FG ID of which the total number of nodes must be returned."
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "schema" : {
+              "type" : "integer",
+              "example" : 64
+            }
           },
           "404" : {
             "description" : "(NF-FG) Not found"
