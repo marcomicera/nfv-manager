@@ -71,4 +71,8 @@ public class ChannelManager {
 	public static ChannelType getChannel(String host1, String host2) {
 		return channels.get(new MyHostPair(host1, host2));
 	}
+	
+	public static synchronized int howMany() {
+		return channels.size();
+	}
 }

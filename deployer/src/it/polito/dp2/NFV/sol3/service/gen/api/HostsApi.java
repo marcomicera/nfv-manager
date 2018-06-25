@@ -27,7 +27,6 @@ public class HostsApi extends RestApplication {
 
 	@GET
 	@Path("/{host_id}")
-
 	@Produces({ "application/xml" })
 	@io.swagger.annotations.ApiOperation(value = "retrieves a single host object", notes = "Retrieves a single host object having the ID specified in the resource path", response = HostType.class, tags = {
 			"hosts", })
@@ -41,7 +40,6 @@ public class HostsApi extends RestApplication {
 	}
 
 	@GET
-
 	@Produces({ "application/xml" })
 	@io.swagger.annotations.ApiOperation(value = "retrieves all physical hosts in the DP2-NFV system", notes = "Retrieves a set containing all physical IN host objects in the DP2-NFV system", response = HostsType.class, tags = {
 			"hosts", })
@@ -49,5 +47,16 @@ public class HostsApi extends RestApplication {
 			@io.swagger.annotations.ApiResponse(code = 200, message = "OK", response = HostsType.class) })
 	public Response getHosts(@Context SecurityContext securityContext) throws NotFoundException {
 		return delegate.getHosts(securityContext);
+	}
+
+	@GET
+	@Path("/howmany")
+	@Produces({ "text/plain" })
+	@io.swagger.annotations.ApiOperation(value = "retrieves the total number of physical hosts in the DP2-NFV system", notes = "Retrieves the total number of all physical IN host objects in the DP2-NFV system", response = Integer.class, tags = {
+			"hosts", })
+	@io.swagger.annotations.ApiResponses(value = {
+			@io.swagger.annotations.ApiResponse(code = 200, message = "OK", response = Integer.class) })
+	public Response getHowManyHosts(@Context SecurityContext securityContext) throws NotFoundException {
+		return delegate.getHowManyHosts(securityContext);
 	}
 }

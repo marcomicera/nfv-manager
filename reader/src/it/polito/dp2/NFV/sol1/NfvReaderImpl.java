@@ -38,7 +38,7 @@ class NfvReaderImpl implements it.polito.dp2.NFV.NfvReader {
 	public NfvReaderImpl() throws NfvReaderException {
 		inputFile = System.getProperty(NfvConfig.inputFileProperty);
 		if(inputFile != null || inputFile.isEmpty()) {
-			readFile();
+			// readFile();
 			
 			catalog = new HashMap<String, VNFTypeReader>();
 			readCatalog();
@@ -56,57 +56,6 @@ class NfvReaderImpl implements it.polito.dp2.NFV.NfvReader {
 			throw new NfvReaderException("Could not find input file");
 	}
 
-	private void readFile() throws NfvReaderException {
-		// Reading the input file
-		FileInputStream fis = null;
-		try {
-			fis = new FileInputStream(new File(inputFile));
-		} catch (FileNotFoundException e) {
-			System.err.println("Could not find input file");
-			e.printStackTrace();
-			System.exit(1);
-		}
-		
-		// Validation
-		SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-		Schema schema = null;
-		try {
-			schema = sf.newSchema(new File(NfvConfig.schemaFile));
-		} catch (SAXException e) {
-			System.err.println("Could not read the schema file");
-			e.printStackTrace();
-		}
-		
-		try {
-			/*	Creating a JAXBContext capable of handling classes generated into
-	    	the it.polito.dp2.NFV.sol1.jaxb package */
-			JAXBContext jc = JAXBContext.newInstance(NfvConfig.jaxbClassesPackage);
-			
-			// Creating an Unmarshaller
-			Unmarshaller u = jc.createUnmarshaller();
-			u.setSchema(schema);
-			
-			// Unmarshalling input file
-			Object root = u.unmarshal(fis);
-			if(!(root instanceof JAXBElement<?>))
-				throw new NfvReaderException("/Unexpected root element");
-			Object rootObject = ((JAXBElement<?>)root).getValue();
-			if(rootObject == null)
-				throw new NfvReaderException("No root element found");
-			if(!(rootObject instanceof NFVType))
-				throw new NfvReaderException("/Unexpected root element");
-			nfvInfo = (NFVType)rootObject;
-		} catch (JAXBException e) {
-			System.err.println("JAXB exception: " + e.getMessage());
-			e.printStackTrace();
-			System.exit(1);
-		} catch (ClassCastException cce) {
-        	System.err.println("Unexpected root element found");
-        	cce.printStackTrace();
-        	System.exit(1);
-        }
-	}
-	
 	private void readCatalog() {
 		for(VNFType vnf: nfvInfo.getCatalog().getVNF())
 			try {
@@ -143,7 +92,7 @@ class NfvReaderImpl implements it.polito.dp2.NFV.NfvReader {
 		}
 	}
 	
-	private Map<String, NodeReader> readNodes(NffgType nffg, MyNffgReader nffgReader) {
+	public Map<String, NodeReader> readNodes(NffgType nffg, MyNffgReader nffgReader) {
 		Map<String, NodeReader> nodes = new HashMap<String, NodeReader>();
 		for(NodeType node: nffg.getNodes().getNode()) {
 			MyNodeReader tempNodeReader = new MyNodeReader(

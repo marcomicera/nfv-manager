@@ -7,4 +7,8 @@ import javax.ws.rs.core.SecurityContext;
 public abstract class CatalogApiService {
       public abstract Response getCatalog(SecurityContext securityContext)
       throws NotFoundException;
+      public abstract Response getHowManyVnf(SecurityContext securityContext)
+      throws NotFoundException;
+      public abstract Response getVnf(String vnfId,SecurityContext securityContext)
+      throws NotFoundException;
 }

@@ -108,6 +108,27 @@ public class NffgsApiServiceImpl extends NffgsApiService {
 	}
 
 	@Override
+	public Response getHowManyLinks(String nffgId, SecurityContext securityContext) throws NotFoundException {
+		return Response.ok().entity(
+				// Retrieving data from the NFV database
+				LinkManager.howMany(nffgId)).build();
+	}
+
+	@Override
+	public Response getHowManyNffgs(SecurityContext securityContext) throws NotFoundException {
+		return Response.ok().entity(
+				// Retrieving data from the NFV database
+				NffgManager.howMany()).build();
+	}
+
+	@Override
+	public Response getHowManyNodes(String nffgId, SecurityContext securityContext) throws NotFoundException {
+		return Response.ok().entity(
+				// Retrieving data from the NFV database
+				NodeManager.howMany(nffgId)).build();
+	}
+
+	@Override
 	public Response getNffg(String nffgId, SecurityContext securityContext) throws NotFoundException {
 		// Retrieving the NF-FG object
 		NffgType retrievedNffg = NffgManager.getNffg(nffgId);

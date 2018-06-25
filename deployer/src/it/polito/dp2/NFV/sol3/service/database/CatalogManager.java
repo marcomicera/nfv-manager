@@ -63,4 +63,16 @@ public class CatalogManager {
 		return catalog;
 	}
 	
+	public static synchronized VNFType getVnf(String vnfId) {
+		for (VNFType vnf : catalog.getVNF())
+			if(vnfId.compareTo(vnf.getId()) == 0)
+				return vnf;
+		
+		return null;
+	}
+	
+	public static synchronized int howMany() {
+		return catalog.getVNF().size();
+	}
+	
 }

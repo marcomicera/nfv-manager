@@ -9,4 +9,6 @@ public abstract class ChannelsApiService {
       throws NotFoundException;
       public abstract Response getChannels(SecurityContext securityContext)
       throws NotFoundException;
+      public abstract Response getHowManyChannels(SecurityContext securityContext)
+      throws NotFoundException;
 }

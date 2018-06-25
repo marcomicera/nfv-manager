@@ -381,4 +381,8 @@ public class NffgManager {
 		gregorianCalendar.setTime(parsedDate);
 		return DatatypeFactory.newInstance().newXMLGregorianCalendar(gregorianCalendar);
 	}
+	
+	public static synchronized int howMany() {
+		return nffgs.size();
+	}
 }

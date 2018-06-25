@@ -19,6 +19,12 @@ public abstract class NffgsApiService {
       throws NotFoundException;
       public abstract Response deployNffg(NffgType nffg,SecurityContext securityContext)
       throws NotFoundException;
+      public abstract Response getHowManyLinks(String nffgId,SecurityContext securityContext)
+	  throws NotFoundException;
+	  public abstract Response getHowManyNffgs(SecurityContext securityContext)
+	  throws NotFoundException;
+	  public abstract Response getHowManyNodes(String nffgId,SecurityContext securityContext)
+	  throws NotFoundException;
       public abstract Response getNffg(String nffgId,SecurityContext securityContext)
       throws NotFoundException;
       public abstract Response getNffgs(String since,SecurityContext securityContext)

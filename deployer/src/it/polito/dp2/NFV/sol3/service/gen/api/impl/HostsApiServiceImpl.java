@@ -41,4 +41,11 @@ public class HostsApiServiceImpl extends HostsApiService {
 						HostManager.getHosts()))
 				.build();
 	}
+
+	@Override
+	public Response getHowManyHosts(SecurityContext securityContext) throws NotFoundException {
+		return Response.ok().entity(
+				// Retrieving data from the NFV database
+				HostManager.howMany()).build();
+	}
 }

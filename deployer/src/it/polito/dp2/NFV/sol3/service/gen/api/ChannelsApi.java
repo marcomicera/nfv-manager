@@ -49,4 +49,15 @@ public class ChannelsApi extends RestApplication {
 	public Response getChannels(@Context SecurityContext securityContext) throws NotFoundException {
 		return delegate.getChannels(securityContext);
 	}
+
+	@GET
+	@Path("/howmany")
+	@Produces({ "text/plain" })
+	@io.swagger.annotations.ApiOperation(value = "retrieves the total number of physical channels in the DP2-NFV system", notes = "Retrieves the total number of all physical channel objects in the DP2-NFV system", response = Integer.class, tags = {
+			"channels", })
+	@io.swagger.annotations.ApiResponses(value = {
+			@io.swagger.annotations.ApiResponse(code = 200, message = "OK", response = Integer.class) })
+	public Response getHowManyChannels(@Context SecurityContext securityContext) throws NotFoundException {
+		return delegate.getHowManyChannels(securityContext);
+	}
 }

@@ -41,4 +41,11 @@ public class ChannelsApiServiceImpl extends ChannelsApiService {
 						ChannelManager.getChannels()))
 				.build();
 	}
+
+	@Override
+	public Response getHowManyChannels(SecurityContext securityContext) throws NotFoundException {
+		return Response.ok().entity(
+				// Retrieving data from the NFV database
+				ChannelManager.howMany()).build();
+	}
 }

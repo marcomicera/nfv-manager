@@ -3,6 +3,7 @@
 	
 	<!-- Possible XML body objects -->
 	<xsd:element name="catalog" type="CatalogType"/>
+	<xsd:element name="vnf" type="VNFType"/>
 	
 	<xsd:element name="hosts" type="HostsType"/>
 	<xsd:element name="host" type="HostType"/>

@@ -164,4 +164,8 @@ public class HostManager {
 	public static synchronized Map<String, String> getNeo4jIds() {
 		return neo4jIds;
 	}
+	
+	public static synchronized int howMany() {
+		return hosts.size();
+	}
 }

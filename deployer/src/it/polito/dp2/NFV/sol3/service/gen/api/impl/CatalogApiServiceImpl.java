@@ -14,11 +14,29 @@ public class CatalogApiServiceImpl extends CatalogApiService {
 	public Response getCatalog(SecurityContext securityContext) throws NotFoundException {
 		// Returning a OK response
 		return Response.ok().entity(
-			// XmlRootObject wrapper
-			new ObjectFactory().createCatalog(
+				// XmlRootObject wrapper
+				new ObjectFactory().createCatalog(
+						// Retrieving data from the NFV database
+						CatalogManager.getCatalog()))
+				.build();
+	}
+
+	@Override
+	public Response getHowManyVnf(SecurityContext securityContext) throws NotFoundException {
+		// Returning a OK response
+		return Response.ok().entity(
 				// Retrieving data from the NFV database
-				CatalogManager.getCatalog()
-			)
-		).build();
+				CatalogManager.howMany()).build();
+	}
+
+	@Override
+	public Response getVnf(String vnfId, SecurityContext securityContext) throws NotFoundException {
+		// Returning a OK response
+		return Response.ok().entity(
+				// XmlRootObject wrapper
+				new ObjectFactory().createVnf(
+						// Retrieving data from the NFV database
+						CatalogManager.getVnf(vnfId)))
+				.build();
 	}
 }

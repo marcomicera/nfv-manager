@@ -466,4 +466,8 @@ public class NodeManager {
 
 		return nffg;
 	}
+	
+	public static synchronized int howMany(String nffgId) {
+		return nodes.get(nffgId).size();
+	}
 }

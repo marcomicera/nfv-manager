@@ -1,5 +1,6 @@
 package it.polito.dp2.NFV.sol3.service.database;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -13,9 +14,9 @@ import it.polito.dp2.NFV.sol3.service.gen.model.NodeType;
 
 public class LinkManager {
 	/**
-	 * Links data
+	 * Links data. External key: NF-FG ID. Internal key: link ID. Value: link object
 	 */
-	private static Map<String, LinkType> links = new ConcurrentHashMap<>();
+	private static Map<String, Map<String, LinkType>> links = new ConcurrentHashMap<>();
 
 	/**
 	 * It deploys all links belonging to the specified NF-FG.
@@ -168,7 +169,9 @@ public class LinkManager {
 		RelationshipManager.deployRelationship(sourceNodeId, destinationNodeId, "ForwardsTo");
 
 		// Adding this new link to the links local map
-		links.put(link.getId(), link);
+		if (!links.containsKey(nffgId))
+			links.put(nffgId, new HashMap<String, LinkType>());
+		links.get(nffgId).put(link.getId(), link);
 	}
 
 	/**
@@ -197,7 +200,32 @@ public class LinkManager {
 		return (new NfvValidationProvider<LinkType>()).isReadable(link.getClass(), null, null, null);
 	}
 
-	public static synchronized Map<String, LinkType> getLinks() {
-		return links;
+	/**
+	 * Returns all links belonging to the specified NF-FG.
+	 * 
+	 * @param nffgId
+	 *            the NF-FG ID whose links must returned.
+	 * @return all links belonging to the specified NF-FG.
+	 * @throws UnknownEntityException
+	 *             if the specified NF-FG does not exist.
+	 */
+	/*public static synchronized LinksType getLinks(String nffgId) {
+		// Retrieving links belonging to the specified NF-FG
+		Map<String, LinkType> nffgLinks = links.get(nffgId);
+
+		// If the NF-FG has no links
+		if (nffgLinks == null)
+			// Throw an exception
+			throw new UnknownEntityException("Trying to retrieve links from a non-existing NF-FG.");
+
+		// Building the result object
+		LinksType result = new LinksType();
+		result.getNode().addAll(nffgLinks.values());
+
+		return result;
+	}*/
+
+	public static synchronized int howMany(String nffgId) {
+		return links.get(nffgId).size();
 	}
 }
