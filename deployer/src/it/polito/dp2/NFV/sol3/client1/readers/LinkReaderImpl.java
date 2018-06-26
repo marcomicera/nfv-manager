@@ -2,7 +2,7 @@ package it.polito.dp2.NFV.sol3.client1.readers;
 
 import it.polito.dp2.NFV.LinkReader;
 import it.polito.dp2.NFV.NodeReader;
-import it.polito.dp2.NFV.sol3.client1.nfvdeployer.LinkType;
+import it.polito.dp2.NFV.sol3.service.gen.model.LinkType;
 
 public class LinkReaderImpl extends MyNamedEntity implements LinkReader {
 	private LinkType info;

@@ -112,7 +112,7 @@ public class NffgManager {
 			// Setting the new temporary node object properties
 			newNffgNode.setId(node.getName());
 			newNffgNode.setHost(node.getHost().getName());
-			newNffgNode.setFunctionalType(node.getFuncType().getFunctionalType().toString());
+			newNffgNode.setFunctionalType(node.getFuncType().getName());
 
 			// New temporary Nffg node links list
 			List<LinkType> newNffgNodeLinks = newNffgNode.getLink();

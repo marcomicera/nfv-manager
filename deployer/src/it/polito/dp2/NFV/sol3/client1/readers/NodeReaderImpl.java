@@ -8,8 +8,8 @@ import it.polito.dp2.NFV.LinkReader;
 import it.polito.dp2.NFV.NffgReader;
 import it.polito.dp2.NFV.NodeReader;
 import it.polito.dp2.NFV.VNFTypeReader;
-import it.polito.dp2.NFV.sol3.client1.nfvdeployer.LinkType;
-import it.polito.dp2.NFV.sol3.client1.nfvdeployer.NodeType;
+import it.polito.dp2.NFV.sol3.service.gen.model.LinkType;
+import it.polito.dp2.NFV.sol3.service.gen.model.NodeType;
 
 public class NodeReaderImpl extends MyNamedEntity implements NodeReader {
 	private NodeType info;
@@ -22,7 +22,7 @@ public class NodeReaderImpl extends MyNamedEntity implements NodeReader {
 		super(info.getId());
 
 		// Arguments checking
-		if (nffg == null || functionalType == null || host == null)
+		if (nffg == null || functionalType == null /*|| host == null*/)
 			throw new IllegalArgumentException("Invalid node parameters");
 
 		this.info = info;

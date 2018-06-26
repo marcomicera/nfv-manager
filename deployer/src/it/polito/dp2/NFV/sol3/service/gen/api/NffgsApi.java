@@ -4,7 +4,7 @@ import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -35,7 +35,7 @@ public class NffgsApi extends RestApplication {
 		super();
 	}
 
-	@PUT
+	@POST
 	@Path("/{nffg_id}/links")
 	@Consumes({ "text/boolean", "application/xml" })
 
@@ -55,7 +55,7 @@ public class NffgsApi extends RestApplication {
 		return delegate.addLink(nffgId, overwrite, link, securityContext);
 	}
 
-	@PUT
+	@POST
 	@Path("/{nffg_id}/nodes")
 	@Consumes({ "application/xml" })
 
@@ -105,7 +105,7 @@ public class NffgsApi extends RestApplication {
 		return delegate.deleteNode(nffgId, nodeId, securityContext);
 	}
 
-	@PUT
+	@POST
 
 	@Consumes({ "application/xml" })
 

@@ -150,7 +150,7 @@ public class LinkManager {
 					"Attempting to add link " + link.getId() + " ending on a non-existing destination node.");
 
 		// If this link has already been deployed
-		if (!overwrite && hasBeenDeployed(link))
+		if (!overwrite && hasBeenDeployed(link, nffgId))
 			throw new LinkAlreadyPresentException("Link " + link.getId() + " has already been deployed.");
 
 		// If this object is not well-formed
@@ -181,12 +181,17 @@ public class LinkManager {
 	 *            the link to be checked.
 	 * @return true if already deployed, false otherwise.
 	 */
-	public static boolean hasBeenDeployed(LinkType link) {
-		return hasBeenDeployed(link.getId());
-	}
+	public static boolean hasBeenDeployed(LinkType link, String nffgId) {
+		if (links.get(nffgId) == null)
+			return false;
 
-	private synchronized static boolean hasBeenDeployed(String linkId) {
-		return links.containsKey(linkId);
+		for (LinkType nffgLink : links.get(nffgId).values()) {
+			if (nffgLink.getSourceNode().compareToIgnoreCase(link.getSourceNode()) == 0
+					&& nffgLink.getDestinationNode().compareToIgnoreCase(link.getDestinationNode()) == 0)
+				return true;
+		}
+
+		return false;
 	}
 
 	/**
@@ -209,21 +214,21 @@ public class LinkManager {
 	 * @throws UnknownEntityException
 	 *             if the specified NF-FG does not exist.
 	 */
-	/*public static synchronized LinksType getLinks(String nffgId) {
-		// Retrieving links belonging to the specified NF-FG
-		Map<String, LinkType> nffgLinks = links.get(nffgId);
-
-		// If the NF-FG has no links
-		if (nffgLinks == null)
-			// Throw an exception
-			throw new UnknownEntityException("Trying to retrieve links from a non-existing NF-FG.");
-
-		// Building the result object
-		LinksType result = new LinksType();
-		result.getNode().addAll(nffgLinks.values());
-
-		return result;
-	}*/
+	/*
+	 * public static synchronized LinksType getLinks(String nffgId) { // Retrieving
+	 * links belonging to the specified NF-FG Map<String, LinkType> nffgLinks =
+	 * links.get(nffgId);
+	 * 
+	 * // If the NF-FG has no links if (nffgLinks == null) // Throw an exception
+	 * throw new
+	 * UnknownEntityException("Trying to retrieve links from a non-existing NF-FG."
+	 * );
+	 * 
+	 * // Building the result object LinksType result = new LinksType();
+	 * result.getNode().addAll(nffgLinks.values());
+	 * 
+	 * return result; }
+	 */
 
 	public static synchronized int howMany(String nffgId) {
 		return links.get(nffgId).size();

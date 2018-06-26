@@ -5,7 +5,7 @@ import java.util.Set;
 
 import it.polito.dp2.NFV.HostReader;
 import it.polito.dp2.NFV.NodeReader;
-import it.polito.dp2.NFV.sol3.client1.nfvdeployer.HostType;
+import it.polito.dp2.NFV.sol3.service.gen.model.HostType;
 
 public class HostReaderImpl extends MyNamedEntity implements HostReader {
 	private HostType info;

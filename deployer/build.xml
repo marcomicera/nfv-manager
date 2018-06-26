@@ -182,6 +182,7 @@
 		</target>
 
 	<target name="run-tests" depends="setseed,redeployNeo4JSimpleXML,redeployWS" description="runs tests">
+	<!-- <target name="run-tests" depends="setseed" description="runs tests"> -->
 		<echo>Running functional tests</echo>
 		<echo>Seed: ${seed}</echo>
 

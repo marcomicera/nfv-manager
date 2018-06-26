@@ -1,16 +1,18 @@
 package it.polito.dp2.NFV.sol3.client1.readers;
 
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import it.polito.dp2.NFV.HostReader;
 import it.polito.dp2.NFV.NffgReader;
 import it.polito.dp2.NFV.NodeReader;
 import it.polito.dp2.NFV.VNFTypeReader;
-import it.polito.dp2.NFV.sol3.client1.nfvdeployer.NffgType;
-import it.polito.dp2.NFV.sol3.client1.nfvdeployer.NodeType;
+import it.polito.dp2.NFV.sol3.service.gen.model.NffgType;
+import it.polito.dp2.NFV.sol3.service.gen.model.NodeType;
 
 public class NffgReaderImpl extends MyNamedEntity implements NffgReader {
 	private NffgType info;
@@ -21,6 +23,7 @@ public class NffgReaderImpl extends MyNamedEntity implements NffgReader {
 
 		info = nffg;
 
+		nodes = new HashMap<>();
 		readNodes(hosts, catalog);
 	}
 
@@ -61,6 +64,13 @@ public class NffgReaderImpl extends MyNamedEntity implements NffgReader {
 
 	private void readNodes(Map<String, HostReader> hosts, Map<String, VNFTypeReader> catalog) {
 		for (NodeType node : info.getNodes().getNode()) {
+			// TODO debugging
+			System.out.println("Catalog keys: ");
+			for (Entry<String, VNFTypeReader> catalogEntry : catalog.entrySet()) {
+				System.out.print(catalogEntry.getKey() + " ");
+			}
+			System.out.println("\n***** node.getFunctionalType(): " + node.getFunctionalType());
+			
 			NodeReader tempNodeReader = new NodeReaderImpl(node, this, catalog.get(node.getFunctionalType()),
 					hosts.get(node.getHost()));
 

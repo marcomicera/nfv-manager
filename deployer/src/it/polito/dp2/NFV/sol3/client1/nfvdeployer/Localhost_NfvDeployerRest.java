@@ -18,7 +18,7 @@ import com.sun.jersey.api.uri.UriTemplate;
 
 @Generated(value = {
     "wadl|http://localhost:8080/NfvDeployer/rest/application.wadl"
-}, comments = "wadl2java, http://wadl.java.net", date = "2018-06-25T19:34:26.123+02:00")
+}, comments = "wadl2java, http://wadl.java.net", date = "2018-06-26T22:43:46.108+02:00")
 public class Localhost_NfvDeployerRest {
 
     /**
@@ -198,6 +198,169 @@ public class Localhost_NfvDeployerRest {
             }
         }
 
+        public Localhost_NfvDeployerRest.Catalog.Howmany howmany() {
+            return new Localhost_NfvDeployerRest.Catalog.Howmany(_client, _uriBuilder.buildFromMap(_templateAndMatrixParameterValues));
+        }
+
+        public Localhost_NfvDeployerRest.Catalog.Vnf_id vnf_id(String vnfId) {
+            return new Localhost_NfvDeployerRest.Catalog.Vnf_id(_client, _uriBuilder.buildFromMap(_templateAndMatrixParameterValues), vnfId);
+        }
+
+        public static class Howmany {
+
+            private Client _client;
+            private UriBuilder _uriBuilder;
+            private Map<String, Object> _templateAndMatrixParameterValues;
+
+            private Howmany(Client client, UriBuilder uriBuilder, Map<String, Object> map) {
+                _client = client;
+                _uriBuilder = uriBuilder.clone();
+                _templateAndMatrixParameterValues = map;
+            }
+
+            /**
+             * Create new instance using existing Client instance, and a base URI and any parameters
+             * 
+             */
+            public Howmany(Client client, URI baseUri) {
+                _client = client;
+                _uriBuilder = UriBuilder.fromUri(baseUri);
+                _uriBuilder = _uriBuilder.path("/howmany");
+                _templateAndMatrixParameterValues = new HashMap<String, Object>();
+            }
+
+            public<T >T getAsTextPlain(GenericType<T> returnType) {
+                UriBuilder localUriBuilder = _uriBuilder.clone();
+                WebResource resource = _client.resource(localUriBuilder.buildFromMap(_templateAndMatrixParameterValues));
+                com.sun.jersey.api.client.WebResource.Builder resourceBuilder = resource.getRequestBuilder();
+                resourceBuilder = resourceBuilder.accept("text/plain");
+                ClientResponse response;
+                response = resourceBuilder.method("GET", ClientResponse.class);
+                if (response.getStatus()>= 400) {
+                    throw new Localhost_NfvDeployerRest.WebApplicationExceptionMessage(Response.status(response.getClientResponseStatus()).build());
+                }
+                return response.getEntity(returnType);
+            }
+
+            public<T >T getAsTextPlain(Class<T> returnType) {
+                UriBuilder localUriBuilder = _uriBuilder.clone();
+                WebResource resource = _client.resource(localUriBuilder.buildFromMap(_templateAndMatrixParameterValues));
+                com.sun.jersey.api.client.WebResource.Builder resourceBuilder = resource.getRequestBuilder();
+                resourceBuilder = resourceBuilder.accept("text/plain");
+                ClientResponse response;
+                response = resourceBuilder.method("GET", ClientResponse.class);
+                if (!ClientResponse.class.isAssignableFrom(returnType)) {
+                    if (response.getStatus()>= 400) {
+                        throw new Localhost_NfvDeployerRest.WebApplicationExceptionMessage(Response.status(response.getClientResponseStatus()).build());
+                    }
+                }
+                if (!ClientResponse.class.isAssignableFrom(returnType)) {
+                    return response.getEntity(returnType);
+                } else {
+                    return returnType.cast(response);
+                }
+            }
+
+        }
+
+        public static class Vnf_id {
+
+            private Client _client;
+            private UriBuilder _uriBuilder;
+            private Map<String, Object> _templateAndMatrixParameterValues;
+
+            private Vnf_id(Client client, UriBuilder uriBuilder, Map<String, Object> map) {
+                _client = client;
+                _uriBuilder = uriBuilder.clone();
+                _templateAndMatrixParameterValues = map;
+            }
+
+            /**
+             * Create new instance using existing Client instance, and a base URI and any parameters
+             * 
+             */
+            public Vnf_id(Client client, URI baseUri, String vnfId) {
+                _client = client;
+                _uriBuilder = UriBuilder.fromUri(baseUri);
+                _uriBuilder = _uriBuilder.path("/{vnf_id}");
+                _templateAndMatrixParameterValues = new HashMap<String, Object>();
+                _templateAndMatrixParameterValues.put("vnf_id", vnfId);
+            }
+
+            /**
+             * Create new instance using existing Client instance, and the URI from which the parameters will be extracted
+             * 
+             */
+            public Vnf_id(Client client, URI uri) {
+                _client = client;
+                StringBuilder template = new StringBuilder(BASE_URI.toString());
+                if (template.charAt((template.length()- 1))!= '/') {
+                    template.append("/catalog/{vnf_id}");
+                } else {
+                    template.append("catalog/{vnf_id}");
+                }
+                _uriBuilder = UriBuilder.fromPath(template.toString());
+                _templateAndMatrixParameterValues = new HashMap<String, Object>();
+                UriTemplate uriTemplate = new UriTemplate(template.toString());
+                HashMap<String, String> parameters = new HashMap<String, String>();
+                uriTemplate.match(uri.toString(), parameters);
+                _templateAndMatrixParameterValues.putAll(parameters);
+            }
+
+            /**
+             * Get vnf_id
+             * 
+             */
+            public String getVnfId() {
+                return ((String) _templateAndMatrixParameterValues.get("vnf_id"));
+            }
+
+            /**
+             * Duplicate state and set vnf_id
+             * 
+             */
+            public Localhost_NfvDeployerRest.Catalog.Vnf_id setVnfId(String vnfId) {
+                Map<String, Object> copyMap;
+                copyMap = new HashMap<String, Object>(_templateAndMatrixParameterValues);
+                UriBuilder copyUriBuilder = _uriBuilder.clone();
+                copyMap.put("vnf_id", vnfId);
+                return new Localhost_NfvDeployerRest.Catalog.Vnf_id(_client, copyUriBuilder, copyMap);
+            }
+
+            public<T >T getAsXml(GenericType<T> returnType) {
+                UriBuilder localUriBuilder = _uriBuilder.clone();
+                WebResource resource = _client.resource(localUriBuilder.buildFromMap(_templateAndMatrixParameterValues));
+                com.sun.jersey.api.client.WebResource.Builder resourceBuilder = resource.getRequestBuilder();
+                resourceBuilder = resourceBuilder.accept("application/xml");
+                ClientResponse response;
+                response = resourceBuilder.method("GET", ClientResponse.class);
+                if (response.getStatus()>= 400) {
+                    throw new Localhost_NfvDeployerRest.WebApplicationExceptionMessage(Response.status(response.getClientResponseStatus()).build());
+                }
+                return response.getEntity(returnType);
+            }
+
+            public<T >T getAsXml(Class<T> returnType) {
+                UriBuilder localUriBuilder = _uriBuilder.clone();
+                WebResource resource = _client.resource(localUriBuilder.buildFromMap(_templateAndMatrixParameterValues));
+                com.sun.jersey.api.client.WebResource.Builder resourceBuilder = resource.getRequestBuilder();
+                resourceBuilder = resourceBuilder.accept("application/xml");
+                ClientResponse response;
+                response = resourceBuilder.method("GET", ClientResponse.class);
+                if (!ClientResponse.class.isAssignableFrom(returnType)) {
+                    if (response.getStatus()>= 400) {
+                        throw new Localhost_NfvDeployerRest.WebApplicationExceptionMessage(Response.status(response.getClientResponseStatus()).build());
+                    }
+                }
+                if (!ClientResponse.class.isAssignableFrom(returnType)) {
+                    return response.getEntity(returnType);
+                } else {
+                    return returnType.cast(response);
+                }
+            }
+
+        }
+
     }
 
     public static class Channels {
@@ -257,6 +420,67 @@ public class Localhost_NfvDeployerRest {
 
         public Localhost_NfvDeployerRest.Channels.Source_host_idDestination_host_id source_host_idDestination_host_id(String sourceHostId, String destinationHostId) {
             return new Localhost_NfvDeployerRest.Channels.Source_host_idDestination_host_id(_client, _uriBuilder.buildFromMap(_templateAndMatrixParameterValues), sourceHostId, destinationHostId);
+        }
+
+        public Localhost_NfvDeployerRest.Channels.Howmany howmany() {
+            return new Localhost_NfvDeployerRest.Channels.Howmany(_client, _uriBuilder.buildFromMap(_templateAndMatrixParameterValues));
+        }
+
+        public static class Howmany {
+
+            private Client _client;
+            private UriBuilder _uriBuilder;
+            private Map<String, Object> _templateAndMatrixParameterValues;
+
+            private Howmany(Client client, UriBuilder uriBuilder, Map<String, Object> map) {
+                _client = client;
+                _uriBuilder = uriBuilder.clone();
+                _templateAndMatrixParameterValues = map;
+            }
+
+            /**
+             * Create new instance using existing Client instance, and a base URI and any parameters
+             * 
+             */
+            public Howmany(Client client, URI baseUri) {
+                _client = client;
+                _uriBuilder = UriBuilder.fromUri(baseUri);
+                _uriBuilder = _uriBuilder.path("/howmany");
+                _templateAndMatrixParameterValues = new HashMap<String, Object>();
+            }
+
+            public<T >T getAsTextPlain(GenericType<T> returnType) {
+                UriBuilder localUriBuilder = _uriBuilder.clone();
+                WebResource resource = _client.resource(localUriBuilder.buildFromMap(_templateAndMatrixParameterValues));
+                com.sun.jersey.api.client.WebResource.Builder resourceBuilder = resource.getRequestBuilder();
+                resourceBuilder = resourceBuilder.accept("text/plain");
+                ClientResponse response;
+                response = resourceBuilder.method("GET", ClientResponse.class);
+                if (response.getStatus()>= 400) {
+                    throw new Localhost_NfvDeployerRest.WebApplicationExceptionMessage(Response.status(response.getClientResponseStatus()).build());
+                }
+                return response.getEntity(returnType);
+            }
+
+            public<T >T getAsTextPlain(Class<T> returnType) {
+                UriBuilder localUriBuilder = _uriBuilder.clone();
+                WebResource resource = _client.resource(localUriBuilder.buildFromMap(_templateAndMatrixParameterValues));
+                com.sun.jersey.api.client.WebResource.Builder resourceBuilder = resource.getRequestBuilder();
+                resourceBuilder = resourceBuilder.accept("text/plain");
+                ClientResponse response;
+                response = resourceBuilder.method("GET", ClientResponse.class);
+                if (!ClientResponse.class.isAssignableFrom(returnType)) {
+                    if (response.getStatus()>= 400) {
+                        throw new Localhost_NfvDeployerRest.WebApplicationExceptionMessage(Response.status(response.getClientResponseStatus()).build());
+                    }
+                }
+                if (!ClientResponse.class.isAssignableFrom(returnType)) {
+                    return response.getEntity(returnType);
+                } else {
+                    return returnType.cast(response);
+                }
+            }
+
         }
 
         public static class Source_host_idDestination_host_id {
@@ -439,6 +663,10 @@ public class Localhost_NfvDeployerRest {
             return new Localhost_NfvDeployerRest.Hosts.Host_id(_client, _uriBuilder.buildFromMap(_templateAndMatrixParameterValues), hostId);
         }
 
+        public Localhost_NfvDeployerRest.Hosts.Howmany howmany() {
+            return new Localhost_NfvDeployerRest.Hosts.Howmany(_client, _uriBuilder.buildFromMap(_templateAndMatrixParameterValues));
+        }
+
         public static class Host_id {
 
             private Client _client;
@@ -521,6 +749,63 @@ public class Localhost_NfvDeployerRest {
                 WebResource resource = _client.resource(localUriBuilder.buildFromMap(_templateAndMatrixParameterValues));
                 com.sun.jersey.api.client.WebResource.Builder resourceBuilder = resource.getRequestBuilder();
                 resourceBuilder = resourceBuilder.accept("application/xml");
+                ClientResponse response;
+                response = resourceBuilder.method("GET", ClientResponse.class);
+                if (!ClientResponse.class.isAssignableFrom(returnType)) {
+                    if (response.getStatus()>= 400) {
+                        throw new Localhost_NfvDeployerRest.WebApplicationExceptionMessage(Response.status(response.getClientResponseStatus()).build());
+                    }
+                }
+                if (!ClientResponse.class.isAssignableFrom(returnType)) {
+                    return response.getEntity(returnType);
+                } else {
+                    return returnType.cast(response);
+                }
+            }
+
+        }
+
+        public static class Howmany {
+
+            private Client _client;
+            private UriBuilder _uriBuilder;
+            private Map<String, Object> _templateAndMatrixParameterValues;
+
+            private Howmany(Client client, UriBuilder uriBuilder, Map<String, Object> map) {
+                _client = client;
+                _uriBuilder = uriBuilder.clone();
+                _templateAndMatrixParameterValues = map;
+            }
+
+            /**
+             * Create new instance using existing Client instance, and a base URI and any parameters
+             * 
+             */
+            public Howmany(Client client, URI baseUri) {
+                _client = client;
+                _uriBuilder = UriBuilder.fromUri(baseUri);
+                _uriBuilder = _uriBuilder.path("/howmany");
+                _templateAndMatrixParameterValues = new HashMap<String, Object>();
+            }
+
+            public<T >T getAsTextPlain(GenericType<T> returnType) {
+                UriBuilder localUriBuilder = _uriBuilder.clone();
+                WebResource resource = _client.resource(localUriBuilder.buildFromMap(_templateAndMatrixParameterValues));
+                com.sun.jersey.api.client.WebResource.Builder resourceBuilder = resource.getRequestBuilder();
+                resourceBuilder = resourceBuilder.accept("text/plain");
+                ClientResponse response;
+                response = resourceBuilder.method("GET", ClientResponse.class);
+                if (response.getStatus()>= 400) {
+                    throw new Localhost_NfvDeployerRest.WebApplicationExceptionMessage(Response.status(response.getClientResponseStatus()).build());
+                }
+                return response.getEntity(returnType);
+            }
+
+            public<T >T getAsTextPlain(Class<T> returnType) {
+                UriBuilder localUriBuilder = _uriBuilder.clone();
+                WebResource resource = _client.resource(localUriBuilder.buildFromMap(_templateAndMatrixParameterValues));
+                com.sun.jersey.api.client.WebResource.Builder resourceBuilder = resource.getRequestBuilder();
+                resourceBuilder = resourceBuilder.accept("text/plain");
                 ClientResponse response;
                 response = resourceBuilder.method("GET", ClientResponse.class);
                 if (!ClientResponse.class.isAssignableFrom(returnType)) {
@@ -640,28 +925,28 @@ public class Localhost_NfvDeployerRest {
             }
         }
 
-        public<T >T putXmlAs(Object input, GenericType<T> returnType) {
+        public<T >T postXmlAs(Object input, GenericType<T> returnType) {
             UriBuilder localUriBuilder = _uriBuilder.clone();
             WebResource resource = _client.resource(localUriBuilder.buildFromMap(_templateAndMatrixParameterValues));
             com.sun.jersey.api.client.WebResource.Builder resourceBuilder = resource.getRequestBuilder();
             resourceBuilder = resourceBuilder.accept("*/*");
             resourceBuilder = resourceBuilder.type("application/xml");
             ClientResponse response;
-            response = resourceBuilder.method("PUT", ClientResponse.class, input);
+            response = resourceBuilder.method("POST", ClientResponse.class, input);
             if (response.getStatus()>= 400) {
                 throw new Localhost_NfvDeployerRest.WebApplicationExceptionMessage(Response.status(response.getClientResponseStatus()).build());
             }
             return response.getEntity(returnType);
         }
 
-        public<T >T putXmlAs(Object input, Class<T> returnType) {
+        public<T >T postXmlAs(Object input, Class<T> returnType) {
             UriBuilder localUriBuilder = _uriBuilder.clone();
             WebResource resource = _client.resource(localUriBuilder.buildFromMap(_templateAndMatrixParameterValues));
             com.sun.jersey.api.client.WebResource.Builder resourceBuilder = resource.getRequestBuilder();
             resourceBuilder = resourceBuilder.accept("*/*");
             resourceBuilder = resourceBuilder.type("application/xml");
             ClientResponse response;
-            response = resourceBuilder.method("PUT", ClientResponse.class, input);
+            response = resourceBuilder.method("POST", ClientResponse.class, input);
             if (!ClientResponse.class.isAssignableFrom(returnType)) {
                 if (response.getStatus()>= 400) {
                     throw new Localhost_NfvDeployerRest.WebApplicationExceptionMessage(Response.status(response.getClientResponseStatus()).build());
@@ -678,12 +963,8 @@ public class Localhost_NfvDeployerRest {
             return new Localhost_NfvDeployerRest.Nffgs.Nffg_idNodesNode_id(_client, _uriBuilder.buildFromMap(_templateAndMatrixParameterValues), nffgId, nodeId);
         }
 
-        public Localhost_NfvDeployerRest.Nffgs.Nffg_id nffg_id(String nffgId) {
-            return new Localhost_NfvDeployerRest.Nffgs.Nffg_id(_client, _uriBuilder.buildFromMap(_templateAndMatrixParameterValues), nffgId);
-        }
-
-        public Localhost_NfvDeployerRest.Nffgs.Nffg_idNodes nffg_idNodes(String nffgId) {
-            return new Localhost_NfvDeployerRest.Nffgs.Nffg_idNodes(_client, _uriBuilder.buildFromMap(_templateAndMatrixParameterValues), nffgId);
+        public Localhost_NfvDeployerRest.Nffgs.Nffg_idNodesNode_idReachableEntities nffg_idNodesNode_idReachableEntities(String nffgId, String nodeId) {
+            return new Localhost_NfvDeployerRest.Nffgs.Nffg_idNodesNode_idReachableEntities(_client, _uriBuilder.buildFromMap(_templateAndMatrixParameterValues), nffgId, nodeId);
         }
 
         public Localhost_NfvDeployerRest.Nffgs.Nffg_idLinksLink_id nffg_idLinksLink_id(String nffgId, String linkId) {
@@ -694,8 +975,81 @@ public class Localhost_NfvDeployerRest {
             return new Localhost_NfvDeployerRest.Nffgs.Nffg_idLinks(_client, _uriBuilder.buildFromMap(_templateAndMatrixParameterValues), nffgId);
         }
 
-        public Localhost_NfvDeployerRest.Nffgs.Nffg_idNodesNode_idReachableEntities nffg_idNodesNode_idReachableEntities(String nffgId, String nodeId) {
-            return new Localhost_NfvDeployerRest.Nffgs.Nffg_idNodesNode_idReachableEntities(_client, _uriBuilder.buildFromMap(_templateAndMatrixParameterValues), nffgId, nodeId);
+        public Localhost_NfvDeployerRest.Nffgs.Nffg_idLinksHowmany nffg_idLinksHowmany(String nffgId) {
+            return new Localhost_NfvDeployerRest.Nffgs.Nffg_idLinksHowmany(_client, _uriBuilder.buildFromMap(_templateAndMatrixParameterValues), nffgId);
+        }
+
+        public Localhost_NfvDeployerRest.Nffgs.Nffg_idNodesHowmany nffg_idNodesHowmany(String nffgId) {
+            return new Localhost_NfvDeployerRest.Nffgs.Nffg_idNodesHowmany(_client, _uriBuilder.buildFromMap(_templateAndMatrixParameterValues), nffgId);
+        }
+
+        public Localhost_NfvDeployerRest.Nffgs.Nffg_id nffg_id(String nffgId) {
+            return new Localhost_NfvDeployerRest.Nffgs.Nffg_id(_client, _uriBuilder.buildFromMap(_templateAndMatrixParameterValues), nffgId);
+        }
+
+        public Localhost_NfvDeployerRest.Nffgs.Nffg_idNodes nffg_idNodes(String nffgId) {
+            return new Localhost_NfvDeployerRest.Nffgs.Nffg_idNodes(_client, _uriBuilder.buildFromMap(_templateAndMatrixParameterValues), nffgId);
+        }
+
+        public Localhost_NfvDeployerRest.Nffgs.Howmany howmany() {
+            return new Localhost_NfvDeployerRest.Nffgs.Howmany(_client, _uriBuilder.buildFromMap(_templateAndMatrixParameterValues));
+        }
+
+        public static class Howmany {
+
+            private Client _client;
+            private UriBuilder _uriBuilder;
+            private Map<String, Object> _templateAndMatrixParameterValues;
+
+            private Howmany(Client client, UriBuilder uriBuilder, Map<String, Object> map) {
+                _client = client;
+                _uriBuilder = uriBuilder.clone();
+                _templateAndMatrixParameterValues = map;
+            }
+
+            /**
+             * Create new instance using existing Client instance, and a base URI and any parameters
+             * 
+             */
+            public Howmany(Client client, URI baseUri) {
+                _client = client;
+                _uriBuilder = UriBuilder.fromUri(baseUri);
+                _uriBuilder = _uriBuilder.path("/howmany");
+                _templateAndMatrixParameterValues = new HashMap<String, Object>();
+            }
+
+            public<T >T getAsTextPlain(GenericType<T> returnType) {
+                UriBuilder localUriBuilder = _uriBuilder.clone();
+                WebResource resource = _client.resource(localUriBuilder.buildFromMap(_templateAndMatrixParameterValues));
+                com.sun.jersey.api.client.WebResource.Builder resourceBuilder = resource.getRequestBuilder();
+                resourceBuilder = resourceBuilder.accept("text/plain");
+                ClientResponse response;
+                response = resourceBuilder.method("GET", ClientResponse.class);
+                if (response.getStatus()>= 400) {
+                    throw new Localhost_NfvDeployerRest.WebApplicationExceptionMessage(Response.status(response.getClientResponseStatus()).build());
+                }
+                return response.getEntity(returnType);
+            }
+
+            public<T >T getAsTextPlain(Class<T> returnType) {
+                UriBuilder localUriBuilder = _uriBuilder.clone();
+                WebResource resource = _client.resource(localUriBuilder.buildFromMap(_templateAndMatrixParameterValues));
+                com.sun.jersey.api.client.WebResource.Builder resourceBuilder = resource.getRequestBuilder();
+                resourceBuilder = resourceBuilder.accept("text/plain");
+                ClientResponse response;
+                response = resourceBuilder.method("GET", ClientResponse.class);
+                if (!ClientResponse.class.isAssignableFrom(returnType)) {
+                    if (response.getStatus()>= 400) {
+                        throw new Localhost_NfvDeployerRest.WebApplicationExceptionMessage(Response.status(response.getClientResponseStatus()).build());
+                    }
+                }
+                if (!ClientResponse.class.isAssignableFrom(returnType)) {
+                    return response.getEntity(returnType);
+                } else {
+                    return returnType.cast(response);
+                }
+            }
+
         }
 
         public static class Nffg_id {
@@ -892,28 +1246,28 @@ public class Localhost_NfvDeployerRest {
                 return new Localhost_NfvDeployerRest.Nffgs.Nffg_idLinks(_client, copyUriBuilder, copyMap);
             }
 
-            public<T >T putTextBooleanAs(Object input, GenericType<T> returnType) {
+            public<T >T postTextBooleanAs(Object input, GenericType<T> returnType) {
                 UriBuilder localUriBuilder = _uriBuilder.clone();
                 WebResource resource = _client.resource(localUriBuilder.buildFromMap(_templateAndMatrixParameterValues));
                 com.sun.jersey.api.client.WebResource.Builder resourceBuilder = resource.getRequestBuilder();
                 resourceBuilder = resourceBuilder.accept("*/*");
                 resourceBuilder = resourceBuilder.type("text/boolean");
                 ClientResponse response;
-                response = resourceBuilder.method("PUT", ClientResponse.class, input);
+                response = resourceBuilder.method("POST", ClientResponse.class, input);
                 if (response.getStatus()>= 400) {
                     throw new Localhost_NfvDeployerRest.WebApplicationExceptionMessage(Response.status(response.getClientResponseStatus()).build());
                 }
                 return response.getEntity(returnType);
             }
 
-            public<T >T putTextBooleanAs(Object input, Class<T> returnType) {
+            public<T >T postTextBooleanAs(Object input, Class<T> returnType) {
                 UriBuilder localUriBuilder = _uriBuilder.clone();
                 WebResource resource = _client.resource(localUriBuilder.buildFromMap(_templateAndMatrixParameterValues));
                 com.sun.jersey.api.client.WebResource.Builder resourceBuilder = resource.getRequestBuilder();
                 resourceBuilder = resourceBuilder.accept("*/*");
                 resourceBuilder = resourceBuilder.type("text/boolean");
                 ClientResponse response;
-                response = resourceBuilder.method("PUT", ClientResponse.class, input);
+                response = resourceBuilder.method("POST", ClientResponse.class, input);
                 if (!ClientResponse.class.isAssignableFrom(returnType)) {
                     if (response.getStatus()>= 400) {
                         throw new Localhost_NfvDeployerRest.WebApplicationExceptionMessage(Response.status(response.getClientResponseStatus()).build());
@@ -926,7 +1280,7 @@ public class Localhost_NfvDeployerRest {
                 }
             }
 
-            public<T >T putTextBooleanAs(Object input, Boolean overwrite, GenericType<T> returnType) {
+            public<T >T postTextBooleanAs(Object input, Boolean overwrite, GenericType<T> returnType) {
                 UriBuilder localUriBuilder = _uriBuilder.clone();
                 if (overwrite == null) {
                 }
@@ -940,14 +1294,14 @@ public class Localhost_NfvDeployerRest {
                 resourceBuilder = resourceBuilder.accept("*/*");
                 resourceBuilder = resourceBuilder.type("text/boolean");
                 ClientResponse response;
-                response = resourceBuilder.method("PUT", ClientResponse.class, input);
+                response = resourceBuilder.method("POST", ClientResponse.class, input);
                 if (response.getStatus()>= 400) {
                     throw new Localhost_NfvDeployerRest.WebApplicationExceptionMessage(Response.status(response.getClientResponseStatus()).build());
                 }
                 return response.getEntity(returnType);
             }
 
-            public<T >T putTextBooleanAs(Object input, Boolean overwrite, Class<T> returnType) {
+            public<T >T postTextBooleanAs(Object input, Boolean overwrite, Class<T> returnType) {
                 UriBuilder localUriBuilder = _uriBuilder.clone();
                 if (overwrite == null) {
                 }
@@ -961,7 +1315,7 @@ public class Localhost_NfvDeployerRest {
                 resourceBuilder = resourceBuilder.accept("*/*");
                 resourceBuilder = resourceBuilder.type("text/boolean");
                 ClientResponse response;
-                response = resourceBuilder.method("PUT", ClientResponse.class, input);
+                response = resourceBuilder.method("POST", ClientResponse.class, input);
                 if (!ClientResponse.class.isAssignableFrom(returnType)) {
                     if (response.getStatus()>= 400) {
                         throw new Localhost_NfvDeployerRest.WebApplicationExceptionMessage(Response.status(response.getClientResponseStatus()).build());
@@ -974,28 +1328,28 @@ public class Localhost_NfvDeployerRest {
                 }
             }
 
-            public<T >T putXmlAs(Object input, GenericType<T> returnType) {
+            public<T >T postXmlAs(Object input, GenericType<T> returnType) {
                 UriBuilder localUriBuilder = _uriBuilder.clone();
                 WebResource resource = _client.resource(localUriBuilder.buildFromMap(_templateAndMatrixParameterValues));
                 com.sun.jersey.api.client.WebResource.Builder resourceBuilder = resource.getRequestBuilder();
                 resourceBuilder = resourceBuilder.accept("*/*");
                 resourceBuilder = resourceBuilder.type("application/xml");
                 ClientResponse response;
-                response = resourceBuilder.method("PUT", ClientResponse.class, input);
+                response = resourceBuilder.method("POST", ClientResponse.class, input);
                 if (response.getStatus()>= 400) {
                     throw new Localhost_NfvDeployerRest.WebApplicationExceptionMessage(Response.status(response.getClientResponseStatus()).build());
                 }
                 return response.getEntity(returnType);
             }
 
-            public<T >T putXmlAs(Object input, Class<T> returnType) {
+            public<T >T postXmlAs(Object input, Class<T> returnType) {
                 UriBuilder localUriBuilder = _uriBuilder.clone();
                 WebResource resource = _client.resource(localUriBuilder.buildFromMap(_templateAndMatrixParameterValues));
                 com.sun.jersey.api.client.WebResource.Builder resourceBuilder = resource.getRequestBuilder();
                 resourceBuilder = resourceBuilder.accept("*/*");
                 resourceBuilder = resourceBuilder.type("application/xml");
                 ClientResponse response;
-                response = resourceBuilder.method("PUT", ClientResponse.class, input);
+                response = resourceBuilder.method("POST", ClientResponse.class, input);
                 if (!ClientResponse.class.isAssignableFrom(returnType)) {
                     if (response.getStatus()>= 400) {
                         throw new Localhost_NfvDeployerRest.WebApplicationExceptionMessage(Response.status(response.getClientResponseStatus()).build());
@@ -1008,7 +1362,7 @@ public class Localhost_NfvDeployerRest {
                 }
             }
 
-            public<T >T putXmlAs(Object input, Boolean overwrite, GenericType<T> returnType) {
+            public<T >T postXmlAs(Object input, Boolean overwrite, GenericType<T> returnType) {
                 UriBuilder localUriBuilder = _uriBuilder.clone();
                 if (overwrite == null) {
                 }
@@ -1022,14 +1376,14 @@ public class Localhost_NfvDeployerRest {
                 resourceBuilder = resourceBuilder.accept("*/*");
                 resourceBuilder = resourceBuilder.type("application/xml");
                 ClientResponse response;
-                response = resourceBuilder.method("PUT", ClientResponse.class, input);
+                response = resourceBuilder.method("POST", ClientResponse.class, input);
                 if (response.getStatus()>= 400) {
                     throw new Localhost_NfvDeployerRest.WebApplicationExceptionMessage(Response.status(response.getClientResponseStatus()).build());
                 }
                 return response.getEntity(returnType);
             }
 
-            public<T >T putXmlAs(Object input, Boolean overwrite, Class<T> returnType) {
+            public<T >T postXmlAs(Object input, Boolean overwrite, Class<T> returnType) {
                 UriBuilder localUriBuilder = _uriBuilder.clone();
                 if (overwrite == null) {
                 }
@@ -1043,7 +1397,105 @@ public class Localhost_NfvDeployerRest {
                 resourceBuilder = resourceBuilder.accept("*/*");
                 resourceBuilder = resourceBuilder.type("application/xml");
                 ClientResponse response;
-                response = resourceBuilder.method("PUT", ClientResponse.class, input);
+                response = resourceBuilder.method("POST", ClientResponse.class, input);
+                if (!ClientResponse.class.isAssignableFrom(returnType)) {
+                    if (response.getStatus()>= 400) {
+                        throw new Localhost_NfvDeployerRest.WebApplicationExceptionMessage(Response.status(response.getClientResponseStatus()).build());
+                    }
+                }
+                if (!ClientResponse.class.isAssignableFrom(returnType)) {
+                    return response.getEntity(returnType);
+                } else {
+                    return returnType.cast(response);
+                }
+            }
+
+        }
+
+        public static class Nffg_idLinksHowmany {
+
+            private Client _client;
+            private UriBuilder _uriBuilder;
+            private Map<String, Object> _templateAndMatrixParameterValues;
+
+            private Nffg_idLinksHowmany(Client client, UriBuilder uriBuilder, Map<String, Object> map) {
+                _client = client;
+                _uriBuilder = uriBuilder.clone();
+                _templateAndMatrixParameterValues = map;
+            }
+
+            /**
+             * Create new instance using existing Client instance, and a base URI and any parameters
+             * 
+             */
+            public Nffg_idLinksHowmany(Client client, URI baseUri, String nffgId) {
+                _client = client;
+                _uriBuilder = UriBuilder.fromUri(baseUri);
+                _uriBuilder = _uriBuilder.path("/{nffg_id}/links/howmany");
+                _templateAndMatrixParameterValues = new HashMap<String, Object>();
+                _templateAndMatrixParameterValues.put("nffg_id", nffgId);
+            }
+
+            /**
+             * Create new instance using existing Client instance, and the URI from which the parameters will be extracted
+             * 
+             */
+            public Nffg_idLinksHowmany(Client client, URI uri) {
+                _client = client;
+                StringBuilder template = new StringBuilder(BASE_URI.toString());
+                if (template.charAt((template.length()- 1))!= '/') {
+                    template.append("/nffgs/{nffg_id}/links/howmany");
+                } else {
+                    template.append("nffgs/{nffg_id}/links/howmany");
+                }
+                _uriBuilder = UriBuilder.fromPath(template.toString());
+                _templateAndMatrixParameterValues = new HashMap<String, Object>();
+                UriTemplate uriTemplate = new UriTemplate(template.toString());
+                HashMap<String, String> parameters = new HashMap<String, String>();
+                uriTemplate.match(uri.toString(), parameters);
+                _templateAndMatrixParameterValues.putAll(parameters);
+            }
+
+            /**
+             * Get nffg_id
+             * 
+             */
+            public String getNffgId() {
+                return ((String) _templateAndMatrixParameterValues.get("nffg_id"));
+            }
+
+            /**
+             * Duplicate state and set nffg_id
+             * 
+             */
+            public Localhost_NfvDeployerRest.Nffgs.Nffg_idLinksHowmany setNffgId(String nffgId) {
+                Map<String, Object> copyMap;
+                copyMap = new HashMap<String, Object>(_templateAndMatrixParameterValues);
+                UriBuilder copyUriBuilder = _uriBuilder.clone();
+                copyMap.put("nffg_id", nffgId);
+                return new Localhost_NfvDeployerRest.Nffgs.Nffg_idLinksHowmany(_client, copyUriBuilder, copyMap);
+            }
+
+            public<T >T getAsTextPlain(GenericType<T> returnType) {
+                UriBuilder localUriBuilder = _uriBuilder.clone();
+                WebResource resource = _client.resource(localUriBuilder.buildFromMap(_templateAndMatrixParameterValues));
+                com.sun.jersey.api.client.WebResource.Builder resourceBuilder = resource.getRequestBuilder();
+                resourceBuilder = resourceBuilder.accept("text/plain");
+                ClientResponse response;
+                response = resourceBuilder.method("GET", ClientResponse.class);
+                if (response.getStatus()>= 400) {
+                    throw new Localhost_NfvDeployerRest.WebApplicationExceptionMessage(Response.status(response.getClientResponseStatus()).build());
+                }
+                return response.getEntity(returnType);
+            }
+
+            public<T >T getAsTextPlain(Class<T> returnType) {
+                UriBuilder localUriBuilder = _uriBuilder.clone();
+                WebResource resource = _client.resource(localUriBuilder.buildFromMap(_templateAndMatrixParameterValues));
+                com.sun.jersey.api.client.WebResource.Builder resourceBuilder = resource.getRequestBuilder();
+                resourceBuilder = resourceBuilder.accept("text/plain");
+                ClientResponse response;
+                response = resourceBuilder.method("GET", ClientResponse.class);
                 if (!ClientResponse.class.isAssignableFrom(returnType)) {
                     if (response.getStatus()>= 400) {
                         throw new Localhost_NfvDeployerRest.WebApplicationExceptionMessage(Response.status(response.getClientResponseStatus()).build());
@@ -1241,6 +1693,40 @@ public class Localhost_NfvDeployerRest {
                 return new Localhost_NfvDeployerRest.Nffgs.Nffg_idNodes(_client, copyUriBuilder, copyMap);
             }
 
+            public<T >T postXmlAs(Object input, GenericType<T> returnType) {
+                UriBuilder localUriBuilder = _uriBuilder.clone();
+                WebResource resource = _client.resource(localUriBuilder.buildFromMap(_templateAndMatrixParameterValues));
+                com.sun.jersey.api.client.WebResource.Builder resourceBuilder = resource.getRequestBuilder();
+                resourceBuilder = resourceBuilder.accept("*/*");
+                resourceBuilder = resourceBuilder.type("application/xml");
+                ClientResponse response;
+                response = resourceBuilder.method("POST", ClientResponse.class, input);
+                if (response.getStatus()>= 400) {
+                    throw new Localhost_NfvDeployerRest.WebApplicationExceptionMessage(Response.status(response.getClientResponseStatus()).build());
+                }
+                return response.getEntity(returnType);
+            }
+
+            public<T >T postXmlAs(Object input, Class<T> returnType) {
+                UriBuilder localUriBuilder = _uriBuilder.clone();
+                WebResource resource = _client.resource(localUriBuilder.buildFromMap(_templateAndMatrixParameterValues));
+                com.sun.jersey.api.client.WebResource.Builder resourceBuilder = resource.getRequestBuilder();
+                resourceBuilder = resourceBuilder.accept("*/*");
+                resourceBuilder = resourceBuilder.type("application/xml");
+                ClientResponse response;
+                response = resourceBuilder.method("POST", ClientResponse.class, input);
+                if (!ClientResponse.class.isAssignableFrom(returnType)) {
+                    if (response.getStatus()>= 400) {
+                        throw new Localhost_NfvDeployerRest.WebApplicationExceptionMessage(Response.status(response.getClientResponseStatus()).build());
+                    }
+                }
+                if (!ClientResponse.class.isAssignableFrom(returnType)) {
+                    return response.getEntity(returnType);
+                } else {
+                    return returnType.cast(response);
+                }
+            }
+
             public<T >T getAsXml(GenericType<T> returnType) {
                 UriBuilder localUriBuilder = _uriBuilder.clone();
                 WebResource resource = _client.resource(localUriBuilder.buildFromMap(_templateAndMatrixParameterValues));
@@ -1273,28 +1759,92 @@ public class Localhost_NfvDeployerRest {
                 }
             }
 
-            public<T >T putXmlAs(Object input, GenericType<T> returnType) {
+        }
+
+        public static class Nffg_idNodesHowmany {
+
+            private Client _client;
+            private UriBuilder _uriBuilder;
+            private Map<String, Object> _templateAndMatrixParameterValues;
+
+            private Nffg_idNodesHowmany(Client client, UriBuilder uriBuilder, Map<String, Object> map) {
+                _client = client;
+                _uriBuilder = uriBuilder.clone();
+                _templateAndMatrixParameterValues = map;
+            }
+
+            /**
+             * Create new instance using existing Client instance, and a base URI and any parameters
+             * 
+             */
+            public Nffg_idNodesHowmany(Client client, URI baseUri, String nffgId) {
+                _client = client;
+                _uriBuilder = UriBuilder.fromUri(baseUri);
+                _uriBuilder = _uriBuilder.path("/{nffg_id}/nodes/howmany");
+                _templateAndMatrixParameterValues = new HashMap<String, Object>();
+                _templateAndMatrixParameterValues.put("nffg_id", nffgId);
+            }
+
+            /**
+             * Create new instance using existing Client instance, and the URI from which the parameters will be extracted
+             * 
+             */
+            public Nffg_idNodesHowmany(Client client, URI uri) {
+                _client = client;
+                StringBuilder template = new StringBuilder(BASE_URI.toString());
+                if (template.charAt((template.length()- 1))!= '/') {
+                    template.append("/nffgs/{nffg_id}/nodes/howmany");
+                } else {
+                    template.append("nffgs/{nffg_id}/nodes/howmany");
+                }
+                _uriBuilder = UriBuilder.fromPath(template.toString());
+                _templateAndMatrixParameterValues = new HashMap<String, Object>();
+                UriTemplate uriTemplate = new UriTemplate(template.toString());
+                HashMap<String, String> parameters = new HashMap<String, String>();
+                uriTemplate.match(uri.toString(), parameters);
+                _templateAndMatrixParameterValues.putAll(parameters);
+            }
+
+            /**
+             * Get nffg_id
+             * 
+             */
+            public String getNffgId() {
+                return ((String) _templateAndMatrixParameterValues.get("nffg_id"));
+            }
+
+            /**
+             * Duplicate state and set nffg_id
+             * 
+             */
+            public Localhost_NfvDeployerRest.Nffgs.Nffg_idNodesHowmany setNffgId(String nffgId) {
+                Map<String, Object> copyMap;
+                copyMap = new HashMap<String, Object>(_templateAndMatrixParameterValues);
+                UriBuilder copyUriBuilder = _uriBuilder.clone();
+                copyMap.put("nffg_id", nffgId);
+                return new Localhost_NfvDeployerRest.Nffgs.Nffg_idNodesHowmany(_client, copyUriBuilder, copyMap);
+            }
+
+            public<T >T getAsTextPlain(GenericType<T> returnType) {
                 UriBuilder localUriBuilder = _uriBuilder.clone();
                 WebResource resource = _client.resource(localUriBuilder.buildFromMap(_templateAndMatrixParameterValues));
                 com.sun.jersey.api.client.WebResource.Builder resourceBuilder = resource.getRequestBuilder();
-                resourceBuilder = resourceBuilder.accept("*/*");
-                resourceBuilder = resourceBuilder.type("application/xml");
+                resourceBuilder = resourceBuilder.accept("text/plain");
                 ClientResponse response;
-                response = resourceBuilder.method("PUT", ClientResponse.class, input);
+                response = resourceBuilder.method("GET", ClientResponse.class);
                 if (response.getStatus()>= 400) {
                     throw new Localhost_NfvDeployerRest.WebApplicationExceptionMessage(Response.status(response.getClientResponseStatus()).build());
                 }
                 return response.getEntity(returnType);
             }
 
-            public<T >T putXmlAs(Object input, Class<T> returnType) {
+            public<T >T getAsTextPlain(Class<T> returnType) {
                 UriBuilder localUriBuilder = _uriBuilder.clone();
                 WebResource resource = _client.resource(localUriBuilder.buildFromMap(_templateAndMatrixParameterValues));
                 com.sun.jersey.api.client.WebResource.Builder resourceBuilder = resource.getRequestBuilder();
-                resourceBuilder = resourceBuilder.accept("*/*");
-                resourceBuilder = resourceBuilder.type("application/xml");
+                resourceBuilder = resourceBuilder.accept("text/plain");
                 ClientResponse response;
-                response = resourceBuilder.method("PUT", ClientResponse.class, input);
+                response = resourceBuilder.method("GET", ClientResponse.class);
                 if (!ClientResponse.class.isAssignableFrom(returnType)) {
                     if (response.getStatus()>= 400) {
                         throw new Localhost_NfvDeployerRest.WebApplicationExceptionMessage(Response.status(response.getClientResponseStatus()).build());
@@ -1664,12 +2214,12 @@ public class Localhost_NfvDeployerRest {
             _templateAndMatrixParameterValues = new HashMap<String, Object>();
         }
 
-        public Localhost_NfvDeployerRest.Root.SwaggerYaml swaggerYaml() {
-            return new Localhost_NfvDeployerRest.Root.SwaggerYaml(_client, _uriBuilder.buildFromMap(_templateAndMatrixParameterValues));
-        }
-
         public Localhost_NfvDeployerRest.Root.SwaggerJson swaggerJson() {
             return new Localhost_NfvDeployerRest.Root.SwaggerJson(_client, _uriBuilder.buildFromMap(_templateAndMatrixParameterValues));
+        }
+
+        public Localhost_NfvDeployerRest.Root.SwaggerYaml swaggerYaml() {
+            return new Localhost_NfvDeployerRest.Root.SwaggerYaml(_client, _uriBuilder.buildFromMap(_templateAndMatrixParameterValues));
         }
 
         public static class SwaggerJson {

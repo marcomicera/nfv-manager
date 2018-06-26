@@ -1,11 +1,9 @@
 package it.polito.dp2.NFV.sol3.client1;
 
-import java.util.HashMap;
-import java.util.Map;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
-import com.sun.jersey.api.client.ClientResponse;
-
-import it.polito.dp2.NFV.HostReader;
 import it.polito.dp2.NFV.LinkReader;
 import it.polito.dp2.NFV.NffgReader;
 import it.polito.dp2.NFV.NodeReader;
@@ -17,17 +15,15 @@ import it.polito.dp2.NFV.lab3.NoNodeException;
 import it.polito.dp2.NFV.lab3.ServiceException;
 import it.polito.dp2.NFV.sol3.client1.managers.CatalogManager;
 import it.polito.dp2.NFV.sol3.client1.managers.HostManager;
+import it.polito.dp2.NFV.sol3.client1.managers.LinkManager;
 import it.polito.dp2.NFV.sol3.client1.managers.NodeManager;
-import it.polito.dp2.NFV.sol3.client1.nfvdeployer.HostType;
-import it.polito.dp2.NFV.sol3.client1.nfvdeployer.HostsType;
-import it.polito.dp2.NFV.sol3.client1.nfvdeployer.LinkType;
-import it.polito.dp2.NFV.sol3.client1.nfvdeployer.Localhost_NfvDeployerRest;
-import it.polito.dp2.NFV.sol3.client1.nfvdeployer.NffgType;
-import it.polito.dp2.NFV.sol3.client1.nfvdeployer.NodeType;
-import it.polito.dp2.NFV.sol3.client1.readers.HostReaderImpl;
 import it.polito.dp2.NFV.sol3.client1.readers.LinkReaderImpl;
 import it.polito.dp2.NFV.sol3.client1.readers.NffgReaderImpl;
 import it.polito.dp2.NFV.sol3.client1.readers.NodeReaderImpl;
+import it.polito.dp2.NFV.sol3.service.gen.model.LinkType;
+import it.polito.dp2.NFV.sol3.service.gen.model.NffgType;
+import it.polito.dp2.NFV.sol3.service.gen.model.NodeType;
+import it.polito.dp2.NFV.sol3.service.gen.model.ObjectFactory;
 
 public class DeployedNffgImpl implements DeployedNffg {
 
@@ -35,10 +31,16 @@ public class DeployedNffgImpl implements DeployedNffg {
 	 * NF-FG data
 	 */
 	private NffgReader nffg;
+	private String nffgId;
 
-	public DeployedNffgImpl(NffgType nffg) {
+	public DeployedNffgImpl(NffgType nffg) throws ServiceException {
+		this.nffgId = nffg.getId();
+
+		// TODO debugging
+		System.out.println("Deployed Nffg " + nffgId);
+
 		// Retrieving NF-FG reader
-		this.nffg = new NffgReaderImpl(nffg, retrieveHosts(), CatalogManager.retrieve());
+		this.nffg = new NffgReaderImpl(nffg, HostManager.retrieve(), CatalogManager.retrieve());
 	}
 
 	@Override
@@ -47,12 +49,29 @@ public class DeployedNffgImpl implements DeployedNffg {
 		NodeType nodeToUpload = new NodeType();
 
 		// Setting properties
-		nodeToUpload.setFunctionalType(type.getFunctionalType().value().toString());
+		nodeToUpload.setId(String.valueOf(NodeManager.nextId(nffgId)));
+		nodeToUpload.setFunctionalType(type.getFunctionalType().name());
 		nodeToUpload.setHost(hostName);
 
 		// Uploading the node object
-		Localhost_NfvDeployerRest.nffgs(Localhost_NfvDeployerRest.createClient(), Localhost_NfvDeployerRest.BASE_URI)
-				.nffg_idNodes(nffg.getName()).putXmlAs(nodeToUpload, ClientResponse.class);
+		// ClientResponse response = Localhost_NfvDeployerRest
+		// .nffgs(Localhost_NfvDeployerRest.createClient(),
+		// Localhost_NfvDeployerRest.BASE_URI)
+		// .nffg_idNodes(nffgId).postXmlAs(new ObjectFactory().createNode(nodeToUpload),
+		// ClientResponse.class);
+		Response response = NfvClientImpl.getTarget().path("nffgs").path(nffgId).path("nodes")
+				.request(MediaType.APPLICATION_XML)
+				.post(Entity.entity(new ObjectFactory().createNode(nodeToUpload), MediaType.APPLICATION_XML));
+
+		// Response analysis
+		switch (response.getStatus()) {
+		case 403:
+			throw new AllocationException("Forbidden (allocation constraints not satisfied)");
+		case 400:
+			throw new ServiceException("The XML node object contained in the HTTP body was not valid.");
+		case 404:
+			throw new ServiceException("(NF-FG) Not found");
+		}
 
 		// Returning the corresponding reader
 		return (new NodeReaderImpl(nodeToUpload, nffg, type, HostManager.retrieve(hostName)));
@@ -65,12 +84,26 @@ public class DeployedNffgImpl implements DeployedNffg {
 		LinkType linkToUpload = new LinkType();
 
 		// Setting properties
+		linkToUpload.setId(String.valueOf(LinkManager.nextId(nffgId)));
 		linkToUpload.setSourceNode(source.getName());
 		linkToUpload.setDestinationNode(dest.getName());
 
 		// Uploading the link object
-		Localhost_NfvDeployerRest.nffgs(Localhost_NfvDeployerRest.createClient(), Localhost_NfvDeployerRest.BASE_URI)
-				.nffg_idLinks(nffg.getName()).putXmlAs(linkToUpload, overwrite, ClientResponse.class);
+//		ClientResponse response = Localhost_NfvDeployerRest
+//				.nffgs(Localhost_NfvDeployerRest.createClient(), Localhost_NfvDeployerRest.BASE_URI)
+//				.nffg_idLinks(nffgId)
+//				.postXmlAs(new ObjectFactory().createLink(linkToUpload), overwrite, ClientResponse.class);
+		Response response = NfvClientImpl.getTarget().path("nffgs").path(nffgId).path("links").request(MediaType.APPLICATION_XML).post(Entity.entity(new ObjectFactory().createLink(linkToUpload), MediaType.APPLICATION_XML));
+
+		// Response analysis
+		switch (response.getStatus()) {
+		case 400:
+			throw new ServiceException("Bad request. The XML link object contained in the HTTP body was not valid.");
+		case 403:
+			throw new LinkAlreadyPresentException("Link was already present and overwrite was false.");
+		case 404:
+			throw new NoNodeException("No node was found.");
+		}
 
 		// Returning the corresponding reader
 		return (new LinkReaderImpl(linkToUpload, NodeManager.retrieve(nffg, source.getName()),
@@ -80,25 +113,5 @@ public class DeployedNffgImpl implements DeployedNffg {
 	@Override
 	public NffgReader getReader() throws ServiceException {
 		return nffg;
-	}
-
-	/**
-	 * Retrieves all host readers from the NfvDeployer web service.
-	 * 
-	 * @return all deployed hosts readers.
-	 */
-	private Map<String, HostReader> retrieveHosts() {
-		// Retrieving hosts
-		HostsType retrievedHosts = Localhost_NfvDeployerRest
-				.hosts(Localhost_NfvDeployerRest.createClient(), Localhost_NfvDeployerRest.BASE_URI)
-				.getAsXml(HostsType.class);
-
-		// Building the result map
-		final Map<String, HostReader> result = new HashMap<>();
-		for (final HostType retrievedHost : retrievedHosts.getHost()) {
-			result.put(retrievedHost.getId(), new HostReaderImpl(retrievedHost));
-		}
-
-		return result;
 	}
 }

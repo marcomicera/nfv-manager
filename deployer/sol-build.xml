@@ -50,7 +50,7 @@
 		</exec>
 	</target>
 
-	<target name="generate-artifacts-client1" description="generate Java classes from schema">
+	<!-- <target name="generate-artifacts-client1" description="generate Java classes from schema">
 		<exec executable="xjc" failonerror="true">
 			<arg value="-d" />
 			<arg value="${src.dir}" />
@@ -58,19 +58,23 @@
 			<arg value="it.polito.dp2.NFV.sol3.client1.nfvdeployer" />
 			<arg value="${xsd.dir}/${serviceName}.xsd" />
 		</exec>
-	</target>
+	</target> -->
 
 	<!-- Generating the Java class from the Neo4JSimpleXML WADL -->
 	<target name="generate-neo4jsimplexml-wadl">
 		<mkdir dir="${src.dir}" />
 		<wjc target="${src.dir}" autoSchemaPackage="false" package="it.polito.dp2.NFV.sol3.service.neo4j" description="${Neo4JSimpleXMLWADL}" />
 	</target>
-	
+
 	<!-- Generating the Java class from the NfvDeployer WADL -->
-		<target name="generate-nfvdeployer-wadl">
-			<mkdir dir="${src.dir}" />
-			<wjc target="${src.dir}" autoSchemaPackage="false" package="it.polito.dp2.NFV.sol3.client1.nfvdeployer" description="${URL}/application.wadl" />
-		</target>
+	<target name="generate-nfvdeployer-wadl-client1">
+		<mkdir dir="${src.dir}" />
+		<wjc target="${src.dir}" autoSchemaPackage="false" package="it.polito.dp2.NFV.sol3.client1.nfvdeployer" description="${URL}/application.wadl" />
+	</target>
+	<target name="generate-nfvdeployer-wadl-client2">
+		<mkdir dir="${src.dir}" />
+		<wjc target="${src.dir}" autoSchemaPackage="false" package="it.polito.dp2.NFV.sol3.client2.nfvdeployer" description="${URL}/application.wadl" />
+	</target>
 
 	<!-- Service builder target -->
 	<target name="build-service" depends="generate-artifacts, generate-neo4jsimplexml-wadl">
@@ -91,7 +95,7 @@
 		<antcall target="build-client2" />
 	</target>
 
-	<target name="build-client1" depends="generate-artifacts-client1, generate-nfvdeployer-wadl">
+	<target name="build-client1" depends="generate-nfvdeployer-wadl-client1">
 		<echo>Building client 1...</echo>
 		<javac destdir="${build.dir}" debug="${debug}" debuglevel="${debuglevel}" source="${source}" target="${target}" includeantruntime="false">
 			<src path="${client1.dir}" />
@@ -102,7 +106,7 @@
 		<echo>Done.</echo>
 	</target>
 
-	<target name="build-client2">
+	<target name="build-client2" depends="generate-nfvdeployer-wadl-client2">
 		<echo>Building client 2...</echo>
 		<javac destdir="${build.dir}" debug="${debug}" debuglevel="${debuglevel}" source="${source}" target="${target}" includeantruntime="false">
 			<src path="${client2.dir}" />

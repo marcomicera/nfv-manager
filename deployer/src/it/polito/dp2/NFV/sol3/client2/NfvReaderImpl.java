@@ -1,16 +1,19 @@
 package it.polito.dp2.NFV.sol3.client2;
 
-import java.net.URI;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.Set;
-
-import javax.ws.rs.core.UriBuilder;
 
 import it.polito.dp2.NFV.ConnectionPerformanceReader;
 import it.polito.dp2.NFV.HostReader;
 import it.polito.dp2.NFV.NffgReader;
 import it.polito.dp2.NFV.NfvReader;
 import it.polito.dp2.NFV.VNFTypeReader;
+import it.polito.dp2.NFV.lab3.ServiceException;
+import it.polito.dp2.NFV.sol3.client1.managers.CatalogManager;
+import it.polito.dp2.NFV.sol3.client1.managers.HostManager;
+import it.polito.dp2.NFV.sol3.client1.managers.NffgManager;
+import it.polito.dp2.NFV.sol3.client2.managers.ChannelManager;
 
 public class NfvReaderImpl implements NfvReader {
 	
@@ -18,67 +21,77 @@ public class NfvReaderImpl implements NfvReader {
 	 * System property by which the NfvDeployer web service's URI
 	 * should be retrieved.
 	 */
-	private static final String NFV_DEPLOYER_SYSTEM_PROPERTY = "it.polito.dp2.NFV.lab3.URL";
+	// private static final String NFV_DEPLOYER_SYSTEM_PROPERTY = "it.polito.dp2.NFV.lab3.URL";
 	
 	/**
 	 * Default NfvDeployer web service's URI
 	 */
-	private static final String NFV_DEPLOYER_DEFAULT_URI = "http://localhost:8080/NfvDeployer/rest/";
+	// private static final String NFV_DEPLOYER_DEFAULT_URI = "http://localhost:8080/NfvDeployer/rest/";
 	
 	/**
 	 * Base URI of the NfvDeployer web service. 
 	 */
-	private URI nfvDeployerBaseURI;
-
+	// private URI nfvDeployerBaseURI;
+	
 	/**
 	 * NfvReader's implementation's default constructor-
 	 */
 	public NfvReaderImpl() {
 		// Retrieving the NfvDeployer web service's base URI
-		nfvDeployerBaseURI = getBaseURI();	
+		// nfvDeployerBaseURI = getBaseURI();
+		
+		// Retrieving the NF-FG catalog
+		
+		// Retrieving the NF-FG hosts
 	}
 
 	@Override
-	public ConnectionPerformanceReader getConnectionPerformance(HostReader arg0, HostReader arg1) {
-		// TODO Auto-generated method stub
-		return null;
+	public ConnectionPerformanceReader getConnectionPerformance(HostReader host1, HostReader host2) {
+		return ChannelManager.retrieve(host1.getName(), host2.getName());
 	}
 
 	@Override
-	public HostReader getHost(String arg0) {
-		// TODO Auto-generated method stub
-		return null;
+	public HostReader getHost(String hostId) {
+		return HostManager.retrieve(hostId);
 	}
 
 	@Override
 	public Set<HostReader> getHosts() {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			return new HashSet<HostReader>(HostManager.retrieve().values());
+		} catch (ServiceException e) {
+			return null;
+		}
 	}
 
 	@Override
-	public NffgReader getNffg(String arg0) {
-		// TODO Auto-generated method stub
-		return null;
+	public NffgReader getNffg(String nffgId) {
+		try {
+			return NffgManager.retrieve(nffgId);
+		} catch (ServiceException e) {
+			return null;
+		}
 	}
 
 	@Override
-	public Set<NffgReader> getNffgs(Calendar arg0) {
-		// TODO Auto-generated method stub
-		return null;
+	public Set<NffgReader> getNffgs(Calendar since) {
+		try {
+			return NffgManager.retrieve(since);
+		} catch (ServiceException e) {
+			return null;
+		}
 	}
 
 	@Override
 	public Set<VNFTypeReader> getVNFCatalog() {
-		// TODO Auto-generated method stub
-		return null;
+		return new HashSet<VNFTypeReader>(CatalogManager.retrieve().values());
 	}
 
 	/**
 	 * Returns the base URI of the NfvDeployer web service.
 	 * @return	base NfvDeployer's URI.
 	 */
-	private static URI getBaseURI() {
+	/*private static URI getBaseURI() {
 		String baseURI;
 		try {
 			baseURI = System.getProperty(NFV_DEPLOYER_SYSTEM_PROPERTY);
@@ -87,5 +100,5 @@ public class NfvReaderImpl implements NfvReader {
 		}
 		
 		return UriBuilder.fromUri(baseURI + "/data/").build();
-	}
+	}*/
 }
